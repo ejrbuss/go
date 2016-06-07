@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang='en'>
+    <head>
+        <!-- Fashion -->
+        <link rel='stylesheet' type='text/css' href='css/fashion.css'>
+        <!-- Acquire lifeblood -->
+        <script src='https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js'></script>
+        <!-- Load VFM -->
+        <script src='js/vfm.js'></script>
+        <!-- Start Script -->
+        <script>
+            $( document ).ready(function() {
+                vc = new ViewController( '.content' );
+                vc.login();
+            });
+        </script>
+    </head>
+    <body>
+        <div class='content'></div>
+    </body>
+</html>

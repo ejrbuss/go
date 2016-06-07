@@ -1,0 +1,45 @@
+/*
+ * GLOBAL DEFAULTS
+ */
+
+* {
+    font-family: Trebuchet MS, Verdana, sans-serif;
+    font-size: 2vw;
+    margin: 0;
+    padding: 0;
+}
+
+*:focus {
+    outline: 0;                             
+}
+
+/*
+ * ELEMENT DEFAULTS
+ */
+
+body {
+    background: #000;
+}
+
+button {
+    border: none;                       
+}
+
+svg {
+    -webkit-filter: drop-shadow(1vw 1vw 1vw hsla(0, 0%, 0%, 0.3));
+    filter: drop-shadow(1vw 1vw 1vw hsla(0, 0%, 0%, 0.2));
+}
+
+/*
+ * CLASS CONTROLS
+ */
+
+.content {
+    background: #F0F0F0;
+    margin: auto;
+    position: absolute;
+    top: 0; 
+    bottom: 0; 
+    width: 100vw;
+    height: 50vw;
+}
