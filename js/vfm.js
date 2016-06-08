@@ -16,6 +16,7 @@
 //
 // Add and modify new views from ViewController.
 //
+//
 //==========================================================================================================================//
 // GLOBALS                                                                                                                  
 //==========================================================================================================================//
@@ -29,122 +30,114 @@ function getsetter(object, id, value) {
     object[id] = value;
     return object;
 }
+
+function expandProperties(object) {
+    $.each(object, function(name, val) {
+        object['_' + name + '_'] = val;
+        object[name] = function(arg) {
+            return getsetter(object, '_' + name + '_', arg);  
+        };
+    });
+}
 //==========================================================================================================================//
 // COMPONENT                                                                                                        
 //==========================================================================================================================//
 function Component() {
     
-    var component = this;
-    
     // Component private fields
     
-    this._id_           = (id_counter++).toString();
-    this._element_      = 'div';
-    this._types_        = '';
-    this._x_            = 'auto';
-    this._y_            = 'auto';
-    this._width_        = 'auto';
-    this._height_       = 'auto';
-    this._opacity_      = '1';
-    this._color_        = '#0000FF';
-    this._html_         = '';
-    this._padding_      = '0';
+    this.element      = 'div';
+    this.attributes   = '';
+    this.x            = '0';
+    this.y            = '0';
+    this.z            = '0';
+    this.width        = 'auto';
+    this.height       = 'auto';
+    this.opacity      = '1';
+    this.color        = '';
+    this.html         = '';
+    this.padding      = '0';
+    this.skew         = '0deg';
+    this.shadow       = '0';
+    this.font         = null;
     
-    // Component public fields
+    expandProperties(this);
     
+    this._id_         = (id_counter++).toString();
     this.$ = '#' + this._id_;
     
     // Access functions
     
-    this.element = function(element) { 
-        return getsetter(this, '_element_', element); 
-    };
-    
-    this.types = function(types) { 
-        return getsetter(this, '_types_', types); 
-    };
-    
-    this.x = function(x) { 
-        return getsetter(this, '_x_', x); 
-    };
-    
-    this.y = function(y) { 
-        return getsetter(this, '_y_', y); 
-    };
-    
-    this.z = function(z) { 
-        return getsetter(this, '_z_', z); 
-    };
-    
-    this.width = function(width) { 
-        return getsetter(this, '_width_', width); 
-    };
-    
-    this.height = function(height) { 
-        return getsetter(this, '_height_', height); 
-    };
-    
-    this.opacity = function(opacity) { 
-        return getsetter(this, '_opacity_', opacity); 
-    };
-    
-    this.color = function(color) { 
-        return getsetter(this, '_color_', color); 
-    };
-    
-    this.html = function(html) {
-        return getsetter(this, '_html_', html); 
-    };
-    
-    this.padding = function(padding) { 
-        return getsetter(this, '_padding_', padding); 
-    };
+    var component = this;
     
     this.show = function(id) {
         $( id ).html($( id ).html() 
-            + '<' + component.element() + ' ' + component.types()
+            + '<' + component.element() + ' ' + component.attributes()
             + ' id="' + component._id_ + '">' 
             + component.html() 
             + '</' + component.element() + '>');
         $( component.$ ).css({
-            'position'      : 'absolute',
-            'left'          : component.x(),
-            'top'           : component.y(),
-            'z-index'       : component.z(),
-            'width'         : component.width(),
-            'height'        : component.height(),
-            'opacity'       : component.opacity(),
-            'background'    : component.color(), 
-            'padding'       : copmonent.padding()
+            'position'          : 'absolute',
+            'left'              : component.x(),
+            'top'               : component.y(),
+            'z-index'           : component.z(),
+            'width'             : component.width(),
+            'height'            : component.height(),
+            'opacity'           : component.opacity(),
+            'background'        : component.color(), 
+            'padding'           : component.padding(),
+            '-ms-transform'     : 'skew(' + component.skew() + ')',
+   	        '-webkit-transform' : 'skew(' + component.skew() + ')',
+            'transform'         : 'skew(' + component.skew() + ')',
+            '-webkit-filter'    : 'drop-shadow(1vw 1vw 1vw hsla(0, 0%, 0%, ' + component.shadow() + '))',
+            'filter'            : 'drop-shadow(1vw 1vw 1vw hsla(0, 0%, 0%, ' + component.shadow() + '))'
         });
-    }
+        if ( component.font() ) {
+            $( component.$ ).css({
+                'color'         : component.font().color(),
+                'font-family'   : component.font().family(),
+                'font-size'     : component.font().size(),
+                'font-weight'   : component.font().weight(),
+                'font-style'    : component.font().style()
+            });
+        }
+    };
     
 }
 
 function Font() {
-    // TODO font Object
+    
+    this.color  = 'auto';
+    this.family = 'BebasNeue';
+    this.size   = 'auto';
+    this.weight = 'normal';
+    this.style  = '';
+    
+    expandProperties(this);
+    
 }
 
-function Animation() {
-    // TODO animatation OBject
+function Action() {
+    
+    this.trigger = null;
+    this.action = null;
+    
+    expandProperties(this);
 }
 //==========================================================================================================================//
 // COMPONENT FACTORY                                                                                                        
 //==========================================================================================================================//
 function ComponentFactory() {
     
-    this.titleFont = new Font(); // TODO
-    
-    this.standardFont = new Font(); // TODO
-    
     this.vector = function(points) {
         var component = new Component()
             .element('svg')
-            .types('viewBox="0 0 100 50" preserveAspectRatio="none"')
+            .attributes('viewBox="0 0 100 50" preserveAspectRatio="none"')
             .x('0')
             .y('0')
             .width('100%')
-            .height('100%');
+            .height('100%')
+            .shadow('0.2');
         var old = component.show;
         component.show = function(id) {
             component.html('<polygon points="' + points + '"/>');
@@ -153,13 +146,41 @@ function ComponentFactory() {
                 'background' : '',
                 'fill'       : component.color()
             });
-        }
+        };
         return component;
     }
     
-    this.text = function(text) {
-        var component = new Component();
-        // TODO text factory function
+    this.title = function(text) {
+        var component = new Component()
+            .z('10')
+            .html(text)
+            .shadow('0.1')
+            .font(new Font()
+                 .color('#FFFFFF')
+                 .size('4vw')
+                 .style('italic')
+            )
+        component.color = function(arg) {
+            component.font().color(arg);            
+            if ( arg == undefined )
+                return component._color_;
+            return component;
+        }
+        var old = component.show;
+        component.show = function(id) {
+            old(id);
+            $( component.$ )
+                .addClass('stroke')
+                .css({
+                    '-webkit-user-select'   : 'none',
+                    '-khtml-user-select'    : 'none',
+                    '-moz-user-select'      : 'none',
+                    '-ms-user-select'       : 'none',
+                    '-o-user-select'        : 'none',
+                    'user-select'           : 'none',
+                    'cursor'                : 'default'
+                });
+        };
         return component;
     }
     
@@ -170,8 +191,18 @@ function ComponentFactory() {
     }
     
     this.input = function() {
-        var component = new Component();
-        // TODO input factory function
+        var component = new Component()
+            .z('10')
+            .element('input')
+            .width('40vw')
+            .color('#000000')
+            .skew('-10deg')
+            .padding('0.3vw')
+            .shadow('0.2')
+            .font(new Font()
+                .size('3vw')
+                .color('#FFFFFF')
+            );
         return component;
     }
     
@@ -201,148 +232,64 @@ function ViewController(container) {
         });
         console.log( $( container ).html() );
         this.live = [];
+        
+        $( '.stroke' ).attr('title', function(){
+            return $(this).html();
+        });
     };
-
+    
+    this.add = function(component) {
+        this.live.push(component);
+    }
+    
     this.login = function() {
-        this.live.push(
-            this.factory.vector('7,0 50,0 0,45 0,35')
-                .color('#000')
-                .z(1)
-        );
-        this.live.push(
-            this.factory.vector('50,0 70,0 20,20')
-                .color('#00F')
-        );
-        this.live.push(
-            this.factory.vector('50,50 100,25 100,50')
-                .color('#000')
-                .z(1)
-        );
-        this.live.push(
-            this.factory.vector('35,50 80,40, 80,50')
-                .color('#00F')
-        );
-        this.live.push( 
-            new Component()
-            .x('30vw')
-            .y('30vw')
-            .width('10vw')
-            .html('Username:')
-        );
-        this.live.push( new Component()
-            .x('43vw')
-            .y('30vw')
-            .width('20vw')
-            .element('input')
-            .z(2)
-        );
-        this.live.push( 
-            new Component()
-            .x('30vw')
-            .y('35vw')
-            .width('10vw')
-            .html('Password:')
-        );
-        this.live.push( 
-            new Component()
-            .x('43vw')
-            .y('35vw')
-            .width('20vw')
-            .element('input')
-            .z(2)
-        );
-        this.live.push( 
-            new Component()
-            .x('44vw')
-            .y('40vw')
-            .element('button')
-            .html('Create an Account')
-        );
-        this.live.push( 
-            new Component()
-            .x('56vw')
-            .y('40vw')
-            .element('button')
-            .html('Login')
-        );
+        // Vecotrs
+        this.add( this.factory.vector('7,0 50,0 0,45 0,35').color('#000').z(1) );
+        this.add( this.factory.vector('50,0 70,0 20,20').color('#00F') );
+        this.add( this.factory.vector('50,50 100,25 100,50').color('#000').z(1) );
+        this.add( this.factory.vector('35,50 80,40, 80,50').color('#00F') );
+        // Username/pass entry
+        this.add( this.factory.title('USERNAME').x('16vw').y('20vw') );
+        this.add( this.factory.title('PASSWORD').x('15vw').y('26vw') );
+        this.add( this.factory.input().x('32vw').y('20vw') );
+        this.add( this.factory.input().x('31vw').y('26vw').attributes('type="password"') );
+        // Buttons
+        this.add( this.factory.title('NEW ACCOUNT').color('#C80164').x('43vw').y('31vw'));
+        this.add( this.factory.title('LOGIN').color('#00C864').x('63vw').y('31vw') );
+        // Update
         this.update();
     };
 
     this.menu = function(args) {
-        this.live.push( 
-            new Component()
-            .x('10vw')
-            .y('10vw')
-            .element('button')
-            .html('story')
-        );
-        this.live.push(
-            new Component()
-            .x('10vw')
-            .y('15vw')
-            .element('button')
-            .html('versus')
-        );
-        this.live.push(
-            new Component()
-            .x('10vw')
-            .y('20vw')
-            .element('button')
-            .html('stats')
-        );
-        this.live.push(
-            new Component()
-            .x('10vw')
-            .y('25vw')
-            .element('button')
-            .html('replay')
-        );
-        this.live.push(
-            new Component()
-            .x('10vw')
-            .y('30vw')
-            .element('button')
-            .html('logout')
-        );
+        // Vectors
+        this.add( this.factory.vector('0,0 3,0 35,50 0,50').color('#000').z(1) );
+        this.add( this.factory.vector('0,0 12,0, 17,30 0,30').color('#00F') );
+        this.add( this.factory.vector('65,8 97,14 97,20 60,25').color('#000').z(1) );
+        this.add( this.factory.vector('68,9 94,8 94,20').color('#00F') );
+        // TODO parameterize menu items
+        this.add( this.factory.title('STORY').x('6vw').y('10vw') );
+        this.add( this.factory.title('VERSUS').x('9vw').y('15vw') );
+        this.add( this.factory.title('REPLAY').x('12vw').y('20vw') );
+        this.add( this.factory.title('PROFILE').x('15vw').y('25vw') );
+        this.add( this.factory.title('LOGOUT').x('18vw').y('30vw') );
+        // Update
         this.update();
     };
 
     this.levelSelect = function(args) {
-        this.live.push( 
-            new Component()
-            .x('10vw')
-            .y('60vw')
-            .element('button')
-            .html('I')
-        );
-        this.live.push(
-            new Component()
-            .x('20vw')
-            .y('60vw')
-            .element('button')
-            .html('II')
-        );
-        this.live.push(
-            new Component()
-            .x('30vw')
-            .y('60vw')
-            .element('button')
-            .html('III')
-        );
-        this.live.push(
-            new Component()
-            .x('40vw')
-            .y('60vw')
-            .element('button')
-            .html('IV')
-        );
-        this.live.push(
-            new Component()
-            .x('50vw')
-            .y('60vw')
-            .element('button')
-            .html('V')
-        );
+        // Vectors
+        this.add( this.factory.vector('0,0 100,0, 100,50, 0,50').color('#00F') );
+        this.add( this.factory.vector('17,0, 27,0 13,50, 3,50').color('#000').z(1) );
+        this.add( this.factory.vector('17,0, 27,0 13,50, 3,50').color('#000').z(1).x('18vw') );
+        this.add( this.factory.vector('17,0, 27,0 13,50, 3,50').color('#000').z(1).x('36vw') );
+        this.add( this.factory.vector('17,0, 27,0 13,50, 3,50').color('#000').z(1).x('54vw') );
+        this.add( this.factory.vector('17,0, 27,0 13,50, 3,50').color('#000').z(1).x('72vw') );
+        this.add( this.factory.vector('9,28 18,32 13,50 3,50').color('#FFF').z(2) );
+        this.add( this.factory.vector('9,28 18,32 13,50 3,50').color('#FFF').z(2).x('16vw').y('7vw') );
+        this.add( this.factory.vector('9,28 18,32 13,50 3,50').color('#FFF').z(2).x('32vw').y('14vw') );
+        this.add( this.factory.vector('9,28 18,32 13,50 3,50').color('#FFF').z(2).x('54vw').y('15vw') );
+        this.add( this.factory.vector('9,28 18,32 13,50 3,50').color('#FFF').z(2).x('72vw').y('20vw') );
+        // Update
         this.update();
     };
 

@@ -1,12 +1,24 @@
 /*
+ * FONTS
+ */
+
+@font-face {
+    font-family: BebasNeue;
+    src: url(BebasNeue.woff);
+    font-weight: normal;
+}
+
+/*
  * GLOBAL DEFAULTS
  */
 
 * {
-    font-family: Trebuchet MS, Verdana, sans-serif;
+    overflow: hidden;
+    font-family: BebasNeue, sans-serif;
     font-size: 2vw;
     margin: 0;
     padding: 0;
+    border: none;
 }
 
 *:focus {
@@ -21,25 +33,26 @@ body {
     background: #000;
 }
 
-button {
-    border: none;                       
-}
-
-svg {
-    -webkit-filter: drop-shadow(1vw 1vw 1vw hsla(0, 0%, 0%, 0.3));
-    filter: drop-shadow(1vw 1vw 1vw hsla(0, 0%, 0%, 0.2));
-}
-
 /*
  * CLASS CONTROLS
  */
 
 .content {
-    background: #F0F0F0;
+    background: #FFF;
     margin: auto;
     position: absolute;
     top: 0; 
     bottom: 0; 
     width: 100vw;
     height: 50vw;
+}
+
+/** https://www.petercarrero.com/examples/stroke/ **/
+
+.stroke:before {
+    left: 0;
+    z-index: -1;
+    content: attr(title);
+    position: absolute;
+    -webkit-text-stroke: 0.2em #000000; 
 }
