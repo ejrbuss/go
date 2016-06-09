@@ -1,0 +1,141 @@
+/*
+ * COLORS
+ *
+ * background-1 : #000000
+ * background-2 : #FFFFFF
+ * accent       : #0000FF
+ * select1      : #C80164
+ * select2      : #00C864
+ */
+
+/*
+ * FONTS
+ */
+
+@font-face {
+    font-family: BebasNeue;
+    src: url(BebasNeue.woff);
+    font-weight: normal;
+}
+
+/*
+ * ANIMATIONS
+ */
+
+@keyframes slide-down {
+    from { transform: translate(0, -50vw) }
+    to { transform: none }
+}
+
+.slide-down {
+    animation: slide-down;
+    animation-duration: 0.5s;
+}
+
+@keyframes slide-up {
+    from { transform: translate(0, 50vw) }
+    to { transform: none }
+}
+
+.slide-up {
+    animation: slide-up;
+    animation-duration: 0.5s;
+}
+
+@keyframes slide-left {
+    from { transform: translate(50vw, 0) }
+    to { transform: none }
+}
+
+.slide-left {
+    animation: slide-left;
+    animation-duration: 0.5s;
+}
+
+@keyframes slide-right {
+    from { transform: translate(-50vw, 0) };
+    to { transform: none };
+}
+
+.slide-right {
+    animation: slide-right;
+    animation-duration: 0.5s;
+}
+
+@keyframes slide-up-slight {
+    from{ transform: translate(0, 5vw) }
+    to { transform: none }
+}
+
+.slide-up-slight {
+    animation: slide-up-slight;
+    animation-duration: 1s;
+}
+
+/*
+ * GLOBAL DEFAULTS
+ */
+
+* { 
+    display: block;
+    overflow: hidden;
+    font-family: BebasNeue, sans-serif;
+    font-size: 2vw;
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+*:focus {
+    outline: 0;                             
+}
+
+/*
+ * ELEMENT DEFAULTS
+ */
+
+body {
+    background: #000;
+}
+
+/*
+ * CLASS CONTROL
+ */
+
+.content {
+    background: #FFF;
+    margin: auto;
+    position: absolute;
+    top: 0; 
+    bottom: 0; 
+    width: 100vw;
+    height: 50vw;
+}
+
+.stroke {
+    text-shadow:
+        0.3vw 0 0 #000,
+        -0.3vw 0 0 #000,
+        0.2vw 0.3vw 0 #000,
+        0.4vw -0.3vw 0 #000,
+        -0.4vw 0.3vw 0 #000,
+        -0.2vw -0.3vw 0 #000,
+        0 0.3vw 0 #000,
+        0 -0.3vw 0 #000;
+}
+/*
+.stroke:before {
+    left: 0;
+    z-index: -1;
+    content: attr(title);
+    position: absolute;
+    -webkit-text-stroke: 0.2em #000000; 
+}
+*/
+.rotate:hover {
+    font-size: 5vw !important;
+    -webkit-transform: rotateZ(-10deg) !important;
+    -ms-transform: rotateZ(-10deg) !important;
+    transform: rotateZ(-10deg) !important;
+    transition: all 0.2s ease;
+}
