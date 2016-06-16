@@ -8,7 +8,7 @@ class Database {
         this._db = null;
     }
 
-    connect () {
+    connect() {
         var that = this;
         
         MongoClient.connect(
@@ -29,21 +29,11 @@ class Database {
 
     }
     
-    /*
-     *  Adds an object to the database.
-     */
-    addData(obj) {
-        console.log("Adding data to the database...")
+    // Adds a new user to the database.
+    addNewAccount(obj) {
+        console.log("Adding new user to the database...")
         var collection = this._db.collection('accounts');
         collection.insert(obj);
-    }
-    
-    /*
-     *  Update's a user's data in the database.
-     */
-    updateData(username, password) {
-        var collection = this._db.collection('accounts');
-        collection.update({'username': username}, {'username': username, 'password': password});
     }
     
 }

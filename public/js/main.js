@@ -17,6 +17,13 @@ function newAccount(username, password, message) {
     if(!isValid(password)) {
         console.log("Invalid Password");
         message('Invalid Password');
+    } else {
+        var xmlhr = new XMLHttpRequest();
+        var obj = {'username':username, 'password':password};
+        xmlhr.open("POST", "/storeNewAccount", true);
+        xmlhr.setRequestHeader("content-type", "application/json");
+        xmlhr.send(JSON.stringify(obj));
+        //$.post('localhost:8080/storeNewAccount', {username: username, password: password}, function(data) {});
     }
     
     if (!canCreateAccount) {
