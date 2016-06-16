@@ -14,6 +14,9 @@ function newAccount(username, password, message) {
     var canCreateAccount = true; 
     
     // Handle error messages (account already in use, blank username/password, etc.)
+    if(!isValid) {
+        message('Invalid Password');
+    }
     
     if (!canCreateAccount) {
         vc.banner('This user account is already taken');
@@ -52,6 +55,17 @@ function login(username, password, message) {
     
     vc.menu(playerManager);
 }
+
+/*
+ *  Checks for invalid characters in the user's password.
+ *  Allows the following characters: A-Za-z0-9_
+ */
+function isValid(password) {
+    var pattern = /\W/;
+    var result = pattern.test(password);
+    return !result;
+}
+
 //==========================================================================================================================//
 // Story Manager                                                                                                        
 //==========================================================================================================================//
