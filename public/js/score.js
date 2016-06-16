@@ -1,7 +1,6 @@
 /*
 The score function library used by both the game manager and the AI.
-TODO implement disputed? checking.
-TODO implement captured? function.
+
 */
 
 function endGame(Board){
@@ -105,4 +104,55 @@ function getOwnerOf(back1, back2, back3, back4){
 		}
 	}
 	return null;
+}
+
+function isSuicide(Board, Move){
+	return !hasLiberties(Board, Move.x, Move.y, [], Move.side).hasLiberties;
+}
+
+function isCapture(Board, Move){
+	var captured = [];
+	var side = 1;
+	if (Move.side == 1){
+		side = 2;
+	}
+	captured = captured.concat(hasLiberties(Board, Move.x+1, Move.y, [], side).group);
+	captured = captured.concat(hasLiberties(Board, Move.x, Move.y+1, [], side).group);
+	captured = captured.concat(hasLiberties(Board, Move.x-1, Move.y, [], side).group);
+	captured = captured.concat(hasLiberties(Board, Move.x, Move.y-1, [], side).group);
+	console.log("tokens captured: " + captured);
+	return captured;
+}
+
+function hasLiberties(Board, i, j, checked, side){
+	console.log(i, j);
+	if (i < 0 || j < 0 || i >= Board.grid.length || j>= Board.grid[0].length)
+		return {group: [], hasLiberties: false};
+
+	if (Board.grid[i][j] == 0)
+		return {group: [], hasLiberties: true};
+
+	if (Board.grid[i][j] != side)
+		return {group: [], hasLiberties: false};
+
+	for (var k = 0; k < checked.length; k++){
+		if (i == checked[k].x && j == checked[k].y)
+			return {group: [], hasLiberties: false};
+	}
+	checked.push({x: i, y: j});
+
+	var back1 = hasLiberties(Board, i+1, j, checked, side);
+	if (back1.hasLiberties)
+		return {group: [], hasLiberties: true};
+	var back2 = hasLiberties(Board, i, j+1, checked, side);
+	if (back2.hasLiberties)
+		return {group: [], hasLiberties: true};
+	var back3 = hasLiberties(Board, i-1, j, checked, side);
+	if (back3.hasLiberties)
+		return {group: [], hasLiberties: true};
+	var back4 = hasLiberties(Board, i, j-1, checked, side);
+	if (back4.hasLiberties)
+		return {group: [], hasLiberties: true};
+
+	return {group: checked, hasLiberties: false};
 }

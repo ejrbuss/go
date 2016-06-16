@@ -5,15 +5,28 @@ TODO add Token class to help with liberties counting
 */
 
 class Game{
-	constructor(id, size, player1, player2){
+	constructor(id, size){
 		this.Board = new Board(size);
-		this.Player1 = new Player(player1);
-		this.Player2 = new Player(player2);
+		this.player1 = 1;
+		this.player2 = 2;
+		this.player1score = 0;
+		this.player2score = 0;
 		this.id = id;
+		this.turn = this.player1;
 	}
 
-	makeMove(Player){
-		this.Board.move(Player.getMove());
+	move(x, y){
+		if (this.turn == this.player1){
+			var captured = this.Board.move(new Move(x, y, this.player1));
+			this.player1score += captured.length;
+			this.turn = this.player2;
+		}
+		else{
+			var captured = this.Board.move(new Move(x, y, this.player2));
+			this.player2score += captured.length;
+			this.turn = this.player1;
+		}
+		return captured;
 	}
 }
 
@@ -30,9 +43,28 @@ class Board{
 	}
 
 	move(Move){
-		if (this.grid[Move.x][Move.y] != 0)
-			throw "SpotTakenException";
+		if (!this.isValidMove(Move))
+			throw "InvalidMoveException";
+
 		this.grid[Move.x][Move.y] = Move.side;
+
+		var captured = isCapture(this, Move);
+		for (var i = 0; i < captured.length; i++){
+			this.grid[captured[i].x][captured[i].y] = 0;
+		}
+		return captured;
+	}
+
+	isValidMove(Move){
+		if (this.grid[Move.x][Move.y] != 0)
+			return false;
+
+		this.grid[Move.x][Move.y] = Move.side;
+		if (isSuicide(this, Move)){
+			this.grid[Move.x][Move.y] = 0;
+			return false;
+		}
+		return true;
 	}
 
 	toString(){
@@ -43,13 +75,7 @@ class Board{
 }
 
 class Player{
-	constructor(side){
-		this.side = side;
-	}
-
-	getMove(){
-		
-	}
+	
 }
 
 class Move{

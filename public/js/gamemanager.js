@@ -5,32 +5,26 @@ maybe doesnt need to be a class...
 
 class GameManager{
 	constructor(size, player1type, player2type){
-		this.Game = new Game(1, size, player1type, player2type);
-		this.player1 = player1type;
+		this.Game = new Game(1, size);
+		this.player1 = player1type; //get AI object from AI class
 		this.player2 = player2type;
-		this.turn = this.player1;
 	}
 
-	move(x, y){
-		if (this.turn == this.player1){
-			try{
-			this.Game.Board.move(new Move(x, y, this.player1));
-			this.turn = this.player2;
-			}
-			catch(err){
-				console.log(err);
-			}
+	userMove(x, y){
+		try{
+		this.Game.move(x, y);
 		}
-		else{
-			try{
-			this.Game.Board.move(new Move(x, y, this.player2));
-			this.turn = this.player1;
-			}
-			catch(err){
-				console.log(err);
-			}
+		catch(err){
+			console.log(err);
+			return "Try Again";
+		}
+		if (this.player2 == "AI"){
+			var move = this.player2.getMove();
+			this.game.move(move.x, move.y);
 		}
 		this.Game.Board.toString();
+		console.log("Player1: " + this.Game.player1score);
+		console.log("Player2: " + this.Game.player2score);
 	}
 
 	end(){
