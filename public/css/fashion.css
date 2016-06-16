@@ -63,7 +63,7 @@
 }
 
 @keyframes slide-up-slight {
-    from{ transform: translate(0, 5vw) }
+    from { transform: translate(0, 5vw) }
     to { transform: none }
 }
 
@@ -71,7 +71,6 @@
     animation: slide-up-slight;
     animation-duration: 1s;
 }
-
 /*
  * GLOBAL DEFAULTS
  */
@@ -123,19 +122,11 @@ body {
         0 0.3vw 0 #000,
         0 -0.3vw 0 #000;
 }
-/*
-.stroke:before {
-    left: 0;
-    z-index: -1;
-    content: attr(title);
-    position: absolute;
-    -webkit-text-stroke: 0.2em #000000; 
-}
-*/
 .rotate:hover {
     font-size: 5vw !important;
-    -webkit-transform: rotateZ(-10deg) !important;
-    -ms-transform: rotateZ(-10deg) !important;
     transform: rotateZ(-10deg) !important;
     transition: all 0.2s ease;
+}
+.banner {
+    transform: rotateZ(-35deg) !important;
 }
