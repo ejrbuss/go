@@ -14,7 +14,8 @@ function newAccount(username, password, message) {
     var canCreateAccount = true; 
     
     // Handle error messages (account already in use, blank username/password, etc.)
-    if(!isValid) {
+    if(!isValid(password)) {
+        console.log("Invalid Password");
         message('Invalid Password');
     }
     
