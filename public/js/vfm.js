@@ -331,10 +331,13 @@ function ViewController(container) {
             $('.message').text(arg);    
         };
         var newAccountAction = new Action().trigger('click').action(function() {
-            newAccount($('.username').val(), $('.password').val(), message);
+            newAccount($('.username').val(), $('.password').val().toLowerCase(), message);
         });
         var loginAction = new Action().trigger('click').action(function() {
-            login($('.username').val(), $('.password').val(), message);
+            login($('.username').val(), $('.password').val().toLowerCase(), message);
+        });
+        var focusAction = new Action().action(function(component) {
+            component.$.focus();
         });
         // Vecotrs
         this.add( this.factory.vector('7,0 50,0 0,45 0,35').color(background1).z(1).addClass('slide-down') );
@@ -345,7 +348,7 @@ function ViewController(container) {
         this.add( this.factory.text('').x('73vw').y('20.5vw').color(select1).addClass('message') );
         this.add( this.factory.title('USERNAME').x('16vw').y('20vw') );
         this.add( this.factory.title('PASSWORD').x('15vw').y('26vw') );
-        this.add( this.factory.input().x('32vw').y('20vw').addClass('username') );
+        this.add( this.factory.input().x('32vw').y('20vw').addClass('username').addAction(focusAction) );
         this.add( this.factory.input().x('31vw').y('26vw').attributes('type="password"').addClass('password') );
         // Buttons
         this.add( this.factory.title_button('NEW ACCOUNT').color(select1).x('43vw').y('31vw').z('51').addAction(newAccountAction) );
