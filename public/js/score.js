@@ -3,12 +3,12 @@ The score function library used by both the game manager and the AI.
 
 */
 
-function endGame(Board){
+function endGame(Game){
 	alreadychecked = [];
-	player1score = 0;
-	player2score = 0;
-	for (var i = 0; i < Board.grid.length; i++){
-		for (var j = 0; j < Board.grid[0].length; j++){
+	player1score = Game.player1score;
+	player2score = Game.player2score;
+	for (var i = 0; i < Game.Board.grid.length; i++){
+		for (var j = 0; j < Game.Board.grid[0].length; j++){
 			var pleasecontinue = false;
 
 			for (var k = 0; k < alreadychecked.length; k++){
@@ -21,16 +21,16 @@ function endGame(Board){
 			if (pleasecontinue)
 				continue;
 
-			if (Board.grid[i][j] == 1){
+			if (Game.Board.grid[i][j] == Game.player1){
 				player1score++;
 				alreadychecked.push({x: i, y: j});
 			}
-			else if (Board.grid[i][j] == 2){
+			else if (Game.Board.grid[i][j] == Game.player2){
 				player2score++;
 				alreadychecked.push({x: i, y: j});
 			}
 			else{
-				var territory = getTerritory(Board, i, j, []);
+				var territory = getTerritory(Game.Board, i, j, []);
 				console.log("found territory!");
 				console.log(territory);
 				alreadychecked = alreadychecked.concat(territory.locations);

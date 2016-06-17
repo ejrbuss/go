@@ -1,7 +1,6 @@
 "use strict"
 /*
 The game model
-TODO add Token class to help with liberties counting
 */
 
 class Game{
@@ -15,18 +14,26 @@ class Game{
 		this.turn = this.player1;
 	}
 
-	move(x, y){
+	move(x, y, pass){
 		if (this.turn == this.player1){
-			var captured = this.Board.move(new Move(x, y, this.player1));
-			this.player1score += captured.length;
+			if (!pass){
+				var captured = this.Board.move(new Move(x, y, this.player1));
+				this.player1score += captured.length;
+			}
 			this.turn = this.player2;
 		}
 		else{
-			var captured = this.Board.move(new Move(x, y, this.player2));
-			this.player2score += captured.length;
+			if (!pass){
+				var captured = this.Board.move(new Move(x, y, this.player2));
+				this.player2score += captured.length;
+			}
 			this.turn = this.player1;
 		}
 		return captured;
+	}
+
+	copyState(){
+
 	}
 }
 
@@ -52,6 +59,7 @@ class Board{
 		for (var i = 0; i < captured.length; i++){
 			this.grid[captured[i].x][captured[i].y] = 0;
 		}
+
 		return captured;
 	}
 

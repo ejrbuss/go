@@ -1,11 +1,28 @@
 
 
-function makeRandomMoves(GameManager, numberofmoves){
-	var possiblemoves = findPossibleMoves()
-	var moves = [];
-	for (var i = 0; i < numberofmoves; i++){
+function makeRandomMoves(Game, numberofmoves){
+	if (numberofmoves == null)
+		numberofmoves = -1;
+	var possiblemoves = findPossibleMoves(Game.Board);
+	var invalidmoves = [];
+
+	while (possiblemoves.length != 0 && numberofmoves != 0){
 		var n = randomInt(possiblemoves.length);
-		moves.push(possiblemoves[n]);
+		try{
+			var captures = Game.move(possiblemoves[n].x, possiblemoves[n].y);
+		}
+		catch(err){
+			if (err == "InvalidMoveException"){
+				console.log(err);
+				invalidmoves.push(possiblemoves.splice(n, 1));
+				continue;
+			}
+			else{
+				throw err;
+			}
+		}
+		possiblemoves.splice(n, 1);
+		possiblemoves = possiblemoves.concat(captures);
 	}
 }
 
@@ -17,6 +34,7 @@ function findPossibleMoves(Board){
 				possiblemoves.push({x: i, y: j});
 		}
 	}
+	return possiblemoves;
 }
 
 function randomInt(n){

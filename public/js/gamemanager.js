@@ -4,10 +4,9 @@ maybe doesnt need to be a class...
 */
 
 class GameManager{
-	constructor(size, player1type, player2type){
-		this.Game = new Game(1, size);
-		this.player1 = player1type; //get AI object from AI class
-		this.player2 = player2type;
+	constructor(size, player2type){
+		this.Game = new Game(1, size); //get AI object from AI class
+		this.player2 = assembleAI(player2type);
 	}
 
 	userMove(x, y){
@@ -18,7 +17,7 @@ class GameManager{
 			console.log(err);
 			return "Try Again";
 		}
-		if (this.player2 == "AI"){
+		if (this.player2){
 			var move = this.player2.getMove();
 			this.game.move(move.x, move.y);
 		}
