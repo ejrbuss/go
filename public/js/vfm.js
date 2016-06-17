@@ -44,6 +44,15 @@ function expandProperties(object) {
         };
     });
 }
+
+String.prototype.format = function() {
+   var content = this;
+   for (var i=0; i < arguments.length; i++) {
+        var replacement = '{' + i + '}';
+        content = content.replace(replacement, arguments[i]);  
+   }
+   return content;
+};
 //==========================================================================================================================//
 // COMPONENT                                                                                                        
 //==========================================================================================================================//
@@ -65,28 +74,32 @@ function Component() {
     this.skew         = '0deg';
     this.shadow       = '0';
     this.font         = null;
+    this.classes      = [];
     this.actions      = [];
     
     expandProperties(this);
     
     this._id_         = (id_counter++).toString();
-    this.$ = null;
-    
-    // Access functions
-    
-    var component = this;
+    var component     = this;
     
     this.addAction = function(action) {
         component._actions_.push(action);
         return component;
     }
     
-    this.show = function(id) {
-        $( id ).html($( id ).html() 
-            + '<' + component.element() + ' ' + component.attributes()
-            + ' id="' + component._id_ + '">' 
-            + component.html() 
-            + '</' + component.element() + '>');
+    this.addClass = function(newClass) {
+        component._classes_.push(newClass);
+        return component;
+    }
+    
+    this.show = function(container) {
+        container.append('<{0} {1} class="{2}" id="{3}">{4}</{0}>'.format(
+            component.element(),
+            component.attributes(),
+            component.classes(),
+            component._id_,
+            component.html()
+        ));
         component.$ = $( '#' + component._id_ );
         component.$.css({
             'position'          : 'absolute',
@@ -171,6 +184,39 @@ function ComponentFactory() {
         return component;
     }
     
+    this.text = function(text) {
+        var component = new Component()
+            .z('10')
+            .html(text)
+            .font(new Font()
+                 .color('#FFFFFF')
+                 .size('3vw')
+                 .style('italic')
+            )
+        component.color = function(arg) {
+            component.font().color(arg);            
+            if ( arg == undefined )
+                return component._color_;
+            return component;
+        }
+        var old = component.show;
+        component.show = function(id) {
+            old(id);
+            component.$.css({
+                'overflow'              : 'visible',
+                '-webkit-user-select'   : 'none',
+                '-khtml-user-select'    : 'none',
+                '-moz-user-select'      : 'none',
+                '-ms-user-select'       : 'none',
+                '-o-user-select'        : 'none',
+                'user-select'           : 'none',
+                'cursor'                : 'default'
+            });
+
+        };
+        return component; 
+    }
+    
     this.title = function(text) {
         var component = new Component()
             .z('10')
@@ -246,12 +292,6 @@ function ComponentFactory() {
         return component;
     }
     
-    this.add_class = function(newClass) {
-        return new Action().action(function(c) {
-            c.$.addClass(newClass);
-        });
-    }
-    
 }
 //==========================================================================================================================//
 // ViewController                                                                                                        
@@ -266,11 +306,11 @@ function ViewController(container) {
     
     this.live = [];
     
-    this.update =  function() {
-        $( container ).html( '' );
+    this.update = function() {
+        this.container.html( '' );
         var l = this.live.length;
         for(var i = 0; i < l; i++ )
-            this.live[i].show(container);
+            this.live[i].show(this.container);
         for(var i = 0; i < l; i++ )
             this.live[i].ready();
         this.live = [];
@@ -280,21 +320,39 @@ function ViewController(container) {
         this.live.push(component);
     }
     
+    this.banner = function(message, color) {
+        this.factory.vector('0,21 100,21 100,29 0,29').color(select1).z('60').addClass('banner').show(this.container);
+        this.factory.text('Testing 123').x('42vw').y('25vw').z('70').addClass('banner').show(this.container);
+    }
+    
     this.login = function() {
-        var toMenu = new Action().trigger('click').action(function() { vc.menu(); });
+        // Actions
+        var message = function(arg) {
+            $('.message').text(arg);    
+        };
+        var newAccountAction = new Action().trigger('click').action(function() {
+            newAccount($('.username').val(), $('.password').val().toLowerCase(), message);
+        });
+        var loginAction = new Action().trigger('click').action(function() {
+            login($('.username').val(), $('.password').val().toLowerCase(), message);
+        });
+        var focusAction = new Action().action(function(component) {
+            component.$.focus();
+        });
         // Vecotrs
-        this.add( this.factory.vector('7,0 50,0 0,45 0,35').color('#000').z(1).addAction(this.factory.add_class('slide-down')) );
-        this.add( this.factory.vector('50,0 70,0 20,20').color('#00F').addAction(this.factory.add_class('slide-down')) );
-        this.add( this.factory.vector('50,50 100,25 100,50').color('#000').z(1).addAction(this.factory.add_class('slide-up')) );
-        this.add( this.factory.vector('35,50 80,40, 80,50').color('#00F').addAction(this.factory.add_class('slide-up')) );
+        this.add( this.factory.vector('7,0 50,0 0,45 0,35').color(background1).z(1).addClass('slide-down') );
+        this.add( this.factory.vector('50,0 70,0 20,20').color(accent).addClass('slide-down') );
+        this.add( this.factory.vector('50,50 100,25 100,50').color(background1).z(1).addClass('slide-up') );
+        this.add( this.factory.vector('35,50 80,40, 80,50').color(accent).addClass('slide-up') );
         // Username/pass entry
+        this.add( this.factory.text('').x('73vw').y('20.5vw').color(select1).addClass('message') );
         this.add( this.factory.title('USERNAME').x('16vw').y('20vw') );
         this.add( this.factory.title('PASSWORD').x('15vw').y('26vw') );
-        this.add( this.factory.input().x('32vw').y('20vw') );
-        this.add( this.factory.input().x('31vw').y('26vw').attributes('type="password"') );
+        this.add( this.factory.input().x('32vw').y('20vw').addClass('username').addAction(focusAction) );
+        this.add( this.factory.input().x('31vw').y('26vw').attributes('type="password"').addClass('password') );
         // Buttons
-        this.add( this.factory.title_button('NEW ACCOUNT').color('#C80164').x('43vw').y('31vw').z('51').addAction(toMenu));
-        this.add( this.factory.title_button('LOGIN').color('#00C864').x('63vw').y('31vw').addAction(toMenu));       
+        this.add( this.factory.title_button('NEW ACCOUNT').color(select1).x('43vw').y('31vw').z('51').addAction(newAccountAction) );
+        this.add( this.factory.title_button('LOGIN').color(select2).x('63vw').y('31vw').addAction(loginAction) );       
         // Update
         this.update();
     };
@@ -309,16 +367,16 @@ function ViewController(container) {
         var enter = new Action().trigger('mouseenter').action(function(c) { c.$.css({'color' : '#C80164'})});
         var leave = new Action().trigger('mouseleave').action(function(c) { c.$.css({'color' : '#FFFFFF'})});
         // Vectors
-        this.add( this.factory.vector('0,0 3,0 35,50 0,50').color('#000').z(1).addAction(this.factory.add_class('slide-right')) );
-        this.add( this.factory.vector('0,0 12,0, 17,30 0,30').color('#00F').addAction(this.factory.add_class('slide-right')) );
+        this.add( this.factory.vector('0,0 3,0 35,50 0,50').color('#000').z(1).addClass('slide-right') );
+        this.add( this.factory.vector('0,0 12,0, 17,30 0,30').color('#00F').addClass('slide-right') );
         this.add( this.factory.vector('65,8 97,14 97,20 60,25').color('#000').z(1) );
-        this.add( this.factory.vector('68,9 94,8 94,14').color('#00F').addAction(this.factory.add_class('slide-up-slight')) );
+        this.add( this.factory.vector('68,9 94,8 94,14').color('#00F').addClass('slide-up-slight') );
         // TODO parameterize menu items
-        this.add( this.factory.title_button('STORY').x('6vw').y('10vw').addAction(enter).addAction(leave).addAction(toStory) );
-        this.add( this.factory.title_button('VERSUS').x('9vw').y('15vw').addAction(enter).addAction(leave).addAction(toVersus) );
-        this.add( this.factory.title_button('REPLAY').x('12vw').y('20vw').addAction(enter).addAction(leave).addAction(toReplay) );
-        this.add( this.factory.title_button('PROFILE').x('15vw').y('25vw').addAction(enter).addAction(leave).addAction(toProfile) );
-        this.add( this.factory.title_button('LOGOUT').x('18vw').y('30vw').addAction(enter).addAction(leave).addAction(toLogin) );
+        this.add( this.factory.title_button('STORY').x('6vw').y('10vw').addAction(enter).addAction(leave).addAction(toStory).addClass('slide-up') );
+        this.add( this.factory.title_button('VERSUS').x('9vw').y('15vw').addAction(enter).addAction(leave).addAction(toVersus).addClass('slide-up') );
+        this.add( this.factory.title_button('REPLAY').x('12vw').y('20vw').addAction(enter).addAction(leave).addAction(toReplay).addClass('slide-up') );
+        this.add( this.factory.title_button('PROFILE').x('15vw').y('25vw').addAction(enter).addAction(leave).addAction(toProfile).addClass('slide-up') );
+        this.add( this.factory.title_button('LOGOUT').x('18vw').y('30vw').addAction(enter).addAction(leave).addAction(toLogin).addClass('slide-up') );
         // Update
         this.update();
     };
@@ -351,6 +409,10 @@ function ViewController(container) {
     this.versus = function(args) {
 
     }
+    
+    this.listReplays = function(args) {
+        
+    }
 
     this.replay = function(args) {
 
@@ -370,6 +432,11 @@ function ViewController(container) {
 
     this.lose = function(args) {
 
+    }
+    
+    this.launch = function() {
+        this.container = $( this.container );
+        vc.login();
     }
 
 }
