@@ -107,6 +107,7 @@ function getOwnerOf(back1, back2, back3, back4){
 }
 
 function isSuicide(Board, Move){
+	var m = "hello";
 	return !hasLiberties(Board, Move.x, Move.y, [], Move.side).hasLiberties;
 }
 
