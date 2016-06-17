@@ -9,9 +9,9 @@ class GameManager{
 		this.player2 = assembleAI(player2type);
 	}
 
-	userMove(x, y){
+	userMove(x, y, pass){
 		try{
-		this.Game.move(x, y);
+		this.Game.move(x, y, pass);
 		}
 		catch(err){
 			console.log(err);
@@ -19,7 +19,7 @@ class GameManager{
 		}
 		if (this.player2){
 			var move = this.player2.getMove();
-			this.game.move(move.x, move.y);
+			this.game.move(move.x, move.y, move.pass);
 		}
 		this.Game.Board.toString();
 		console.log("Player1: " + this.Game.player1score);

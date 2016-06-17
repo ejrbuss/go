@@ -33,7 +33,14 @@ class Game{
 	}
 
 	copyState(){
+		return {player1score: this.player1score, player2score: player2score, turn: this.turn, board: this.Board.gridCopy()};
+	}
 
+	resetState(gamestate){
+		this.player1score = gamestate.player1score;
+		this.player2score = gamestate.player2score;
+		this.turn = gamestate.turn;
+		this.Board.grid = gamestate.board;
 	}
 }
 
@@ -73,6 +80,17 @@ class Board{
 			return false;
 		}
 		return true;
+	}
+
+	gridCopy(grid){
+		var copy = [];
+		for (var i = 0; i < grid.length; i++){
+			copy.push([]);
+			for (var j = 0; j < grid.length; j++){
+				copy[i].push(grid[i][j]);
+			}
+		}
+		return copy;
 	}
 
 	toString(){

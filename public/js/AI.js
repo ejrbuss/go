@@ -29,7 +29,7 @@ class AI5{
 				for (var sims = 0; sims < this.SIMULATIONS; sims++){
 					makeRandomMoves(Game);
 					var score = endGame(Game);
-					if (score.player2score > score.player1score)
+					if (score.player2score >= score.player1score)
 						movescore[i]++;
 					Game.resetState(aftermovestate);
 				}
@@ -42,6 +42,10 @@ class AI5{
 			finally{
 				game.resetState(gamestate);
 			}
+		}
+		var max = -1;
+		for (var k = 0; k < movescore.length; k++){
+			
 		}
 	}
 }
