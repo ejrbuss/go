@@ -1,6 +1,8 @@
 "use strict"
 
 class AI{
+	//class interface
+	// make your AI implement this
 	constructor(){
 
 	}
@@ -27,7 +29,7 @@ class AI5{
 				Game.move(possiblemoves[i].x, possiblemoves[i].y); // will except if fails
 				var aftermovestate = Game.copyState();
 				for (var sims = 0; sims < this.SIMULATIONS; sims++){
-					makeRandomMoves(Game);
+					makeRandomMoves(Game, Math.floor((Game.Board.size*Game.Board.size)*1.25));
 					var score = endGame(Game);
 					if (score.player2score >= score.player1score)
 						movescore[i]++;
@@ -35,17 +37,28 @@ class AI5{
 				}
 			}
 			catch(err){
-				if (err == "InvalidMoveException"){
+				if (err == "InvalidMoveException" || err == "SuicideException" || err == "ReturnToOldStateException"){
 					movescore[i] = -1;
 				}
+				else
+					throw err;
 			}
 			finally{
-				game.resetState(gamestate);
+				Game.resetState(gamestate);
 			}
 		}
+		console.log(movescore);
 		var max = -1;
+		var maxindex = 0;
 		for (var k = 0; k < movescore.length; k++){
-			
+			if (movescore[k] > max){
+				max = movescore[k];
+				maxindex = k;
+			}
 		}
+		if (max == -1)
+			return {x: 0, y: 0, pass: true};
+		else
+			return {x: possiblemoves[maxindex].x, y: possiblemoves[maxindex].y};
 	}
 }

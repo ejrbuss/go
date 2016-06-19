@@ -12,9 +12,9 @@ function makeRandomMoves(Game, numberofmoves){
 			var captures = Game.move(possiblemoves[n].x, possiblemoves[n].y);
 		}
 		catch(err){
-			if (err == "InvalidMoveException"){
-				console.log(err);
-				invalidmoves.push(possiblemoves.splice(n, 1));
+			if (err == "InvalidMoveException" || err == "SuicideException" || err == "ReturnToOldStateException"){
+				//console.log(err);
+				invalidmoves = invalidmoves.concat(possiblemoves.splice(n, 1));
 				continue;
 			}
 			else{
@@ -23,6 +23,10 @@ function makeRandomMoves(Game, numberofmoves){
 		}
 		possiblemoves.splice(n, 1);
 		possiblemoves = possiblemoves.concat(captures);
+		captures = [];
+		possiblemoves = possiblemoves.concat(invalidmoves);
+		invalidmoves = [];
+		numberofmoves--;
 	}
 }
 

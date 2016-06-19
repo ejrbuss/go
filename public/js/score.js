@@ -31,8 +31,8 @@ function endGame(Game){
 			}
 			else{
 				var territory = getTerritory(Game.Board, i, j, []);
-				console.log("found territory!");
-				console.log(territory);
+				//console.log("found territory!");
+				//console.log(territory);
 				alreadychecked = alreadychecked.concat(territory.locations);
 				if (territory.owner == 1)
 					player1score += territory.locations.length;
@@ -46,7 +46,7 @@ function endGame(Game){
 }
 
 function getTerritory(Board, i, j, checked){
-	console.log(i, j);
+	//console.log(i, j);
 	if (i < 0 || j < 0 || i >= Board.grid.length || j>= Board.grid[0].length)
 		return {locations: [], isterritory: true, owner: null};
 
@@ -120,12 +120,12 @@ function isCapture(Board, Move){
 	captured = captured.concat(hasLiberties(Board, Move.x, Move.y+1, [], side).group);
 	captured = captured.concat(hasLiberties(Board, Move.x-1, Move.y, [], side).group);
 	captured = captured.concat(hasLiberties(Board, Move.x, Move.y-1, [], side).group);
-	console.log("tokens captured: " + captured);
+	//console.log("tokens captured: " + captured);
 	return captured;
 }
 
 function hasLiberties(Board, i, j, checked, side){
-	console.log(i, j);
+	//console.log(i, j);
 	if (i < 0 || j < 0 || i >= Board.grid.length || j>= Board.grid[0].length)
 		return {group: [], hasLiberties: false};
 
