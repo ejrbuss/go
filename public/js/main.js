@@ -5,7 +5,7 @@ var vc = new ViewController('.content');
 //==========================================================================================================================//
 // Login screen functions                                                                                                        
 //==========================================================================================================================//
-function newAccount(username, password, message) {
+function newAccount(username, password) {
     
     console.log('newAccount called with username: ' + username + ' password: ' + password);
     
@@ -18,16 +18,16 @@ function newAccount(username, password, message) {
         console.log("Invalid Password");
         message('Invalid Password');
     } else {
-        var xmlhr = new XMLHttpRequest();
-        var obj = {'username':username, 'password':password};
-        xmlhr.open("POST", "/storeNewAccount", true);
-        xmlhr.setRequestHeader("content-type", "application/json");
-        xmlhr.send(JSON.stringify(obj));
-        //$.post('localhost:8080/storeNewAccount', {username: username, password: password}, function(data) {});
+        $.ajax({
+            url: 'http://localhost:8080/storeNewAccount', 
+            type: 'POST', 
+            contentType: 'application/json', 
+            data: JSON.stringify({username: username, password: password})
+        });
     }
     
     if (!canCreateAccount) {
-        vc.banner('This user account is already taken');
+        vc.message('This user account is already taken');
         return;
     }
     
@@ -40,7 +40,7 @@ function newAccount(username, password, message) {
     vc.menu(playerManager);
 }
 
-function login(username, password, message) {
+function login(username, password) {
     
     console.log('login called with username: ' + username + ' password: ' + password);
     
@@ -51,7 +51,7 @@ function login(username, password, message) {
     // Handle error messages (wrong password, blank username/password, etc.)
     
     if (!canLogin)  {
-        vc.banner('Wrong password')
+        vc.message('Wrong password')
         return;
     }
         

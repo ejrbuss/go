@@ -71,6 +71,36 @@
     animation: slide-up-slight;
     animation-duration: 1s;
 }
+
+@keyframes banner-in {
+    from { transform: translate(-50vw, 50vw) skew(-55deg) }
+    to {  transform: translate(0, 0) skew(-55deg) }
+}
+
+@keyframes banner-out {
+    from { transform: translate(0, 0) skew(-55deg) }
+    to { transform: translate(50vw, -50vw) skew(-55deg) }
+}
+
+.banner-transition {
+    animation: banner-in 0.5s, banner-out 0.5s;
+    animation-delay: 0s, 1.5s;
+}
+
+@keyframes text-in {
+    from { transform: translate(-50vw, 50vw) }
+    to {  transform: translate(0, 0) }
+}
+
+@keyframes text-out {
+    from { transform: translate(0, 0) }
+    to { transform: translate(50vw, -50vw) }
+}
+
+.text-transition {
+    animation: text-in 0.5s, text-out 0.5s;
+    animation-delay: 0s, 1.5s;
+}
 /*
  * GLOBAL DEFAULTS
  */
@@ -126,7 +156,4 @@ body {
     font-size: 5vw !important;
     transform: rotateZ(-10deg) !important;
     transition: all 0.2s ease;
-}
-.banner {
-    transform: rotateZ(-35deg) !important;
 }

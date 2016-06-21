@@ -210,7 +210,8 @@ function ComponentFactory() {
                 '-ms-user-select'       : 'none',
                 '-o-user-select'        : 'none',
                 'user-select'           : 'none',
-                'cursor'                : 'default'
+                'cursor'                : 'default',
+                'text-align'            : 'center'
             });
 
         };
@@ -246,7 +247,8 @@ function ComponentFactory() {
                     '-ms-user-select'       : 'none',
                     '-o-user-select'        : 'none',
                     'user-select'           : 'none',
-                    'cursor'                : 'default'
+                    'cursor'                : 'default',
+                    'text-align'            : 'center'
                 });
 
         };
@@ -306,35 +308,55 @@ function ViewController(container) {
     
     this.live = [];
     
-    this.update = function() {
+    this.render = function() {
         this.container.html( '' );
         var l = this.live.length;
-        for(var i = 0; i < l; i++ )
+        for(var i = 0; i < l; i++)
             this.live[i].show(this.container);
-        for(var i = 0; i < l; i++ )
+        for(var i = 0; i < l; i++)
             this.live[i].ready();
         this.live = [];
+    };
+    
+    this.update = function(components) {
+        var l = components.length;
+        for(var i = 0; i < l; i++)
+            components[i].show(this.container);
+        for(var i = 0; i < l; i++)
+            components[i].ready();
     };
     
     this.add = function(component) {
         this.live.push(component);
     }
     
-    this.banner = function(message, color) {
-        this.factory.vector('0,21 100,21 100,29 0,29').color(select1).z('60').addClass('banner').show(this.container);
-        this.factory.text('Testing 123').x('42vw').y('25vw').z('70').addClass('banner').show(this.container);
+    this.message = function(message, color) {
+        var e1 = false;
+        var components = [];
+        components.push(this.factory.vector('40,0 60,0 60,50 40,50').color(background1).z('60').addClass('banner-transition').skew('-55deg').addAction(
+            new Action().trigger('animationend').action(function(component) { 
+            if (e1) 
+                component.$. remove()
+            e1 = true;
+        })));
+        var e2 = false
+        components.push(this.factory.title(message).width('100vw').y('22.5vw').z('61').addClass('text-transition').addAction(
+            new Action().trigger('animationend').action(function(component) { 
+            if (e2) 
+                component.$. remove()
+            e2 = true;
+        })));
+        components[1].font().size('5vw');
+        this.update(components);
     }
     
     this.login = function() {
         // Actions
-        var message = function(arg) {
-            $('.message').text(arg);    
-        };
         var newAccountAction = new Action().trigger('click').action(function() {
-            newAccount($('.username').val(), $('.password').val().toLowerCase(), message);
+            newAccount($('.username').val().toLowerCase(), $('.password').val().toLowerCase());
         });
         var loginAction = new Action().trigger('click').action(function() {
-            login($('.username').val(), $('.password').val().toLowerCase(), message);
+            login($('.username').val().toLowerCase(), $('.password').val().toLowerCase());
         });
         var focusAction = new Action().action(function(component) {
             component.$.focus();
@@ -345,7 +367,6 @@ function ViewController(container) {
         this.add( this.factory.vector('50,50 100,25 100,50').color(background1).z(1).addClass('slide-up') );
         this.add( this.factory.vector('35,50 80,40, 80,50').color(accent).addClass('slide-up') );
         // Username/pass entry
-        this.add( this.factory.text('').x('73vw').y('20.5vw').color(select1).addClass('message') );
         this.add( this.factory.title('USERNAME').x('16vw').y('20vw') );
         this.add( this.factory.title('PASSWORD').x('15vw').y('26vw') );
         this.add( this.factory.input().x('32vw').y('20vw').addClass('username').addAction(focusAction) );
@@ -354,7 +375,7 @@ function ViewController(container) {
         this.add( this.factory.title_button('NEW ACCOUNT').color(select1).x('43vw').y('31vw').z('51').addAction(newAccountAction) );
         this.add( this.factory.title_button('LOGIN').color(select2).x('63vw').y('31vw').addAction(loginAction) );       
         // Update
-        this.update();
+        this.render();
     };
 
     this.menu = function(args) {
@@ -378,7 +399,7 @@ function ViewController(container) {
         this.add( this.factory.title_button('PROFILE').x('15vw').y('25vw').addAction(enter).addAction(leave).addAction(toProfile).addClass('slide-up') );
         this.add( this.factory.title_button('LOGOUT').x('18vw').y('30vw').addAction(enter).addAction(leave).addAction(toLogin).addClass('slide-up') );
         // Update
-        this.update();
+        this.render();
     };
 
     this.levelSelect = function(args) {
@@ -395,7 +416,7 @@ function ViewController(container) {
         this.add( this.factory.vector('9,28 18,32 13,50 3,50').color('#FFF').z(2).x('54vw').y('15vw') );
         this.add( this.factory.vector('9,28 18,32 13,50 3,50').color('#FFF').z(2).x('72vw').y('20vw') );
         // Update
-        this.update();
+        this.render();
     };
 
     this.story = function(args) {
@@ -432,6 +453,10 @@ function ViewController(container) {
 
     this.lose = function(args) {
 
+    }
+    
+    this.override = function(html) {
+        this.container.html(html);
     }
     
     this.launch = function() {
