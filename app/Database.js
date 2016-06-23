@@ -30,10 +30,13 @@ class Database {
     }
     
     // Adds a new user to the database.
-    addNewAccount(obj) {
+    addNewAccount(obj, res) {
         console.log("Adding new user to the database...")
         var collection = this._db.collection('accounts');
-        collection.insert(obj);
+        collection.insert(obj, function(err, docs) {
+            console.log(docs);
+            res.send(docs.ops[0])
+        });
     }
     
 }

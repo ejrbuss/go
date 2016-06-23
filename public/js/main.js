@@ -23,6 +23,8 @@ function newAccount(username, password) {
             type: 'POST', 
             contentType: 'application/json', 
             data: JSON.stringify({username: username, password: password})
+        }).done(function(player) {
+            vc.menu(new PlayerManager(player));
         });
     }
     
@@ -30,14 +32,6 @@ function newAccount(username, password) {
         vc.message('This user account is already taken');
         return;
     }
-    
-    // Get new account info 
-    
-    player = null;
-    
-    playerManager = new PlayerManager(player);
-    
-    vc.menu(playerManager);
 }
 
 function login(username, password) {
@@ -118,6 +112,10 @@ function ReplayManager(game, gvc) {
 // ProfileHelper                                                                                                       
 //==========================================================================================================================//
 function PlayerManager(player) {
+    
+    this.get_username = function() {
+        return player.username;
+    }
     
 }
 //==========================================================================================================================//

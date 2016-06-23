@@ -101,6 +101,16 @@
     animation: text-in 0.5s, text-out 0.5s;
     animation-delay: 0s, 1.5s;
 }
+
+@keyframes slide-up-rotated {
+    from { transform: translate(0, 50vw) rotate(11.3deg);  }
+    to { transform: none rotate(11.3geg) }
+}
+
+.slide-up-rotated {
+    animation: slide-up-rotated;
+    animation-duration: 0.5s;
+}
 /*
  * GLOBAL DEFAULTS
  */

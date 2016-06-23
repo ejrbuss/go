@@ -11,7 +11,7 @@
 // - GAME VIEW CONTROLLER:  control game view
 //
 //
-// To laod a view:
+// To load a view:
 //
 // vc = new ViewController( Jquery selector );
 // vc.viewName( args );
@@ -300,7 +300,7 @@ function ViewController(container) {
         var focusAction = new Action().action(function(component) {
             component.$.focus();
         });
-        // Vecotrs
+        // Vectors
         this.add( this.factory.vector('7,0 50,0 0,45 0,35').color(background1).z(1).addClass('slide-down') );
         this.add( this.factory.vector('50,0 70,0 20,20').color(accent).addClass('slide-down') );
         this.add( this.factory.vector('50,50 100,25 100,50').color(background1).z(1).addClass('slide-up') );
@@ -317,7 +317,7 @@ function ViewController(container) {
         this.render();
     };
 
-    this.menu = function(args) {
+    this.menu = function(playerManager) {
         // Actions
         var toStory = new Action().trigger('click').action(function() { vc.levelSelect() });
         var toVersus = new Action().trigger('click').action(function() { vc.versus() });
@@ -331,6 +331,8 @@ function ViewController(container) {
         this.add( this.factory.vector('0,0 12,0, 17,30 0,30').color('#00F').addClass('slide-right') );
         this.add( this.factory.vector('65,8 97,14 97,20 60,25').color('#000').z(1) );
         this.add( this.factory.vector('68,9 94,8 94,14').color('#00F').addClass('slide-up-slight') );
+        // Stats
+        this.add( this.factory.text(playerManager.get_username()).color('#F00'));
         // TODO parameterize menu items
         this.add( this.factory.title_button('STORY').x('6vw').y('10vw').addAction(enter).addAction(leave).addAction(toStory).addClass('slide-up') );
         this.add( this.factory.title_button('VERSUS').x('9vw').y('15vw').addAction(enter).addAction(leave).addAction(toVersus).addClass('slide-up') );
@@ -369,11 +371,11 @@ function ViewController(container) {
         this.add( this.factory.vector('60,50 62.6,37 72.2,39 70,50').color(background2).z(2).addClass('slide-up') );
         this.add( this.factory.vector('80,50 81.8,41 91.4,43 90,50').color(background2).z(2).addClass('slide-up') );
         // Levels
-        this.add( this.factory.text('I').x('8vw').y('26vw').font(num).color(background1).rotate('11.3deg') );
-        this.add( this.factory.text('II').x('26.5vw').y('30vw').font(num).color(background1).rotate('11.3deg') );
-        this.add( this.factory.text('III').x('45vw').y('34vw').font(num).color(background1).rotate('11.3deg') );
-        this.add( this.factory.text('IV').x('64vw').y('38vw').font(num).color(background1).rotate('11.3deg') );
-        this.add( this.factory.text('V').x('84vw').y('42vw').font(num).color(background1).rotate('11.3deg') );
+        this.add( this.factory.text('I').x('8vw').y('26vw').font(num).color(background1).rotate('11.3deg').addClass('slide-up-rotated') );
+        this.add( this.factory.text('II').x('26.5vw').y('30vw').font(num).color(background1).rotate('11.3deg').addClass('slide-up-rotated') );
+        this.add( this.factory.text('III').x('45vw').y('34vw').font(num).color(background1).rotate('11.3deg').addClass('slide-up-rotated') );
+        this.add( this.factory.text('IV').x('64vw').y('38vw').font(num).color(background1).rotate('11.3deg').addClass('slide-up-rotated') );
+        this.add( this.factory.text('V').x('84vw').y('42vw').font(num).color(background1).rotate('11.3deg').addClass('slide-up-rotated') );
         // buttons
         this.add( this.factory.title_button('REPLAY').x('4vw').y('1vw').addClass('slide-left').addAction(enter).addAction(leave).addAction(levelI) );
         this.add( this.factory.title_button('REPLAY').x('24vw').y('1vw').addClass('slide-left').addAction(enter).addAction(leave).addAction(levelII) );

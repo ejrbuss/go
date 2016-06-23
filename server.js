@@ -17,8 +17,7 @@ app.get('/', function(req, res) {
 app.post("/storeNewAccount", function(req, res) {
     console.log("Storing data...");
     console.log(req.body);
-    db.addNewAccount(req);
-    res.send(null);
+    db.addNewAccount(req.body, res);
 });
 
 app.listen(8080, function() {
