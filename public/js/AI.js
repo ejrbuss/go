@@ -3,7 +3,7 @@
 class AI{
 	//class interface
 	// make your AI implement this
-	constructor(){
+	constructor(Game){
 
 	}
 
@@ -13,12 +13,16 @@ class AI{
 }
 
 class AI5{
-	constructor(simulations){
-		this.SIMULATIONS = simulations;
+	constructor(Game){
+		this.SIMULATIONS = Math.floor(Math.pow(0.016*Game.Board.size, -2.9));
+		this.MAXMOVES = 90;
 	}
 
 	getMove(Game){
 		var possiblemoves = findPossibleMoves(Game.Board);
+		if (possiblemoves.length > this.MAXMOVES){
+			possiblemoves = filterMoves(possiblemoves, this.MAXMOVES);
+		}
 		var movescore = [];
 		for (var i = 0; i < possiblemoves.length; i++){
 			movescore.push(0);

@@ -40,7 +40,11 @@ class Game{
 		this.player1score = gamestate.player1score;
 		this.player2score = gamestate.player2score;
 		this.turn = gamestate.turn;
-		this.Board.grid = this.Board.gridCopy(gamestate.board);
+		for (var i = 0; i < gamestate.board.length; i++){
+			for (var j = 0; j < gamestate.board.length; j++){
+				this.Board.grid[i][j] = gamestate.board[i][j];
+			}
+		}
 	}
 }
 
@@ -48,16 +52,15 @@ class Board{
 	constructor(size){
 		this.size = size;
 		this.grid = [];
-		this.oldGrid1 = [];
-		this.oldGrid2 = [];
+		this.oldGrid = [];
+		this.diff = {Move: null, captured: null};
 		for (var i = 0; i < size; i++){
 			this.grid.push([]);
 			for (var j = 0; j < size; j++){
 				this.grid[i].push(0);
 			}
 		}
-		this.oldGrid1 = this.gridCopy(this.grid);
-		this.oldGrid2 = this.gridCopy(this.grid);
+		this.oldGrid = this.gridCopy(this.grid);
 	}
 
 	move(Move){
@@ -73,17 +76,15 @@ class Board{
 				throw "SuicideException";
 			}
 		}
-		for (var i = 0; i < captured.length; i++){
-			this.grid[captured[i].x][captured[i].y] = 0;
-		}
+		this.updateBoard(Move, captured, this.grid);
 
-		if(this.gridCompare(this.grid,this.oldGrid2)){
-			this.grid = this.oldGrid1;
+		if(this.gridCompare(this.grid,this.oldGrid)){
+			this.rollbackBoard(Move, captured, this.grid);
 			throw "ReturnToOldStateException";
 		}
 
-		this.oldGrid2 = this.oldGrid1;
-		this.oldGrid1 = this.gridCopy(this.grid);
+		this.updateBoard(this.diff.Move, this.diff.captured, this.oldGrid);
+		this.diff = {Move: Move, captured: captured};
 		return captured;
 	}
 
@@ -119,9 +120,33 @@ class Board{
 					return false;
 			}
 		}
-
 		return true;
 	}
+
+	updateBoard(Move, captured, grid){
+		if (Move == null)
+			return;
+		grid[Move.x][Move.y] = Move.side;
+		for (var i = 0; i < captured.length; i++){
+			grid[captured[i].x][captured[i].y] = 0;
+		}
+	}
+
+	rollbackBoard(Move, captured, grid){
+		var capside;
+		if (Move.side == 1)
+			capside = 2;
+		else
+			capside = 1;
+
+		grid[Move.x][Move.y] = 0;
+		for (var i = 0; i < captured.length; i++){
+			grid[captured[i].x][captured[i].y] = capside;
+		}
+	}
+
+
+	
 
 	toString(){
 		for (var i = 0; i < this.size; i++){

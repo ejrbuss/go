@@ -44,3 +44,11 @@ function findPossibleMoves(Board){
 function randomInt(n){
 	return Math.floor(Math.random()*n);
 }
+
+function filterMoves(moves, num){
+	ret = [];
+	while (ret.length <= num){
+		ret = ret.concat(moves.splice(randomInt(moves.length), 1));
+	}
+	return ret;
+}

@@ -4,11 +4,11 @@ maybe doesnt need to be a class...
 */
 
 class GameManager{
-	constructor(size, player2type){
+	constructor(size, AItype){
 		// would call server for game id at this point
 		var id = 1;
 		this.Game = new Game(id, size); //get AI object from AI class
-		this.player2 = assembleAI(player2type);
+		this.player2 = assembleAI(AItype, this.Game);
 	}
 
 	userMove(x, y, pass){

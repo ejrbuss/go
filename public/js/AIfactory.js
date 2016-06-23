@@ -1,4 +1,4 @@
-function assembleAI(AItype){
+function assembleAI(AItype, Game){
 	if (AItype == "AI5")
-		return new AI5(30);
+		return new AI5(Game);
 }
