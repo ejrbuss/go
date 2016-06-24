@@ -12,6 +12,20 @@ function newAccount(username, password) {
     // Check new account with server
     
     var canCreateAccount = true; 
+	
+	// used to generate random information for a new user. 
+	var highScore = Math.floor((Math.random() * 1000) +1);
+	var totalScore = Math.floor((Math.random() * 5000) +1);
+	var gamesWon = Math.floor((Math.random() * 100) +1);
+	var gamesLost = Math.floor((Math.random() * 100) +1);
+	var currentStreak = Math.floor((Math.random() * 10) +1);
+	var longestStreak = Math.floor((Math.random() * 10) +1);
+	var piecesWon = Math.floor((Math.random() * 100) +1);
+	var piecesLost = Math.floor((Math.random() * 100) +1);
+	var totalPlayingTime = Math.floor((Math.random() * 100) +1);
+	var storyLevelsCompleted = Math.floor((Math.random() * 5) +1);
+	
+	
     
     // Handle error messages (account already in use, blank username/password, etc.)
     if(!isValid(password)) {
@@ -22,7 +36,7 @@ function newAccount(username, password) {
             url: 'http://localhost:8080/storeNewAccount', 
             type: 'POST', 
             contentType: 'application/json', 
-            data: JSON.stringify({username: username, password: password})
+            data: JSON.stringify({username: username, password: password, highScore: highScore, totalScore: totalScore, gamesWon: gamesWon, gamesLost: gamesLost, currentStreak: currentStreak, longestStreak: longestStreak, piecesWon: piecesWon, piecesLost: piecesLost, totalPlayingTime: totalPlayingTime, storyLevelsCompleted: storyLevelsCompleted})
         }).done(function(player) {
             vc.menu(new PlayerManager(player));
         });
