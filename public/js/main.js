@@ -9,29 +9,45 @@ function newAccount(username, password) {
     
     console.log('newAccount called with username: ' + username + ' password: ' + password);
     
-    // Check new account with server
-    
-    var canCreateAccount = true; 
-    
-    // Handle error messages (account already in use, blank username/password, etc.)
-    if(!isValid(password)) {
-        console.log("Invalid Password");
-        message('Invalid Password');
-    } else {
-        $.ajax({
-            url: 'http://localhost:8080/storeNewAccount', 
-            type: 'POST', 
-            contentType: 'application/json', 
-            data: JSON.stringify({username: username, password: password})
-        }).done(function(player) {
-            vc.menu(new PlayerManager(player));
-        });
+    // Check for blank username or password.
+    if (username == '') {
+        console.log("Please enter a username");
+        vc.message('please enter a username');
+        return
+    }
+    if (password == '') {
+        console.log("Please enter a password");
+        vc.message('please enter a password');
+        return
     }
     
-    if (!canCreateAccount) {
-        vc.message('This user account is already taken');
-        return;
-    }
+    // Check for duplicate username.
+    $.ajax({
+        url: 'http://localhost:8080/checkDuplicateUsername', 
+        type: 'POST', 
+        contentType: 'application/json', 
+        data: JSON.stringify({username: username})
+    }).done(function(isduplicate) {
+        if(isduplicate) {
+            console.log("Username already taken.");
+            vc.message('username already taken');
+        } else if (!isValid(password)) {
+            console.log("Invalid Password");
+            vc.message('Invalid Password');
+        } else {
+            // Add the user to the database.
+            $.ajax({
+                url: 'http://localhost:8080/storeNewAccount', 
+                type: 'POST', 
+                contentType: 'application/json', 
+                data: JSON.stringify({username: username, password: password})
+            }).done(function(player) {
+                vc.menu(new PlayerManager(player));
+            });
+        }
+    });
+        
+    
 }
 
 function login(username, password) {
@@ -45,7 +61,7 @@ function login(username, password) {
     // Handle error messages (wrong password, blank username/password, etc.)
     
     if (!canLogin)  {
-        vc.message('Wrong password')
+        vc.message('Wrong password');
         return;
     }
         
@@ -67,6 +83,7 @@ function isValid(password) {
     var result = pattern.test(password);
     return !result;
 }
+
 
 //==========================================================================================================================//
 // Story Manager                                                                                                        
@@ -115,6 +132,18 @@ function PlayerManager(player) {
     
     this.get_username = function() {
         return player.username;
+    }
+    
+    this.get_highscores = function() {
+        
+    }
+    
+    this.get_leaderboard = function() {
+        
+    }
+    
+    this.get_menu_stats = function() {
+        
     }
     
 }

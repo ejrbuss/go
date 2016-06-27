@@ -20,6 +20,12 @@ app.post("/storeNewAccount", function(req, res) {
     db.addNewAccount(req.body, res);
 });
 
+// Checks username against the database.
+app.post("/checkDuplicateUsername", function(req, res) {
+    console.log("Checking username " + req.body.username);
+    db.checkUsername(req.body.username, res);
+});
+
 app.listen(8080, function() {
     console.log('Started!');
 });
