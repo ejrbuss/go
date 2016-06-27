@@ -8,12 +8,8 @@ var vc = new ViewController('.content');
 function newAccount(username, password) {
     
     console.log('newAccount called with username: ' + username + ' password: ' + password);
-    
-    // Check new account with server
-    
-    var canCreateAccount = true; 
 	
-	// used to generate random information for a new user. 
+	// used to generate random information for a new user into the database. 
 	var highScore = Math.floor((Math.random() * 1000) +1);
 	var totalScore = Math.floor((Math.random() * 5000) +1);
 	var gamesWon = Math.floor((Math.random() * 100) +1);
@@ -25,27 +21,45 @@ function newAccount(username, password) {
 	var totalPlayingTime = Math.floor((Math.random() * 100) +1);
 	var storyLevelsCompleted = Math.floor((Math.random() * 5) +1);
 	
-	
     
-    // Handle error messages (account already in use, blank username/password, etc.)
-    if(!isValid(password)) {
-        console.log("Invalid Password");
-        message('Invalid Password');
-    } else {
-        $.ajax({
-            url: 'http://localhost:8080/storeNewAccount', 
-            type: 'POST', 
-            contentType: 'application/json', 
-            data: JSON.stringify({username: username, password: password, highScore: highScore, totalScore: totalScore, gamesWon: gamesWon, gamesLost: gamesLost, currentStreak: currentStreak, longestStreak: longestStreak, piecesWon: piecesWon, piecesLost: piecesLost, totalPlayingTime: totalPlayingTime, storyLevelsCompleted: storyLevelsCompleted})
-        }).done(function(player) {
-            vc.menu(new PlayerManager(player));
-        });
+    // Check for blank username or password.
+    if (username == '') {
+        console.log("Please enter a username");
+        vc.message('please enter a username');
+        return
+    }
+    if (password == '') {
+        console.log("Please enter a password");
+        vc.message('please enter a password');
+        return
     }
     
-    if (!canCreateAccount) {
-        vc.message('This user account is already taken');
-        return;
-    }
+    // Check for duplicate username.
+    $.ajax({
+        url: 'http://localhost:8080/checkDuplicateUsername', 
+        type: 'POST', 
+        contentType: 'application/json', 
+        data: JSON.stringify({username: username})
+    }).done(function(isduplicate) {
+        if(isduplicate) {
+            console.log("Username already taken.");
+            vc.message('username already taken');
+        } else if (!isValid(password)) {
+            console.log("Invalid Password");
+            vc.message('Invalid Password');
+        } else {
+            // Add the user to the database.
+            $.ajax({
+                url: 'http://localhost:8080/storeNewAccount', 
+                type: 'POST', 
+                contentType: 'application/json', 
+                data: JSON.stringify({username: username, password: password, highScore: highScore, totalScore: totalScore, gamesWon: gamesWon, gamesLost: gamesLost, currentStreak: currentStreak, longestStreak: longestStreak, piecesWon: piecesWon, piecesLost: piecesLost, totalPlayingTime: totalPlayingTime, storyLevelsCompleted: storyLevelsCompleted})
+            }).done(function(player) {
+                vc.menu(new PlayerManager(player));
+            });
+        }
+    });
+    
 }
 
 function login(username, password) {
@@ -59,7 +73,7 @@ function login(username, password) {
     // Handle error messages (wrong password, blank username/password, etc.)
     
     if (!canLogin)  {
-        vc.message('Wrong password')
+        vc.message('Wrong password');
         return;
     }
         
@@ -81,6 +95,7 @@ function isValid(password) {
     var result = pattern.test(password);
     return !result;
 }
+
 
 //==========================================================================================================================//
 // Story Manager                                                                                                        
@@ -127,10 +142,78 @@ function ReplayManager(game, gvc) {
 //==========================================================================================================================//
 function PlayerManager(player) {
     
-    this.get_username = function() {
-        return player.username;
+    // returns the username of the logged in player    
+	this.get_username = function() {
+		return player.username;	
     }
     
+    this.get_highscores = function() {
+        
+    }
+    
+    this.get_leaderboard = function() {
+        
+    }
+    
+    this.get_menu_stats = function() {
+        
+    }
+	
+    // returns the highscore of the logged in player
+	this.get_highscore = function() {
+        return player.highScore;
+    }
+
+    // returns the totalscore of the logged in player
+	this.get_totalscore = function() {
+        return player.totalScore;
+    }
+	
+    // returns the games won of the logged in player
+	this.get_gameswon = function() {
+        return player.gamesWon;
+    }
+
+    // returns the games lost of the logged in player
+	this.get_gameslost = function() {
+        return player.gamesLost;
+    }
+
+    // returns the current steak of the logged in player
+	this.get_currentstreak = function() {
+        return player.currentStreak;
+    }
+
+    // returns the longest steak of the logged in player
+	this.get_longeststreak = function() {
+        return player.longestStreak;
+    }
+
+    // returns the total number of pieces won of the logged in player
+	this.get_pieceswon = function() {
+        return player.piecesWon;
+    }
+	
+    // returns the total number of pieces lost of the logged in player
+	this.get_pieceslost = function() {
+        return player.piecesLost;
+    }
+	
+	// returns the total playing time of the logged in player
+	this.get_totalplayingtime = function() {
+        return player.totalPlayingTime;
+    }
+	
+	// returns the number of storyLevelsCompleted
+	this.get_storylevelscompleted = function() {
+        return player.storyLevelsCompleted;
+    }
+	
+	// returns the k/d (pieces won / pieces lost )
+	this.get_kd = function() {
+        return (player.piecesWon / player.piecesLost);
+    }
+	
 }
 //==========================================================================================================================//
 // Launch                                                                                                        

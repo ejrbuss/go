@@ -34,14 +34,26 @@ class Database {
     // Adds a new user to the database.
     addNewAccount(obj, res) {
         console.log("Adding new user to the database...")
-        var collection = this._db.collection('accounts');
-        collection.insert(obj, function(err, docs) {
-            console.log(docs);
+        this._db.collection('accounts').insert(obj, function(err, docs) {
             res.send(docs.ops[0])
         });
     }
     
-        //add new move
+    // Checks a username against the database for duplicates.
+    checkUsername(obj, res) {
+        console.log("in checkUsername..." + obj);
+        this._db.collection('accounts').count({username: obj}).then(function(count) {
+            if (count == 0) {
+                console.log('fine');
+                res.send(false);
+            } else {
+                console.log('duplicate');
+                res.send(true);
+            }
+        });
+    }
+     
+    //add new move
     addNewMove(obj) {
         console.log("Adding new move to database...");
         var collection = this._db.collection('moves');

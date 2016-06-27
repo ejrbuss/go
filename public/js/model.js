@@ -89,7 +89,7 @@ class Board{
 	}
 
 	isValidMove(Move){
-		if (this.grid[Move.x][Move.y] != 0)
+		if (Move.x < 0 || Move.y < 0 || Move.x >= this.grid.length || Move.y >= this.grid[0].length || this.grid[Move.x][Move.y] != 0)
 			return false;
 		return true;
 	}

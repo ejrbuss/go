@@ -20,6 +20,12 @@ app.post("/storeNewAccount", function(req, res) {
     db.addNewAccount(req.body, res);
 });
 
+// Checks username against the database.
+app.post("/checkDuplicateUsername", function(req, res) {
+    console.log("Checking username " + req.body.username);
+    db.checkUsername(req.body.username, res);
+});
+
 app.post("/move", function(req, res) {
 	console.log("Storing move...");
 	console.log(req.body);
@@ -32,7 +38,6 @@ app.post("/addGame", function(req, res) {
     console.log(req.body);
     var newGame = db.addNewGame(req.body);
     res.send(newGame);
-
 });
 
 app.post("/updateGame", function(req, res) {
