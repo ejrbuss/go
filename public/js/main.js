@@ -8,6 +8,19 @@ var vc = new ViewController('.content');
 function newAccount(username, password) {
     
     console.log('newAccount called with username: ' + username + ' password: ' + password);
+	
+	// used to generate random information for a new user into the database. 
+	var highScore = Math.floor((Math.random() * 1000) +1);
+	var totalScore = Math.floor((Math.random() * 5000) +1);
+	var gamesWon = Math.floor((Math.random() * 100) +1);
+	var gamesLost = Math.floor((Math.random() * 100) +1);
+	var currentStreak = Math.floor((Math.random() * 10) +1);
+	var longestStreak = Math.floor((Math.random() * 10) +1);
+	var piecesWon = Math.floor((Math.random() * 100) +1);
+	var piecesLost = Math.floor((Math.random() * 100) +1);
+	var totalPlayingTime = Math.floor((Math.random() * 100) +1);
+	var storyLevelsCompleted = Math.floor((Math.random() * 5) +1);
+	
     
     // Check for blank username or password.
     if (username == '') {
@@ -40,13 +53,12 @@ function newAccount(username, password) {
                 url: 'http://localhost:8080/storeNewAccount', 
                 type: 'POST', 
                 contentType: 'application/json', 
-                data: JSON.stringify({username: username, password: password})
+                data: JSON.stringify({username: username, password: password, highScore: highScore, totalScore: totalScore, gamesWon: gamesWon, gamesLost: gamesLost, currentStreak: currentStreak, longestStreak: longestStreak, piecesWon: piecesWon, piecesLost: piecesLost, totalPlayingTime: totalPlayingTime, storyLevelsCompleted: storyLevelsCompleted})
             }).done(function(player) {
                 vc.menu(new PlayerManager(player));
             });
         }
     });
-        
     
 }
 
@@ -130,8 +142,9 @@ function ReplayManager(game, gvc) {
 //==========================================================================================================================//
 function PlayerManager(player) {
     
-    this.get_username = function() {
-        return player.username;
+    // returns the username of the logged in player    
+	this.get_username = function() {
+		return player.username;	
     }
     
     this.get_highscores = function() {
@@ -145,7 +158,62 @@ function PlayerManager(player) {
     this.get_menu_stats = function() {
         
     }
-    
+	
+    // returns the highscore of the logged in player
+	this.get_highscore = function() {
+        return player.highScore;
+    }
+
+    // returns the totalscore of the logged in player
+	this.get_totalscore = function() {
+        return player.totalScore;
+    }
+	
+    // returns the games won of the logged in player
+	this.get_gameswon = function() {
+        return player.gamesWon;
+    }
+
+    // returns the games lost of the logged in player
+	this.get_gameslost = function() {
+        return player.gamesLost;
+    }
+
+    // returns the current steak of the logged in player
+	this.get_currentstreak = function() {
+        return player.currentStreak;
+    }
+
+    // returns the longest steak of the logged in player
+	this.get_longeststreak = function() {
+        return player.longestStreak;
+    }
+
+    // returns the total number of pieces won of the logged in player
+	this.get_pieceswon = function() {
+        return player.piecesWon;
+    }
+	
+    // returns the total number of pieces lost of the logged in player
+	this.get_pieceslost = function() {
+        return player.piecesLost;
+    }
+	
+	// returns the total playing time of the logged in player
+	this.get_totalplayingtime = function() {
+        return player.totalPlayingTime;
+    }
+	
+	// returns the number of storyLevelsCompleted
+	this.get_storylevelscompleted = function() {
+        return player.storyLevelsCompleted;
+    }
+	
+	// returns the k/d (pieces won / pieces lost )
+	this.get_kd = function() {
+        return (player.piecesWon / player.piecesLost);
+    }
+	
 }
 //==========================================================================================================================//
 // Launch                                                                                                        

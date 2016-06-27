@@ -11,7 +11,7 @@
 // - GAME VIEW CONTROLLER:  control game view
 //
 //
-// To load a view:
+// To laod a view:
 //
 // vc = new ViewController( Jquery selector );
 // vc.viewName( args );
@@ -89,6 +89,11 @@ function Component() {
     
     this.addClass = function(newClass) {
         component._classes_.push(newClass);
+        return component;
+    }
+    
+    this.removeClass = function(oldClass) {
+        component._classes_.splice(component._classes_.indexOf(oldClass), 1)
         return component;
     }
     
@@ -254,6 +259,7 @@ function ViewController(container) {
     this.factory   = new ComponentFactory(); // Component factory
     this.container = container;              // Rendering container
     this.live      = [];                     // Components to render
+    this.last      = new Component();
     
     // Render all live components
     this.render = function() {
@@ -273,6 +279,7 @@ function ViewController(container) {
     
     this.add = function(component) {
         this.live.push(component);
+        this.last = component;
     }
     
     this.message = function(message, color=background1) {
@@ -300,7 +307,7 @@ function ViewController(container) {
         var focusAction = new Action().action(function(component) {
             component.$.focus();
         });
-        // Vectors
+        // Vecotrs
         this.add( this.factory.vector('7,0 50,0 0,45 0,35').color(background1).z(1).addClass('slide-down') );
         this.add( this.factory.vector('50,0 70,0 20,20').color(accent).addClass('slide-down') );
         this.add( this.factory.vector('50,50 100,25 100,50').color(background1).z(1).addClass('slide-up') );
@@ -319,10 +326,10 @@ function ViewController(container) {
 
     this.menu = function(playerManager) {
         // Actions
-        var toStory = new Action().trigger('click').action(function() { vc.levelSelect() });
-        var toVersus = new Action().trigger('click').action(function() { vc.versus() });
-        var toReplay = new Action().trigger('click').action(function() { vc.replay() });
-        var toProfile = new Action().trigger('click').action(function() { vc.profile() });
+        var toStory = new Action().trigger('click').action(function() { vc.levelSelect(playerManager) });
+        var toVersus = new Action().trigger('click').action(function() { vc.hotseatAi(playerManager) });
+        var toReplay = new Action().trigger('click').action(function() { vc.replay(playerManager) });
+        var toProfile = new Action().trigger('click').action(function() { vc.profile(playerManager) });
         var toLogin = new Action().trigger('click').action(function() { vc.login(); });
         var enter = new Action().trigger('mouseenter').action(function(c) { c.$.css({'color' : '#C80164'})});
         var leave = new Action().trigger('mouseleave').action(function(c) { c.$.css({'color' : '#FFFFFF'})});
@@ -331,8 +338,11 @@ function ViewController(container) {
         this.add( this.factory.vector('0,0 12,0, 17,30 0,30').color('#00F').addClass('slide-right') );
         this.add( this.factory.vector('65,8 97,14 97,20 60,25').color('#000').z(1) );
         this.add( this.factory.vector('68,9 94,8 94,14').color('#00F').addClass('slide-up-slight') );
-        // Stats
-        this.add( this.factory.text(playerManager.get_username()).color('#F00'));
+        // Statistics
+		
+		// When this is uncommented, it will show a players stats
+		// this.override("username: " + playerManager.get_username() + "<br>" + "highscore: " + playerManager.get_highscore() + "<br>" + "totalscore: " + playerManager.get_totalscore() + "<br>" + "gameswon: " + playerManager.get_gameswon() + "<br>" + "gameslost: " + playerManager.get_gameslost() + "<br>" + "currentstreak: " + playerManager.get_currentstreak() + "<br>" + "longeststreak: " + playerManager.get_longeststreak() + "<br>" + "pieceswon: " + playerManager.get_pieceswon() + "<br>" + "pieceslost: " + playerManager.get_pieceslost() + "<br>" + "totalplayingtime: " + playerManager.get_totalplayingtime() + "<br>" + "storylevelscomplete: " + playerManager.get_storylevelscompleted() + "<br>" + "K/D: " + playerManager.get_kd());
+		
         // TODO parameterize menu items
         this.add( this.factory.title_button('STORY').x('6vw').y('10vw').addAction(enter).addAction(leave).addAction(toStory).addClass('slide-up') );
         this.add( this.factory.title_button('VERSUS').x('9vw').y('15vw').addAction(enter).addAction(leave).addAction(toVersus).addClass('slide-up') );
@@ -340,10 +350,10 @@ function ViewController(container) {
         this.add( this.factory.title_button('PROFILE').x('15vw').y('25vw').addAction(enter).addAction(leave).addAction(toProfile).addClass('slide-up') );
         this.add( this.factory.title_button('LOGOUT').x('18vw').y('30vw').addAction(enter).addAction(leave).addAction(toLogin).addClass('slide-up') );
         // Render
-        this.render();
+        //this.render();
     };
 
-    this.levelSelect = function(args) {
+    this.levelSelect = function(playerManager) {
         var num = new Font() 
             .size('8vw');
         // Actions
@@ -352,11 +362,11 @@ function ViewController(container) {
         var levelIII = new Action().trigger('click').action(function() { vc.story(); });
         var levelIV = new Action().trigger('click').action(function() { vc.story(); });
         var levelV = new Action().trigger('click').action(function() { vc.story(); });
-        var menu = new Action().trigger('click').action(function() { vc.menu(); });
+        var menu = new Action().trigger('click').action(function() { vc.menu(playerManager); });
         var enter = new Action().trigger('mouseenter').action(function(c) { c.$.css({'color' : '#C80164'})});
         var leave = new Action().trigger('mouseleave').action(function(c) { c.$.css({'color' : '#FFFFFF'})});
         // Vectors
-        this.add( this.factory.vector('0,0 100,0 100,50, 0,50').color(accent).addClass('slide-right') );
+        this.add( this.factory.vector('0,0 100,0 100,50, 0,50').color(accent) );
         // Black backgrounds
         this.add( this.factory.vector( '0,50 10,0  20,0 10,50').color(background1).z(1).addClass('slide-left') );
         this.add( this.factory.vector('20,50 30,0  40,0 30,50').color(background1).z(1).addClass('slide-left') );
@@ -376,7 +386,7 @@ function ViewController(container) {
         this.add( this.factory.text('III').x('45vw').y('34vw').font(num).color(background1).rotate('11.3deg').addClass('slide-up-rotated') );
         this.add( this.factory.text('IV').x('64vw').y('38vw').font(num).color(background1).rotate('11.3deg').addClass('slide-up-rotated') );
         this.add( this.factory.text('V').x('84vw').y('42vw').font(num).color(background1).rotate('11.3deg').addClass('slide-up-rotated') );
-        // buttons
+        // Buttons
         this.add( this.factory.title_button('REPLAY').x('4vw').y('1vw').addClass('slide-left').addAction(enter).addAction(leave).addAction(levelI) );
         this.add( this.factory.title_button('REPLAY').x('24vw').y('1vw').addClass('slide-left').addAction(enter).addAction(leave).addAction(levelII) );
         this.add( this.factory.title_button('REPLAY').x('44vw').y('1vw').addClass('slide-left').addAction(enter).addAction(leave).addAction(levelIII) );
@@ -390,12 +400,32 @@ function ViewController(container) {
     this.story = function(args) {
     }
         
-    this.hotseatAi = function(args) {
-
+    this.hotseatAi = function(playerManager) {
+        // Actions
+        var enter = new Action().trigger('mouseenter').action(function(c) { c.$.css({'color' : '#C80164'})});
+        var leave = new Action().trigger('mouseleave').action(function(c) { c.$.css({'color' : '#FFFFFF'})});
+        var menu = new Action().trigger('click').action(function() { vc.menu(playerManager); });
+        var versusAi = new Action().trigger('click').action(function() { vc.versus(playerManager); });
+        var versusPvP = new Action().trigger('click').action(function() { vc.versus(playerManager); });
+        // Vectors
+        this.add( this.factory.vector('0,0 55,0 45,50 0,50').color(background1).addClass('slide-right') );
+        this.add( this.factory.vector('55,0 100,0, 100,50 45,50').color(accent).addClass('slide-left') );
+        // Buttons
+        this.add( this.factory.title_button('RETURN').x('1vw').y('40vw').addClass('slide-right').addAction(enter).addAction(leave).addAction(menu) );
+        this.add( this.factory.title_button('PVP').x('20vw').y('4vw').classes(['large-rotate', 'unselectable', 'slide-right']).addAction(versusAi) );
+        this.last.font().size('10vw');
+        this.add( this.factory.title_button('AI').x('70vw').y('37vw').classes(['large-rotate', 'unselectable', 'slide-right']).addAction(versusPvP) );
+        this.last.font().size('10vw');
+        // Render
+        this.render(); 
     }
 
-    this.versus = function(args) {
-
+    this.versus = function(playerManager) {
+         this.game()
+    }
+    
+    this.game = function(args) {
+        return new GameViewController(vc);
     }
     
     this.listReplays = function(args) {
@@ -405,9 +435,18 @@ function ViewController(container) {
     this.replay = function(args) {
 
     }
-
-    this.game = function(args) {
-        return new GameViewController(vc);
+    
+    this.profile = function(playerManager) {
+        // Actions
+        var enter = new Action().trigger('mouseenter').action(function(c) { c.$.css({'color' : '#C80164'})});
+        var leave = new Action().trigger('mouseleave').action(function(c) { c.$.css({'color' : '#FFFFFF'})});
+        var menu = new Action().trigger('click').action(function() { vc.menu(playerManager); });
+        // Vectors
+        
+        // Buttons
+        this.add( this.factory.title_button('RETURN').x('1vw').y('40vw').addClass('slide-right').addAction(enter).addAction(leave).addAction(menu) );
+        // Render
+        this.render();
     }
     
     this.override = function(html) {
