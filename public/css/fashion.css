@@ -174,8 +174,15 @@ body {
         0 0.3vw 0 #000,
         0 -0.3vw 0 #000;
 }
+
 .rotate:hover {
     font-size: 5vw !important;
+    transform: rotateZ(-10deg) !important;
+    transition: all 0.2s ease;
+}
+
+.large-rotate:hover {
+    font-size: 12vw !important;
     transform: rotateZ(-10deg) !important;
     transition: all 0.2s ease;
 }

@@ -22,6 +22,8 @@ class Database {
                     console.log("INFO: Connected to database.");
                     that._db = db;
                     db.createCollection('accounts', {strict:true}, function(err, collection) {});
+                    db.createCollection('games', {strict:true}, function(err, collection) {});
+                    db.createCollection('moves', {strict:true}, function(err, collection) {});
                 }
 
             }
@@ -37,6 +39,42 @@ class Database {
             console.log(docs);
             res.send(docs.ops[0])
         });
+    }
+    
+        //add new move
+    addNewMove(obj) {
+        console.log("Adding new move to database...");
+        var collection = this._db.collection('moves');
+        collection.insert(obj, function(err, docs) {
+            console.log(docs);
+            res.send(docs);
+        });
+    }
+
+    //add new game (happens at beginning of each game)
+    addNewGame(obj) {
+        console.log("Adding new game to database...");
+        var collection = this._db.collection('games');
+        collection.insert(obj, function(err, docs) {
+            console.log(docs);
+            res.send(docs);
+        });
+    }
+
+    //completes the game
+    updateGame(obj) {
+        console.log("Updating game...");
+
+        var id = obj.id;
+        var body = {
+            'score1':obj.score1,
+            'score2':obj,score2,
+            'time':Date.now(),
+            'complete':true
+        };
+
+        var collection = this._db.collection('games');
+        return collection.updateOne({'_id':id},body);
     }
     
 }
