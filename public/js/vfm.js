@@ -332,7 +332,10 @@ function ViewController(container) {
         this.add( this.factory.vector('65,8 97,14 97,20 60,25').color('#000').z(1) );
         this.add( this.factory.vector('68,9 94,8 94,14').color('#00F').addClass('slide-up-slight') );
         // Statistics
-        this.add( this.factory.text(playerManager.get_username()).color(select1) );
+		
+		// When this is uncommented, it will show a players stats
+		// this.override("username: " + playerManager.get_username() + "<br>" + "highscore: " + playerManager.get_highscore() + "<br>" + "totalscore: " + playerManager.get_totalscore() + "<br>" + "gameswon: " + playerManager.get_gameswon() + "<br>" + "gameslost: " + playerManager.get_gameslost() + "<br>" + "currentstreak: " + playerManager.get_currentstreak() + "<br>" + "longeststreak: " + playerManager.get_longeststreak() + "<br>" + "pieceswon: " + playerManager.get_pieceswon() + "<br>" + "pieceslost: " + playerManager.get_pieceslost() + "<br>" + "totalplayingtime: " + playerManager.get_totalplayingtime() + "<br>" + "storylevelscomplete: " + playerManager.get_storylevelscompleted() + "<br>" + "K/D: " + playerManager.get_kd());
+		
         // TODO parameterize menu items
         this.add( this.factory.title_button('STORY').x('6vw').y('10vw').addAction(enter).addAction(leave).addAction(toStory).addClass('slide-up') );
         this.add( this.factory.title_button('VERSUS').x('9vw').y('15vw').addAction(enter).addAction(leave).addAction(toVersus).addClass('slide-up') );
@@ -340,7 +343,7 @@ function ViewController(container) {
         this.add( this.factory.title_button('PROFILE').x('15vw').y('25vw').addAction(enter).addAction(leave).addAction(toProfile).addClass('slide-up') );
         this.add( this.factory.title_button('LOGOUT').x('18vw').y('30vw').addAction(enter).addAction(leave).addAction(toLogin).addClass('slide-up') );
         // Render
-        this.render();
+        //this.render();
     };
 
     this.levelSelect = function(playerManager) {
