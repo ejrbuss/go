@@ -22,6 +22,8 @@ class Database {
                     console.log("INFO: Connected to database.");
                     that._db = db;
                     db.createCollection('accounts', {strict:true}, function(err, collection) {});
+                    db.createCollection('games', {strict:true}, function(err, collection) {});
+                    db.createCollection('moves', {strict:true}, function(err, collection) {});
                 }
 
             }
@@ -45,7 +47,7 @@ class Database {
         var collection = this._db.collection('moves');
         collection.insert(obj, function(err, docs) {
             console.log(docs);
-            res.send(docs[0]);
+            res.send(docs);
         });
     }
 
@@ -53,9 +55,9 @@ class Database {
     addNewGame(obj) {
         console.log("Adding new game to database...");
         var collection = this._db.collection('games');
-        return collection.insert(obj, function(err, docs) {
+        collection.insert(obj, function(err, docs) {
             console.log(docs);
-            res.send(docs[0]);
+            res.send(docs);
         });
     }
 
