@@ -1,9 +1,10 @@
 "use strict"
-/*
-maybe doesnt need to be a class...
-*/
 
-class GameManager{
+function GameManager(gvc, size, ai) {
+    
+}
+
+class GameManagerOld{
 	constructor(size, AItype){
 		// would call server for game id at this point
 		var id = 1;
