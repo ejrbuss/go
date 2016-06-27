@@ -13,7 +13,7 @@ class GameManager{
 
 	userMove(x, y, pass){
 		try{
-		this.Game.move(x, y, pass);
+		  this.Game.move(x, y, pass);
 		}
 		catch(err){
 			console.log(err);
