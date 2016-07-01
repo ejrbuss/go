@@ -6,18 +6,29 @@
         <!-- Fashion -->
         <link rel='stylesheet' type='text/css' href='css/fashion.css'>
         <!-- Acquire lifeblood -->
-        <script src='https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js'></script>
+        <script src='lib/jquery.min.js'></script>
+        <script src='lib/typed.min.js'></script>
+        <!-- Load Utilities -->
+        <script src='js/util.js'></script>
         <!-- Load VFM -->
-        <script src='js/vfm.js'></script>
-        <!-- Start Script -->
-        <script src='js/main.js'></script>
+        <script src='js/VFM.js'></script>
+        <script src='js/story.js'></script>
+        <script src='js/ViewController.js'></script>    
         <!-- Game Scripts -->
-        <script type="text/javascript" src="js/gamemanager.js"></script>
-        <script type="text/javascript" src="js/score.js"></script>
-        <script type="text/javascript" src="js/model.js"></script>
-        <script type="text/javascript" src="js/simulation.js"></script>
-        <script type="text/javascript" src="js/AIfactory.js"></script>
-        <script type="text/javascript" src="js/AI.js"></script>
+        <script src='js/GameController.js'></script>
+        <script src='js/score.js'></script>
+        <script src='js/model.js'></script>
+        <script src='js/simulation.js'></script>
+        <script src='js/AIfactory.js'></script>
+        <script src='js/AI.js'></script>
+        <script src='js/PlayerModel.js'></script>
+        <!-- Start -->
+        <script>
+            var vc = null;
+            $(document).ready(function() {
+                vc = new ViewController('.content');
+            });
+        </script>
     </head>
     <body>
         <span style='color:#FFF;top:0;position:absolute'>WARNING: performance issues and browser compatibility issues galore</span>

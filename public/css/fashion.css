@@ -62,16 +62,6 @@
     animation-duration: 0.5s;
 }
 
-@keyframes slide-up-slight {
-    from { transform: translate(0, 5vw) }
-    to { transform: none }
-}
-
-.slide-up-slight {
-    animation: slide-up-slight;
-    animation-duration: 1s;
-}
-
 @keyframes banner-in {
     from { transform: translate(-50vw, 50vw) skew(-55deg) }
     to {  transform: translate(0, 0) skew(-55deg) }
@@ -118,6 +108,7 @@
 * { 
     display: block;
     overflow: hidden;
+    text-align: left;
     font-family: BebasNeue, sans-serif;
     font-size: 2vw;
     margin: 0;
@@ -135,6 +126,10 @@
 
 body {
     background: #000;
+}
+
+pre {
+    text-align: left !important;
 }
 
 /*
@@ -185,4 +180,8 @@ body {
     font-size: 12vw !important;
     transform: rotateZ(-10deg) !important;
     transition: all 0.2s ease;
+}
+
+.circle {
+    border-radius: 50%;
 }

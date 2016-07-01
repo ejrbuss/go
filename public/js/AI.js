@@ -4,8 +4,8 @@ class AI{
 	//class interface
 	// make your AI implement this
 	constructor(Game){
-
-	}
+        this.name = 'placeholder';
+	}  
 
 	getMove(Game){
 		return {x: 0, y: 0};
@@ -14,6 +14,7 @@ class AI{
 
 class AI2{
 	constructor(Game){
+        this.name = 'placeholder';
 		var i = Math.floor(Game.Board.size / 2);
 		var j = i;
 		this.blobmoves = [{x: i, y: j}, {x: i+1, y: j}]
@@ -50,7 +51,9 @@ class AI2{
 }
 
 class AI5{
+    
 	constructor(Game){
+        this.name = 'placeholder';
 		this.SIMULATIONS = Math.floor(Math.pow(0.016*Game.Board.size, -2.9));
 		this.MAXMOVES = 90;
 	}

@@ -4,6 +4,7 @@ The game model
 */
 
 class Game{
+    
 	constructor(id, size){
 		this.Board = new Board(size);
 		this.player1 = 1;
@@ -21,8 +22,7 @@ class Game{
 				this.player1score += captured.length;
 			}
 			this.turn = this.player2;
-		}
-		else{
+		} else {
 			if (!pass){
 				var captured = this.Board.move(new Move(x, y, this.player2));
 				this.player2score += captured.length;
@@ -32,11 +32,11 @@ class Game{
 		return captured;
 	}
 
-	copyState(){
+	copyState() { 
 		return {player1score: this.player1score, player2score: this.player2score, turn: this.turn, board: this.Board.gridCopy(this.Board.grid)};
 	}
 
-	resetState(gamestate){
+	resetState(gamestate) {
 		this.player1score = gamestate.player1score;
 		this.player2score = gamestate.player2score;
 		this.turn = gamestate.turn;
@@ -48,8 +48,9 @@ class Game{
 	}
 }
 
-class Board{
-	constructor(size){
+class Board 
+{
+	constructor(size) {
 		this.size = size;
 		this.grid = [];
 		this.oldGrid = [];
@@ -148,10 +149,11 @@ class Board{
 
 	
 
-	toString(){
-		for (var i = 0; i < this.size; i++){
-			console.log(this.grid[i]);
-		}
+	toString() {
+        var content = this.grid[0].join(' ');
+        for(var i = 1; i < this.grid.length; i++)
+            content += '\n' + this.grid[i].join(' ');
+        return content;
 	}
 }
 
