@@ -132,6 +132,24 @@ pre {
     text-align: left !important;
 }
 
+ul {
+    overflow-y: auto;
+}
+
+li {
+    text-align: left !important;
+    padding: 0.5vw;
+}
+
+/* Some magic http://jsfiddle.net/hmartiro/Xck2A/1/ */
+ul::-webkit-scrollbar {
+    width: 3vw;
+}
+
+ul::-webkit-scrollbar-thumb {
+    border: 1vw solid #000000;
+    background: #FFFFFF; 
+}
 /*
  * CLASS CONTROL
  */

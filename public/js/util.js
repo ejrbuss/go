@@ -187,7 +187,7 @@ class Logger {
      */
     log(level, color) {
         return function() {
-            var time = new Date().toLocaleDateString();
+            var time = new Date().toLocaleTimeString();
             var caller = new Error().stack.split('\n')[2].trim()
             console.log('%c' + level + ' : ' + time + ' ' + caller, 'color:' + color);
             for(var i = 0; i < arguments.length; i++)

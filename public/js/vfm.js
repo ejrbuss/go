@@ -134,31 +134,33 @@ class Component extends PropertyExpander {
     constructor() {
         super();
         // Properties
-        this.property.id           = (id_counter++).toString(); 
-        this.property.element      = 'div';                     
-        this.property.html         = '';
-        this.property.text         = '';
-        this.property.x            = null;
-        this.property.y            = null;
-        this.property.z            = null;
-        this.property.width        = null;
-        this.property.height       = null;
-        this.property.opacity      = null;
-        this.property.background   = null;
-        this.property.padding      = null;
-        this.property.skew         = null;
-        this.property.rotate       = null;
-        this.property.shadow       = null;
-        this.property.foreground   = null;
-        this.property.family       = null;
-        this.property.size         = null;
-        this.property.weight       = null;
-        this.property.style        = null;
+        this.property.id            = (id_counter++).toString();
+        this.property.position      = 'absolute'
+        this.property.element       = 'div';                     
+        this.property.html          = '';
+        this.property.text          = '';
+        this.property.x             = null;
+        this.property.y             = null;
+        this.property.z             = null;
+        this.property.width         = null;
+        this.property.height        = null;
+        this.property.opacity       = null;
+        this.property.background    = null;
+        this.property.padding       = null;
+        this.property.skew          = null;
+        this.property.rotate        = null;
+        this.property.shadow        = null;
+        this.property.foreground    = null;
+        this.property.family        = null;
+        this.property.size          = null;
+        this.property.weight        = null;
+        this.property.style         = null;
         // List properties
-        this.listProperty.class    = [];
-        this.listProperty.action   = [];
+        this.listProperty.class     = [];
+        this.listProperty.action    = [];
+        this.listProperty.component = [];
         // Map properties
-        this.mapProperty.attribute = {};
+        this.mapProperty.attribute  = {};
         // Expand propertoes
         super.expand();
     }
@@ -178,7 +180,7 @@ class Component extends PropertyExpander {
         ));
         this.$ = $( '#' + this._id_ );
         this.$.css({
-            'position'       : 'absolute',
+            'position'       : this.position(),
             'left'           : this.x() + 'vw',
             'top'            : this.y() + 'vw',
             'z-index'        : this.z(),
@@ -210,6 +212,9 @@ class Component extends PropertyExpander {
                 '-webkit-filter' : 'drop-shadow(1vw 1vw 1vw hsla(0, 0%, 0%, ' + this.shadow() + '))',
                 'filter'         : 'drop-shadow(1vw 1vw 1vw hsla(0, 0%, 0%, ' + this.shadow() + '))',
             });
+        // Render sub components
+        for(var i = 0; i < this.component().length; i++)
+            this.component()[i].render(this.$);
     }
     
     /**
@@ -225,6 +230,9 @@ class Component extends PropertyExpander {
                     component.$.on(action.trigger(), function() { action.action()(component); } );
             });
         });
+        // Ready sub components
+        for(var i = 0; i < this.component().length; i++)
+            this.component()[i].ready();
     }
     
     /**
@@ -253,7 +261,20 @@ class Component extends PropertyExpander {
     xz(x, z) {
         this.x(x);
         this.z(z);
-    }  
+    }
+    
+    /**
+     * Appends inner html.
+     * @param html the HTML to append
+     */
+    append(html) {
+        this.html(this.html() + html);
+        return this;
+    }
+    
+    item(item) {
+        return this.append('<li>' + item + '</li>');
+    }
     
     /**
      * Adds a polygon to the HTML of this component.
@@ -261,8 +282,7 @@ class Component extends PropertyExpander {
      * @param color  the fill color of the polygon
      */
     poly(points, color) {
-        this.html(this.html() + '<polygon points=' + this.formatPoints(points) + ' style="fill:' + color + '"/>');
-        return this;
+        return this.append('<polygon points=' + this.formatPoints(points) + ' style="fill:' + color + '"/>');
     }
     
     /**
@@ -284,8 +304,7 @@ class Component extends PropertyExpander {
      * @param color the fill color of the circle
      */
     circle(x, y, r, color) {
-        this.html(this.html() + '<circle cx="{0}" cy="{1}" r="{2}"  style="fill:{3}"/>'.format(x + r, y + r, r, color));
-        return this;
+        return this.append('<circle cx="{0}" cy="{1}" r="{2}"  style="fill:{3}"/>'.format(x + r, y + r, r, color));
     }
     
 }
@@ -382,6 +401,11 @@ class ComponentFactory {
             .width('40')
             .size(3)
             .z(10);
+    }
+    
+    List() {
+        return new Component()
+            .element('ul');
     }
     
     /**

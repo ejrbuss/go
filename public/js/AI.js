@@ -14,7 +14,7 @@ class AI{
 
 class AI2{
 	constructor(Game){
-        this.name = 'placeholder';
+        this.name = 'AI2';
 		var i = Math.floor(Game.Board.size / 2);
 		var j = i;
 		this.blobmoves = [{x: i, y: j}, {x: i+1, y: j}]
@@ -37,7 +37,7 @@ class AI2{
 			}
 			catch(err){
 				if (err == "InvalidMoveException" || err == "SuicideException" || err == "ReturnToOldStateException"){
-					console.log("Blob no Move");
+					log.debug("Blob no Move");
 				}
 				else
 					throw err;
@@ -53,7 +53,7 @@ class AI2{
 class AI5{
     
 	constructor(Game){
-        this.name = 'placeholder';
+        this.name = 'AI5';
 		this.SIMULATIONS = Math.floor(Math.pow(0.016*Game.Board.size, -2.9));
 		this.MAXMOVES = 90;
 	}
@@ -91,7 +91,7 @@ class AI5{
 				Game.resetState(gamestate);
 			}
 		}
-		console.log(movescore);
+		log.debug(movescore);
 		var max = -1;
 		var maxindex = 0;
 		for (var k = 0; k < movescore.length; k++){

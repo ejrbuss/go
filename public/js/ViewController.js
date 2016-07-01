@@ -111,7 +111,7 @@ class ViewController {
         this.add( this.factory.TitleButton('NEW ACCOUNT', select1).xyz(43, 31, 51).addAction(newAccountAction) );
         this.add( this.factory.TitleButton('LOGIN', select2).xy(63, 31).addAction(loginAction) );
         // Images
-        this.add( this.factory.Resource('/rsc/icons/logo.png').xy(20, -5).width(28).height(28).addClass('slide-down') );
+        this.add( this.factory.Resource('/rsc/icons/logo.png').xy(20, -5).width(28).addClass('slide-down') );
         // Render
         this.clear();
         this.update();
@@ -163,7 +163,7 @@ class ViewController {
         this.add( this.factory.TitleButton('PROFILE').xy(15, 25).addAction(enter).addAction(leave).addAction(toProfile).addClass('slide-up') );
         this.add( this.factory.TitleButton('LOGOUT' ).xy(18, 30).addAction(enter).addAction(leave).addAction(toLogin).addClass('slide-up') );
         // Images
-        this.add(this.factory.Resource('rsc/backgrounds/mainmenu.png').xy(20, 15).width(70).height(35).addClass('slide-up') );
+        this.add(this.factory.Resource('rsc/backgrounds/mainmenu.png').xy(20, 15).width(70).addClass('slide-up') );
         // Render
         this.clear();
         this.update();
@@ -196,35 +196,35 @@ class ViewController {
                  .poly([80,50, 90,0,  100,0, 90,50], background1)
                  .z(1).addClass('slide-left') );
         // White backgrounds and characters
-        this.add( this.factory.Resource('rsc/characters/level1.png').xyz(3,    7,  2).width(18).height(24).addClass('slide-up') ); 
+        this.add( this.factory.Resource('rsc/characters/level1.png').xyz(3,    7,  2).width(18).addClass('slide-up') ); 
         var white = this.factory.Vector()
                  .poly([0,50,  5,25,    14.6,27, 10,50], background2)
                  .poly([0,25,  10,50,   0,50], background1)
                  .z(3).addClass('slide-up');
         if (playerModel.levels() > 0) {  
             white.poly([20,50, 24.2,29, 33.8,31, 30,50], background2)
-            this.add( this.factory.Resource('rsc/characters/level2.png').xyz(21.5, 7,  2).width(18).height(24).addClass('slide-up') );
+            this.add( this.factory.Resource('rsc/characters/level2.png').xyz(21.5, 7,  2).width(18).addClass('slide-up') );
             this.add( this.factory.TitleButton('REPLAY').xy(4, 1).addClass('slide-left').addAction(enter).addAction(leave).addAction(levelI) );
         } else if (playerModel.levels() == 0) {
             this.add( this.factory.TitleButton('CONTINUE').xy(4, 1).addClass('slide-left').addAction(enter).addAction(leave).addAction(levelI) );
         }
         if (playerModel.levels() > 1) {
             white.poly([40,50, 43.4,33, 53.0,35, 50,50], background2)
-            this.add( this.factory.Resource('rsc/characters/level3.png').xyz(40,   14, 2).width(18).height(24).addClass('slide-up') );
+            this.add( this.factory.Resource('rsc/characters/level3.png').xyz(40,   14, 2).width(18).addClass('slide-up') );
             this.add( this.factory.TitleButton('REPLAY').xy(24, 1).addClass('slide-left').addAction(enter).addAction(leave).addAction(levelII) );
         } else if (playerModel.levels() == 1) {
             this.add( this.factory.TitleButton('CONTINUE').xy(24, 1).addClass('slide-left').addAction(enter).addAction(leave).addAction(levelII) );
         }
         if (playerModel.levels() > 2) {
             white.poly([60,50, 62.6,37, 72.2,39, 70,50], background2)
-            this.add( this.factory.Resource('rsc/characters/level4.png').xyz(61.5, 16, 2).width(18).height(24).addClass('slide-up') );
+            this.add( this.factory.Resource('rsc/characters/level4.png').xyz(61.5, 16, 2).width(18).addClass('slide-up') );
             this.add( this.factory.TitleButton('REPLAY').xy(44, 1).addClass('slide-left').addAction(enter).addAction(leave).addAction(levelIII) );   
         } else if (playerModel.levels() == 2) {
             this.add( this.factory.TitleButton('CONTINUE').xy(44, 1).addClass('slide-left').addAction(enter).addAction(leave).addAction(levelIII) );
         }
         if (playerModel.levels() > 3) { 
             white.poly([80,50, 81.8,41, 91.4,43, 90,50], background2)
-            this.add( this.factory.Resource('rsc/characters/level5.png').xyz(76,   19, 2).width(18).height(24).addClass('slide-up') );
+            this.add( this.factory.Resource('rsc/characters/level5.png').xyz(76,   19, 2).width(18).addClass('slide-up') );
             this.add( this.factory.TitleButton('REPLAY').xy(64, 1).addClass('slide-left').addAction(enter).addAction(leave).addAction(levelIV) );
         } else if (playerModel.levels() == 3) {
             this.add( this.factory.TitleButton('CONTINUE').xy(64, 1).addClass('slide-left').addAction(enter).addAction(leave).addAction(levelIV) );
@@ -236,11 +236,11 @@ class ViewController {
         }
         this.add( white );
         // Levels
-        this.add( this.factory.Text('I',   background1).xy(8,    26).size(8).rotate('11.3deg').addClass('slide-up-rotated') );
-        this.add( this.factory.Text('II',  background1).xy(26.5, 30).size(8).rotate('11.3deg').addClass('slide-up-rotated') );
-        this.add( this.factory.Text('III', background1).xy(45,   34).size(8).rotate('11.3deg').addClass('slide-up-rotated') );
-        this.add( this.factory.Text('IV',  background1).xy(64,   38).size(8).rotate('11.3deg').addClass('slide-up-rotated') );
-        this.add( this.factory.Text('V',   background1).xy(84,   42).size(8).rotate('11.3deg').addClass('slide-up-rotated') );
+        this.add( this.factory.Text('I',   background1).xy(8,    26).size(8).style('normal').rotate('11.3deg').addClass('slide-up-rotated') );
+        this.add( this.factory.Text('II',  background1).xy(26.5, 30).size(8).style('normal').rotate('11.3deg').addClass('slide-up-rotated') );
+        this.add( this.factory.Text('III', background1).xy(45,   34).size(8).style('normal').rotate('11.3deg').addClass('slide-up-rotated') );
+        this.add( this.factory.Text('IV',  background1).xy(64,   38).size(8).style('normal').rotate('11.3deg').addClass('slide-up-rotated') );
+        this.add( this.factory.Text('V',   background1).xy(84,   42).size(8).style('normal').rotate('11.3deg').addClass('slide-up-rotated') );
         // Buttons
         this.add( this.factory.TitleButton('RETURN'  ).xy(1, 40).addClass('slide-right').addAction(enter).addAction(leave).addAction(menu) );
         // Render
@@ -312,11 +312,11 @@ class ViewController {
         this.add( this.factory.Vector().poly([55,0, 100,0, 100,50, 45,50], accent).addClass('slide-left') );
         // Buttons
         this.add( this.factory.TitleButton('RETURN').xy(1,  40).addClass('slide-right').addAction(enter).addAction(leave).addAction(menu) );
-        this.add( this.factory.TitleButton('PVP'   ).xy(20, 4 ).size(10).class(['large-rotate', 'unselectable', 'slide-right']).addAction(versusAi) );
-        this.add( this.factory.TitleButton('AI'    ).xy(70, 37).size(10).class(['large-rotate', 'unselectable', 'slide-right']).addAction(versusPvP) );
+        this.add( this.factory.TitleButton('PVP'   ).xy(20, 4 ).size(10).class(['large-rotate', 'unselectable', 'slide-right']).addAction(versusPvP) );
+        this.add( this.factory.TitleButton('AI'    ).xy(70, 37).size(10).class(['large-rotate', 'unselectable', 'slide-right']).addAction(versusAi) );
         //Images
-        this.add( this.factory.Resource('rsc/characters/ai.png' ).xy(55, 10).width(30).height(40).addClass('slide-left') );
-        this.add( this.factory.Resource('rsc/characters/pvp.png').xy(5,  10).width(30).height(40).addClass('slide-right') );
+        this.add( this.factory.Resource('rsc/characters/ai.png' ).xy(55, 10).width(30).addClass('slide-left') );
+        this.add( this.factory.Resource('rsc/characters/pvp.png').xy(5,  10).width(30).addClass('slide-right') );
         // Render
         this.clear();
         this.update();
@@ -331,7 +331,7 @@ class ViewController {
         var vc = this;
         // Actions
         var menu  = this.factory.ClickAction(function() { vc.mainMenu(playerModel); });
-        var play  = this.factory.ClickAction(function() { new GameController(vc, playerModel, 9); });
+        var play  = this.factory.ClickAction(function() { new GameController(vc, playerModel, 9, 'AI2'); });
         var enter = this.factory.EnterAction();
         var leave = this.factory.LeaveAction();
         // Vectors
@@ -353,7 +353,7 @@ class ViewController {
         var vc = this;
         // Actions
         var menu  = this.factory.ClickAction(function() { vc.mainMenu(playerModel); });
-        var play  = this.factory.ClickAction(function() { new GameController(vc, playerModel, 9, 'AI1'); });
+        var play  = this.factory.ClickAction(function() { new GameController(vc, playerModel, 9); });
         var enter = this.factory.EnterAction();
         var leave = this.factory.LeaveAction();
         // Vectors
@@ -377,7 +377,20 @@ class ViewController {
         var enter = this.factory.EnterAction();
         var leave = this.factory.LeaveAction();
         // Vectors
-        
+        this.add( this.factory.Vector().poly([0,0,  30,0,  45,50,  0,50], background1).addClass('slide-right') );
+        // List
+        this.add( this.factory.List()
+                 .addComponent( this.factory.Text('TESTING').element('li').position('relative') )
+                 .addComponent( this.factory.Text('TESTING').element('li').position('relative') )
+                 .addComponent( this.factory.Text('TESTING').element('li').position('relative') )
+                 .addComponent( this.factory.Text('TESTING').element('li').position('relative') )
+                 .addComponent( this.factory.Text('TESTING').element('li').position('relative') )
+                 .addComponent( this.factory.Text('TESTING').element('li').position('relative') )
+                 .addComponent( this.factory.Text('TESTING').element('li').position('relative') )
+                 .addComponent( this.factory.Text('TESTING').element('li').position('relative') )
+                 .addComponent( this.factory.Text('TESTING').element('li').position('relative') )
+                 .addComponent( this.factory.Text('TESTING').element('li').position('relative') )
+        .background(background1).xy(15, 3).width(40).height(44).addClass('slide-right') );
         // Buttons
         this.add( this.factory.TitleButton('RETURN').xy(1, 40).addClass('slide-right').addAction(enter).addAction(leave).addAction(menu) );
         // Render

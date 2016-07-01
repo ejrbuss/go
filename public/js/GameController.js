@@ -19,7 +19,7 @@ class GameController {
      * @param color       The color of the board
      * @param background  The name of the background file
      */
-    constructor(vc, playerModel, size, ai, color=accent, background='') {
+    constructor(vc, playerModel, size, ai, color=accent, background='testing') {
         log.info('new game started', arguments);
         this.vc = vc;
         this.id = 0;
@@ -37,6 +37,7 @@ class GameController {
         var passEnter  = vc.factory.EnterAction(select2);
         var leave      = vc.factory.LeaveAction();
         // Vectors
+        vc.add( vc.factory.Resource('rsc/backgrounds/' + background + '.png').width(100) );
         vc.add( vc.factory.Vector().poly([0,25, 10,0, 0,0], background1).addClass('slide-right') );
         vc.add( vc.factory.Vector()
                  .poly([35,0,  75,0,  65,50, 25,50], background1)
@@ -64,8 +65,8 @@ class GameController {
         vc.add( vc.factory.Resource('rsc/characters/player1.png').xyz(3, 15, 2).width(21).height(28).addClass('slide-up') )
         if (!ai)
             vc.add( vc.factory.Resource('rsc/characters/player2.png').xyz(76, 15, 2).width(21).height(28).addClass('slide-up') )
-        else 
-            vc.add( vc.factory.Resource('rsc/characters/' + ai.name + '.png').xyz(3, 15, 2).width(21).height(28).addClass('slide-up') )
+        // else 
+        //    vc.add( vc.factory.Resource('rsc/characters/' + this.ai.name + '.png').xyz(3, 15, 2).width(21).height(28).addClass('slide-up') )
         // Buttons
         vc.add( vc.factory.TitleButton('QUIT').xy(3, 5).addClass('slide-right').addAction(enter).addAction(leave).addAction(quit) );
         vc.add( vc.factory.TitleButton('PASS').xy(62, 45).addClass('slide-right').addAction(passEnter).addAction(leave).addAction(pass) );
@@ -140,21 +141,22 @@ class GameController {
      * @param pass boolean indicating whether the move is being passed
      */
     move(x, y, pass) {
-        log.info('move made', arguments)
+        log.info('move made', arguments);
+        var gm = this;
         try {
             this.game.move(x, y, pass);
             // Succes
             this.update();
             if (this.ai) {
+                this.player1.$.css({'color' : background2});
+                this.player2.$.css({'color' : select2});
                 vc.message(this.ai.name + ' TURN', select1, function() {
-                    this.player1.$.css({'color' : background2});
-                    this.player2.$.css({'color' : select2});
                     var move = gm.ai.getMove(gm.game);
-                    gm.Game.move(move.x, move.y, move.pass);
+                    gm.game.move(move.x, move.y, move.pass);
                     gm.update();
-                    vc.message(this.playerModel.username() + ' TURN', select1);
-                    this.player1.$.css({'color' : select2});
-                    this.player2.$.css({'color' : background2});
+                    vc.message(gm.playerModel.username() + ' TURN', select1);
+                    gm.player1.$.css({'color' : select2});
+                    gm.player2.$.css({'color' : background2});
                 });
             } else {
                 if (this.turn == 1) {
