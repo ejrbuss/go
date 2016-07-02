@@ -1,6 +1,6 @@
 //saveGameData.js
 
-function saveMove(move,gameID){
+function saveMove(move, gameID, callback){
 	var xmlhr = new XMLHttpRequest();
 	var obj = {
 		'gameid':gameID,
@@ -10,25 +10,40 @@ function saveMove(move,gameID){
 		'time':Date.now()
 	};
 
-	xmlhr.open('POST','/move',true);
+	xmlhr.onreadystatechange = function() {
+		if(xmlhr.readyState == 4 && xmlhr.status == 200) {
+			//handle response
+			callback(xmlhr.responseText);
+		}
+	};
+
+	xmlhr.open('POST','/addMove',true);
 	xmlhr.setRequestHeader("content-type", "application/json");
 	xmlhr.send(JSON.stringify(obj));
 
 }
 
-function updateGame(game){
+function updateGame(game, callback){
 	var xmlhr = new XMLHttpRequest();
 	var obj = {
 		'id':game.id,
 		'score1':game.player1score,
 		'score2':game.player2score,
 	};
+
+	xmlhr.onreadystatechange = function() {
+		if(xmlhr.readyState == 4 && xmlhr.status == 200) {
+			//handle response
+			callback(xmlhr.responseText);
+		}
+	};
+
 	xmlhr.open('POST','/updateGame',true);
 	xmlhr.setRequestHeader("content-type", "application/json");
 	xmlhr.send(JSON.stringify(obj));
 }
 
-function saveNewGame(player1, player2, size, cb){
+function saveNewGame(player1, player2, size, callback){
 	var xmlhr = new XMLHttpRequest();
 	var obj = {
 		'player1':player1,
@@ -39,10 +54,50 @@ function saveNewGame(player1, player2, size, cb){
 		'time':null,
 		'complete':false
 	};
-	xmlhr.open('POST','/addGame',true);
+
+	xmlhr.onreadystatechange = function() {
+		if(xmlhr.readyState == 4 && xmlhr.status == 200) {
+			//handle response
+			callback(xmlhr.responseText);
+		}
+	};
+
+	xmlhr.open('POST','/newGame',true);
 	xmlhr.setRequestHeader("content-type", "application/json");
 	xmlhr.send(JSON.stringify(obj));
 
+}
+
+function getMatchHistory(username, callback){
+	var xmlhr = new XMLHttpRequest();
+	var obj = {name:username};
+	xmlhr.onreadystatechange = function() {
+		if(xmlhr.readyState == 4 && xmlhr.status == 200) {
+			//handle response
+			callback(xmlhr.responseText);
+		}
+	}
+
+	xmlhr.open('POST', '/getGames', true);
+	xmlhr.setRequestHeader("content-type", "application/json");
+	xmlhr.send(JSON.stringify(obj));
+
+}
+
+function getMoveList(gameID, callback){
+	var xmlhr = new XMLHttpRequest();
+	var obj = {id:gameID};
+
+	xmlhr.onreadystatechange = function(){
+		if(xmlhr.readyState == 4 && xmlhr.status == 200){
+			//handle response
+			callback(xmlhr.responseText);
+		}
+	}
+
+	xmlhr.open('POST','/getMoves', true);
+	xmlhr.setRequestHeader("content-type", "application/json");
+	xmlhr.send(JSON.stringify(obj));
 }
 
 /*

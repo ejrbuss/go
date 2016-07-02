@@ -26,25 +26,34 @@ app.post("/checkDuplicateUsername", function(req, res) {
     db.checkUsername(req.body.username, res);
 });
 
-app.post("/move", function(req, res) {
+app.post("/addMove", function(req, res) {
 	console.log("Storing move...");
 	console.log(req.body);
-	db.addNewMove(req.body);
-	res.send(null);
+	db.addNewMove(req.body, res);
 });
 
-app.post("/addGame", function(req, res) {
+app.post("/newGame", function(req, res) {
     console.log("Storing New game");
     console.log(req.body);
-    var newGame = db.addNewGame(req.body);
-    res.send(newGame);
+    db.addNewGame(req.body, res);
 });
 
 app.post("/updateGame", function(req, res) {
     console.log("Updating Game data...");
     console.log(req.body);
-    db.updateGame(req.body);
-    res.send(null);
+    db.updateGame(req.body, res);
+});
+
+app.post("/getGames", function(req, res) {
+    console.log("Getting match history...");
+    console.log(req.body);
+    db.getGames(req.body, res);
+});
+
+app.post("/getMoves", function(req, res) {
+    console.log("Getting match history...");
+    console.log(req.body);
+    db.getMoveList(req.body, res);
 });
 
 app.listen(8080, function() {

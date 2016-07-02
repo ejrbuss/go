@@ -54,39 +54,80 @@ class Database {
     }
      
     //add new move
-    addNewMove(obj) {
+    addNewMove(obj, res) {
         console.log("Adding new move to database...");
         var collection = this._db.collection('moves');
         collection.insert(obj, function(err, docs) {
-            console.log(docs);
-            res.send(docs);
+            if(err)
+                res.send(null);
+            else{
+                console.log(docs);
+                res.send(doc.ops[0]);
+            }
         });
     }
 
+    //get move list for replay
+    //obj in the form {id:gameID}
+    getMoveList(obj, res) {
+        var gameID = obj.id;
+        console.log("Getting list of moves...");
+        var collection = this._db.collection('moves');
+        collection.find({gameid:gameID}).toArray(function(err, docs){
+            if(err)
+                res.send(null);
+            else {
+                console.log(docs);
+                res.send(docs);
+            }
+        })
+    }
+
     //add new game (happens at beginning of each game)
-    addNewGame(obj) {
+    addNewGame(obj, res) {
         console.log("Adding new game to database...");
         var collection = this._db.collection('games');
         collection.insert(obj, function(err, docs) {
-            console.log(docs);
-            res.send(docs);
+            if(err) 
+                res.send(null);
+            else {
+                console.log(docs);
+                res.send(docs.ops[0]);
+            }    
         });
     }
 
     //completes the game
-    updateGame(obj) {
+    updateGame(obj, res) {
         console.log("Updating game...");
 
         var id = obj.id;
         var body = {
             'score1':obj.score1,
-            'score2':obj,score2,
+            'score2':obj.score2,
             'time':Date.now(),
             'complete':true
         };
 
         var collection = this._db.collection('games');
-        return collection.updateOne({'_id':id},body);
+        collection.updateOne({id:id},body);
+        res.send(true);
+    }
+
+    //get games by username
+    //obj in the form of {name:username}
+    getGames(obj, res){
+        var username = obj.name;
+        console.log(username);
+        var collection = this._db.collection('games');
+        collection.find({$or: [{player1: username}, {player2: username}]}).toArray(function(err, docs){
+            if(err){
+                res.send(null);
+            } else {
+                console.log(docs);
+                res.send(docs);
+            }
+        });
     }
     
 }
