@@ -16,10 +16,12 @@ class GameController {
      * @param vc          The ViewController to use as the game display
      * @param playerModel The PlayerModel tracking user data for the current player
      * @param size        The board size as the length of one side
+     * @param quit        The function run when quitting the game
+     * @param callback    The function run when the game ends
      * @param color       The color of the board
      * @param background  The name of the background file
      */
-    constructor(vc, playerModel, size, ai, color=accent, background='testing') {
+    constructor(vc, playerModel, size, ai, quit, callback, color=accent, background='0') {
         log.info('new game started', arguments);
         this.vc = vc;
         this.id = 0;
@@ -31,7 +33,7 @@ class GameController {
         this.playerModel = playerModel;
         var gc = this;
         // Actions
-        var quit       = vc.factory.ClickAction(function() { vc.mainMenu(playerModel); });
+        var quit       = vc.factory.ClickAction(quit);
         var pass       = vc.factory.ClickAction(function() { gc.move(0, 0, true); });
         var enter      = vc.factory.EnterAction();
         var passEnter  = vc.factory.EnterAction(select2);

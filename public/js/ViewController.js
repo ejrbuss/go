@@ -242,7 +242,7 @@ class ViewController {
         this.add( this.factory.Text('IV',  background1).xy(64,   38).size(8).style('normal').rotate('11.3deg').addClass('slide-up-rotated') );
         this.add( this.factory.Text('V',   background1).xy(84,   42).size(8).style('normal').rotate('11.3deg').addClass('slide-up-rotated') );
         // Buttons
-        this.add( this.factory.TitleButton('RETURN'  ).xy(1, 40).addClass('slide-right').addAction(enter).addAction(leave).addAction(menu) );
+        this.add( this.factory.TitleButton('RETURN').xy(1, 40).addClass('slide-right').addAction(enter).addAction(leave).addAction(menu) );
         // Render
         this.clear();
         this.update();
@@ -256,9 +256,26 @@ class ViewController {
      */
     story(playerModel, level, scene) {
         log.info('loaded story', arguments);
-        var data = story[level].data[scene];
         var vc = this;
         // Actions
+        var skip = this.factory.ClickAction(function() { new GameController(
+            vc, 
+            playerModel, 
+            story[level].game.size, 
+            story[level].game.ai, 
+            function(){ vc.levelSelect(playerModel); },
+            undefined,
+            story[level].game.color,
+            story[level].game.background
+        )});
+        if (story[level].scenes.length <= scene) {
+            skip.action()();
+            return;
+        }
+        var next = this.factory.ClickAction(function () {
+            vc.story(playerModel, level, scene + 1);    
+        });
+        var data  = story[level].scenes[scene];
         var quit  = this.factory.ClickAction(function() { vc.levelSelect(playerModel); });
         var enter = this.factory.EnterAction();
         var leave = this.factory.LeaveAction();
@@ -268,9 +285,6 @@ class ViewController {
                 typeSpeed: 0
             }); 
         }); 
-        var next = this.factory.ClickAction(function () {
-            vc.story(playerModel, level, scene + 1);    
-        });
         // Vectors
         vc.add( vc.factory.Vector().poly([0,25, 10,0, 0,0], background1).z(1).addClass('slide-right') );
         vc.add( vc.factory.Vector()
@@ -288,7 +302,7 @@ class ViewController {
         // Buttons
         this.add( this.factory.TitleButton('QUIT').xy(3, 5).addClass('slide-right').addAction(enter).addAction(leave).addAction(quit) );
         this.add( this.factory.TitleButton('NEXT').xy(72, 44.5).addClass('slide-up').addAction(enter).addAction(leave).addAction(next) );
-        this.add( this.factory.TitleButton('SKIP').xy(80, 44.5).addClass('slide-up').addAction(enter).addAction(leave) );
+        this.add( this.factory.TitleButton('SKIP').xy(80, 44.5).addClass('slide-up').addAction(enter).addAction(leave).addAction(skip) );
         // Render
         this.clear();
         this.update();
@@ -323,21 +337,48 @@ class ViewController {
     }
     
     /**
-     * Load the versus ai screen.
+     * Load the verus pvp screen.
      * @param playerModel the PlayerModel used for states
      */
-    versusAi(playerModel) {
-        log.info('loaded versusAi', arguments);
+    versusPvP(playerModel) {
+        log.info('loaded versusPvP', arguments);
         var vc = this;
+        var background = '1';
         // Actions
         var menu  = this.factory.ClickAction(function() { vc.mainMenu(playerModel); });
-        var play  = this.factory.ClickAction(function() { new GameController(vc, playerModel, 9, 'AI2'); });
+        var play  = this.factory.ClickAction(function() { 
+            new GameController(vc, playerModel, 9, null, function(){ vc.versusPvP(playerModel); }, function() {}, accent, background); 
+        });
+        var stageSelect = this.factory.ClickAction(function(component) {
+            background = component.$.attr('stage');
+            $( '.stage' ).addClass('unselected');
+            component.$.removeClass('unselected')
+        });
         var enter = this.factory.EnterAction();
         var leave = this.factory.LeaveAction();
+        var leaveBlack  = this.factory.LeaveAction(background1);
         // Vectors
-        
+        this.add( this.factory.Vector()
+            .poly([0,5, 0,50, 7,50], accent)
+            .poly([32,0, 76,0, 66,50, 22,50], background1)
+            .poly([0,25,  10,50,   0,50], background1)
+            .addClass('slide-right') );
+        // Text
+
+        // Images
+        this.add( this.factory.Resource('rsc/backgrounds/select1.png').xy(17, 13).width(15)
+            .setAttribute('stage', '1').addClass('slide-right stage').addAction(stageSelect) );
+        this.add( this.factory.Resource('rsc/backgrounds/select2.png').xy(29, 13).width(15)
+            .setAttribute('stage', '2').addClass('slide-right stage unselected').addAction(stageSelect) );
+        this.add( this.factory.Resource('rsc/backgrounds/select3.png').xy(41, 13).width(15)
+            .setAttribute('stage', '3').addClass('slide-right stage unselected').addAction(stageSelect) );
+        this.add( this.factory.Resource('rsc/backgrounds/select4.png').xy(53, 13).width(15)
+            .setAttribute('stage', '4').addClass('slide-right stage unselected').addAction(stageSelect) );
+        this.add( this.factory.Resource('rsc/backgrounds/select5.png').xy(65, 13).width(15)
+            .setAttribute('stage', '5').addClass('slide-right stage unselected').addAction(stageSelect) );
         // Buttons
-        this.add( this.factory.TitleButton('PlAY'  ).xy(40, 40).addClass('slide-right').addAction(enter).addAction(leave).addAction(play) );
+        this.add( this.factory.TitleButton('PlAY', background1).size(10).xy(80, 19).style('normal')//15)
+            .class(['large-rotate', 'unselectable', 'slide-right']).addAction(enter).addAction(leaveBlack).addAction(play) );
         this.add( this.factory.TitleButton('RETURN').xy(1,  40).addClass('slide-right').addAction(enter).addAction(leave).addAction(menu) );
         // Render
         this.clear();
@@ -345,21 +386,61 @@ class ViewController {
     }
     
     /**
-     * Load the verus pvp screen.
+     * Load the versus ai screen.
      * @param playerModel the PlayerModel used for states
      */
-    versusPvP(playerModel) {
+    versusAi(playerModel) {
         log.info('loaded versusAi', arguments);
         var vc = this;
+        var background = '1';
         // Actions
-        var menu  = this.factory.ClickAction(function() { vc.mainMenu(playerModel); });
-        var play  = this.factory.ClickAction(function() { new GameController(vc, playerModel, 9); });
-        var enter = this.factory.EnterAction();
-        var leave = this.factory.LeaveAction();
+        var menu   = this.factory.ClickAction(function() { vc.mainMenu(playerModel); });
+        var play   = this.factory.ClickAction(function() { 
+            new GameController(vc, playerModel, 9, 'AI2', function(){ vc.versusAi(playerModel); }, function() {}, accent, background); 
+        });
+        var aiSelect = this.factory.ClickAction(function(component) {
+            $( '.ai' ).addClass('unselected');
+            component.$.removeClass('unselected')
+        });
+        var stageSelect = this.factory.ClickAction(function(component) {
+            background = component.$.attr('stage');
+            $( '.stage' ).addClass('unselected');
+            component.$.removeClass('unselected')
+        });
+        var enter       = this.factory.EnterAction();
+        var leave       = this.factory.LeaveAction(); 
+        var leaveBlack  = this.factory.LeaveAction(background1);
         // Vectors
+        this.add( this.factory.Vector()
+            .poly([0,5, 0,50, 7,50], accent)
+            .poly([32,0, 76,0, 66,50, 22,50], background1)
+            .poly([0,25,  10,50,   0,50], background1)
+            .addClass('slide-right') );
+        // Images
+        this.add( this.factory.Resource('rsc/characters/select1.png').xy(20, 2).width(15)
+            .setAttribute('ai', '1').addClass('slide-left ai').addAction(aiSelect) );
+        this.add( this.factory.Resource('rsc/characters/select2.png').xy(32, 2).width(15)
+            .setAttribute('ai', '2').addClass('slide-left ai unselected').addAction(aiSelect) );
+        this.add( this.factory.Resource('rsc/characters/select3.png').xy(44, 2).width(15)
+            .setAttribute('ai', '3').addClass('slide-left ai unselected').addAction(aiSelect) );
+        this.add( this.factory.Resource('rsc/characters/select4.png').xy(56, 2).width(15)
+            .setAttribute('ai', '4').addClass('slide-left ai unselected').addAction(aiSelect) );
+        this.add( this.factory.Resource('rsc/characters/select5.png').xy(68, 2).width(15)
+            .setAttribute('ai', '5').addClass('slide-left ai unselected').addAction(aiSelect) );
         
+        this.add( this.factory.Resource('rsc/backgrounds/select1.png').xy(20, 26).width(15)
+            .setAttribute('stage', '1').addClass('slide-right stage').addAction(stageSelect) );
+        this.add( this.factory.Resource('rsc/backgrounds/select2.png').xy(32, 26).width(15)
+            .setAttribute('stage', '2').addClass('slide-right stage unselected').addAction(stageSelect) );
+        this.add( this.factory.Resource('rsc/backgrounds/select3.png').xy(44, 26).width(15)
+            .setAttribute('stage', '3').addClass('slide-right stage unselected').addAction(stageSelect) );
+        this.add( this.factory.Resource('rsc/backgrounds/select4.png').xy(56, 26).width(15)
+            .setAttribute('stage', '4').addClass('slide-right stage unselected').addAction(stageSelect) );
+        this.add( this.factory.Resource('rsc/backgrounds/select5.png').xy(68, 26).width(15)
+            .setAttribute('stage', '5').addClass('slide-right stage unselected').addAction(stageSelect) );
         // Buttons
-        this.add( this.factory.TitleButton('PlAY'  ).xy(40, 40).addClass('slide-right').addAction(enter).addAction(leave).addAction(play) );
+        this.add( this.factory.TitleButton('PlAY', background1).size(10).xy(80, 19).style('normal')//15)
+            .class(['large-rotate', 'unselectable', 'slide-right']).addAction(enter).addAction(leaveBlack).addAction(play) );
         this.add( this.factory.TitleButton('RETURN').xy(1,  40).addClass('slide-right').addAction(enter).addAction(leave).addAction(menu) );
         // Render
         this.clear();
@@ -377,7 +458,8 @@ class ViewController {
         var enter = this.factory.EnterAction();
         var leave = this.factory.LeaveAction();
         // Vectors
-        this.add( this.factory.Vector().poly([0,0,  30,0,  45,50,  0,50], background1).addClass('slide-right') );
+        this.add( this.factory.Vector().poly([0,0,     30,0,  45,50,  0,50], background1).addClass('slide-right') );
+        this.add( this.factory.Vector().poly([100,50,  100,25,  90,50], background1).z(1).addClass('slide-left') );
         // List
         this.add( this.factory.List()
                  .addComponent( this.factory.Text('TESTING').element('li').position('relative') )
@@ -393,6 +475,7 @@ class ViewController {
         .background(background1).xy(15, 3).width(40).height(44).addClass('slide-right') );
         // Buttons
         this.add( this.factory.TitleButton('RETURN').xy(1, 40).addClass('slide-right').addAction(enter).addAction(leave).addAction(menu) );
+        this.add( this.factory.TitleButton('REPLAY').xy(88, 40).addClass('slide-left').addAction(enter).addAction(leave).addAction(menu) );
         // Render
         this.clear();
         this.update();

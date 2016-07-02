@@ -9,12 +9,49 @@
 //==========================================================================================================================//
 // GLOBALS                                                                                                                  
 //==========================================================================================================================//
-var id_counter  = 0;             // Ensures Components have a unique id
+var id_counter  = 0;            // Ensures Components have a unique id
 var background1 = '#000000';    // Black background
 var background2 = '#FFFFFF';    // White background
 var accent      = '#0000FF';    // Blue accent
 var select1     = '#C80164';    // Purple select
 var select2     = '#00C864';    // Green select
+//==========================================================================================================================//
+// PRELOAD RESOURCES                                                                                                                 
+//==========================================================================================================================//
+$.preloadImages( 
+    // Icons
+    'rsc/icons/logo.png',
+    // Characters
+    'rsc/characters/1.png',
+    'rsc/characters/2.png',
+    'rsc/characters/3.png',
+    'rsc/characters/4.png',
+    'rsc/characters/5.png',
+    'rsc/characters/level1.png',
+    'rsc/characters/level2.png',
+    'rsc/characters/level3.png',
+    'rsc/characters/level4.png',
+    'rsc/characters/level5.png',
+    'rsc/characters/select1.png',
+    'rsc/characters/select2.png',
+    'rsc/characters/select3.png',
+    'rsc/characters/select4.png',
+    'rsc/characters/select5.png',
+    'rsc/characters/ai.png',
+    'rsc/characters/pvp.png',
+    // Backgrounds
+    'rsc/backgrounds/0.png',
+    'rsc/backgrounds/1.png',
+    'rsc/backgrounds/2.png',
+    'rsc/backgrounds/3.png',
+    'rsc/backgrounds/4.png',
+    'rsc/backgrounds/5.png',
+    'rsc/backgrounds/select1.png',
+    'rsc/backgrounds/select2.png',
+    'rsc/backgrounds/select3.png',
+    'rsc/backgrounds/select4.png',
+    'rsc/backgrounds/select5.png'
+);
 //==========================================================================================================================//
 // PROPERTY EXPANDER                                                                                                                  
 //==========================================================================================================================//
@@ -270,10 +307,6 @@ class Component extends PropertyExpander {
     append(html) {
         this.html(this.html() + html);
         return this;
-    }
-    
-    item(item) {
-        return this.append('<li>' + item + '</li>');
     }
     
     /**

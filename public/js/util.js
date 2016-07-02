@@ -46,6 +46,15 @@ function attributize(obj) {
 Math.randomInt = function(max) {
     return Math.floor((Math.random() * (max - 1))) + 1;
 }
+
+/**
+ * Preloads images so that they show quickly.
+ */
+$.preloadImages = function() {
+  for (var i = 0; i < arguments.length; i++) {
+    $("<img />").attr("src", arguments[i]);
+  }
+}
 //==========================================================================================================================//
 // DEBUGGER                                                                                                                  
 //==========================================================================================================================//
