@@ -1,47 +1,47 @@
-"use strict"
+//ai.js
 
-class AI{
-	//class interface
-	// make your AI implement this
+/*
+	AI Goals:
+		start of game prioritize center of the map
+		try to build to a corner or a side
+		secure large territory on the corner / side
+
+		generally play next to own pieces except when CHANGING PRIORITIZED AREA
+
+
+	To Do:
+		define each area for return in getQuadrant() and getSide()
+			- Sides: top,left,right,bottom		-		Quadrants: tl,tr,bl,br
+		where to play in determined area
+			- Use simulation
+*/
+
+Class GoAI {
+
 	constructor(Game){
-        this.name = 'placeholder';
-	}  
-
-	getMove(Game){
-		return {x: 0, y: 0};
-	}
-}
-
-class AI3 {
-
-	constructor(Game) {
-		this.name = 'AI3';
 		this.boardSize = Game.Board.size - 1;
-		this.SIMULATIONS = 90;
 		this.moves = 0;
 		this.lastMove = null;
 		this.potentialMoves = [{x:this.boardSize/2, y:this.boardSize/2},{x:(this.boardSize/2)-1,y:(this.boardSize/2)-1}];
 		for(var i = this.boardSize/2 -2; i < this.boardSize/2 + 2; i++){
 			for(var j = this.boardSize/2 -2; j < this.boardSize/2 + 2; j++){
 				this.potentialMoves.push({x:i, y:j});
-			}
 		}
 	}
 
 	getMove(Game){
-		log.debug('getting move');
 		this.moves += 1;
 		var x = -1;
 		var y = -1;
-		var possiblemoves = this.potentialMoves;
-		var grid = Game.Board.grid;
+		var possiblemoves = [];
+		var grid = gridCopy(Game.grid);
 		var n = grid.size;
 
-		if(this.moves > 5){
+		if(move > 6){
 			//needs a lot of work
 			//play in main territory until own 50% then move right
-			var quad = this.getQuadrant(Game.Board, 2);
-			var side = this.getSide(Game.Board, 2);
+			var quad = getQuadrant(Game.board, 2);
+			var side = getSide(Game.board, 2);
 
 			if (quad.n >= side.n && quad.n < quad.spaces.length){
 				possiblemoves = quad.spaces;
@@ -53,6 +53,8 @@ class AI3 {
 				possiblemoves = quad.spaces;
 			}
 		}
+
+		//set possible moves to empty locations in area
 
 
 		var movescore = [];
@@ -68,7 +70,7 @@ class AI3 {
 					makeRandomMoves(Game, Math.floor((Game.Board.size*Game.Board.size)*1.25));
 					var score = endGame(Game);
 					if (score.player2score >= score.player1score)
-						movescore[i] += 1;
+						movescore[i]++;
 					Game.resetState(aftermovestate);
 				}
 			}
@@ -84,7 +86,7 @@ class AI3 {
 			}
 		}
 		console.log(movescore);
-		var max = 0;
+		var max = -1;
 		var maxindex = 0;
 		for (var k = 0; k < movescore.length; k++){
 			if (movescore[k] > max){
@@ -95,24 +97,28 @@ class AI3 {
 
 		
 		
-		if (max == 0)
+		if (max == -1)
 			return {x: 0, y: 0, pass: true};
 		else
 			return {x: possiblemoves[maxindex].x, y: possiblemoves[maxindex].y};
 	
 	}
 
+	playMiddle(Game){
+		var grid = Game.board;
+		var n = grid.size;
+
+		if(grid[(n+1)/2 - 1][(n+1)/2 - 1] == 0)
+			return new Move((n+1)/2 - 1, (n+1)/2 -1);
+
+
+	}
+
 	getQuadrant(board, player){
-		var grid = board.gridCopy(board.grid);
-		var n = grid.length;
-		var q1 = 0;
-		var q2 = 0;
-		var q3 = 0;
-		var q4 = 0;
-		var s1 = [];
-		var s2 = [];
-		var s3 = [];
-		var s4 = [];
+		var grid = gridCopy(board.grid);
+		var n = grid.size;
+		var q1,q2,q3,q4 = 0;
+		var s1,s2,s3,s4 = []
 		
 		//q1 = top left
 		for(var i = 0; i < (n-1)/2; i++){
@@ -165,16 +171,10 @@ class AI3 {
 	}
 
 	getSide(board, player){
-		var grid = board.gridCopy(board.grid);
-		var n = grid.length ;
-		var l = 0;
-		var t = 0;
-		var r = 0;
-		var b = 0;
-		var st = [];
-		var sl = [];
-		var sr = [];
-		var sb = [];
+		var grid = gridCopy(board.grid);
+		var n = grid.size;
+		var l,t,r,b = 0;
+		var st,sl,sr,sb = [];
 		//t
 		for(var i = 0; i < (n-1)/2; i++){
 			for(var j = i; j < n - i; j++){
@@ -203,7 +203,7 @@ class AI3 {
 			}
 		}
 		//b
-		for(var i = n - 1; i > (n+1)/2; i--){
+		for(var i = n; i > (n+1)/2; i--){
 			for(var j = i; j > n - 1 - i; j--){
 				if(grid[i][j] == player)
 					b++;
@@ -225,98 +225,26 @@ class AI3 {
 
 }
 
-
-class AI2{
-	constructor(Game){
-        this.name = 'AI2';
-		var i = Math.floor(Game.Board.size / 2);
-		var j = i;
-		this.blobmoves = [{x: i, y: j}, {x: i+1, y: j}]
-	}
-	getMove(Game){
-		var pass = "pass";
-		while (this.blobmoves.length > 0){
-			var i = randomInt(this.blobmoves.length);
-			try{
-				var x = this.blobmoves[i].x;
-				var y = this.blobmoves[i].y;
-				Game.Board.move(new Move(x, y, Game.player2));
-				this.blobmoves.push({x: x+1, y: y});
-				this.blobmoves.push({x: x-1, y: y});
-				this.blobmoves.push({x: x, y: y+1});
-				this.blobmoves.push({x: x, y: y-1});
-				Game.Board.grid[x][y] = 0;
-				pass = null;
-				break;
-			}
-			catch(err){
-				if (err == "InvalidMoveException" || err == "SuicideException" || err == "ReturnToOldStateException"){
-					log.debug("Blob no Move");
-				}
-				else
-					throw err;
-			}
-			finally{
-				this.blobmoves.splice(i, 1);
-			}
-		}
-		return {x: x, y: y, pass};
+function makeRandomMoves(GameManager, numberofmoves, locations){
+	var possiblemoves = locations;
+	var moves = [];
+	for (var i = 0; i < numberofmoves; i++){
+		var n = randomInt(possiblemoves.length);
+		moves.push(possiblemoves[n]);
 	}
 }
 
-class AI5{
-    
-	constructor(Game){
-        this.name = 'AI5';
-		this.SIMULATIONS = Math.floor(Math.pow(0.016*Game.Board.size, -2.9));
-		this.MAXMOVES = 90;
-	}
-
-	getMove(Game){
-		var possiblemoves = findPossibleMoves(Game.Board);
-		if (possiblemoves.length > this.MAXMOVES){
-			possiblemoves = filterMoves(possiblemoves, this.MAXMOVES);
+function findPossibleMoves(Board){
+	var possiblemoves = [];
+	for (var i = 0; i < Board.size; i++){
+		for (var j = 0; j < Board.size; j++){
+			if (Board.grid[i][j] == 0)
+				possiblemoves.push({x: i, y: j});
 		}
-		var movescore = [];
-		for (var i = 0; i < possiblemoves.length; i++){
-			movescore.push(0);
-		}
-		for (var i = 0; i < possiblemoves.length; i++){
-			var gamestate = Game.copyState();
-			try{
-				Game.move(possiblemoves[i].x, possiblemoves[i].y); // will except if fails
-				var aftermovestate = Game.copyState();
-				for (var sims = 0; sims < this.SIMULATIONS; sims++){
-					makeRandomMoves(Game, Math.floor((Game.Board.size*Game.Board.size)*1.25));
-					var score = endGame(Game);
-					if (score.player2score >= score.player1score)
-						movescore[i]++;
-					Game.resetState(aftermovestate);
-				}
-			}
-			catch(err){
-				if (err == "InvalidMoveException" || err == "SuicideException" || err == "ReturnToOldStateException"){
-					movescore[i] = -1;
-				}
-				else
-					throw err;
-			}
-			finally{
-				Game.resetState(gamestate);
-			}
-		}
-		log.debug(movescore);
-		var max = -1;
-		var maxindex = 0;
-		for (var k = 0; k < movescore.length; k++){
-			if (movescore[k] > max){
-				max = movescore[k];
-				maxindex = k;
-			}
-		}
-		if (max == -1)
-			return {x: 0, y: 0, pass: true};
-		else
-			return {x: possiblemoves[maxindex].x, y: possiblemoves[maxindex].y};
 	}
 }
+
+function randomInt(n){
+	return Math.floor(Math.random()*n);
+}
+

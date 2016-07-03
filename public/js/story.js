@@ -23,7 +23,7 @@ var story = [
         ],
         game: {
             size: 9,               // Board size
-            ai: 'AI2',             // Ai to use
+            ai: 'AIC',             // Ai to use
             color: select1,        // Color of the obard
             background: '1'        // Backgroudn image
         }
