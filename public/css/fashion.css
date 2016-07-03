@@ -22,84 +22,143 @@
  * ANIMATIONS
  */
 
+@-webkit-keyframes slide-down {
+    from { -webkit-transform: translate(0, -50vw); transform: translate(0, -50vw) }
+    to { -webkit-transform: none; transform: none }
+}
+
 @keyframes slide-down {
-    from { transform: translate(0, -50vw) }
-    to { transform: none }
+    from { -webkit-transform: translate(0, -50vw); transform: translate(0, -50vw) }
+    to { -webkit-transform: none; transform: none }
 }
 
 .slide-down {
-    animation: slide-down;
-    animation-duration: 0.5s;
+    -webkit-animation: slide-down;
+            animation: slide-down;
+    -webkit-animation-duration: 0.5s;
+            animation-duration: 0.5s;
+}
+
+@-webkit-keyframes slide-up {
+    from { -webkit-transform: translate(0, 50vw); transform: translate(0, 50vw) }
+    to { -webkit-transform: none; transform: none }
 }
 
 @keyframes slide-up {
-    from { transform: translate(0, 50vw) }
-    to { transform: none }
+    from { -webkit-transform: translate(0, 50vw); transform: translate(0, 50vw) }
+    to { -webkit-transform: none; transform: none }
 }
 
 .slide-up {
-    animation: slide-up;
-    animation-duration: 0.5s;
+    -webkit-animation: slide-up;
+            animation: slide-up;
+    -webkit-animation-duration: 0.5s;
+            animation-duration: 0.5s;
+}
+
+@-webkit-keyframes slide-left {
+    from { -webkit-transform: translate(50vw, 0); transform: translate(50vw, 0) }
+    to { -webkit-transform: none; transform: none }
 }
 
 @keyframes slide-left {
-    from { transform: translate(50vw, 0) }
-    to { transform: none }
+    from { -webkit-transform: translate(50vw, 0); transform: translate(50vw, 0) }
+    to { -webkit-transform: none; transform: none }
 }
 
 .slide-left {
-    animation: slide-left;
-    animation-duration: 0.5s;
+    -webkit-animation: slide-left;
+            animation: slide-left;
+    -webkit-animation-duration: 0.5s;
+            animation-duration: 0.5s;
+}
+
+@-webkit-keyframes slide-right {
+    from { -webkit-transform: translate(-50vw, 0); transform: translate(-50vw, 0) };
+    to { -webkit-transform: none; transform: none };
 }
 
 @keyframes slide-right {
-    from { transform: translate(-50vw, 0) };
-    to { transform: none };
+    from { -webkit-transform: translate(-50vw, 0); transform: translate(-50vw, 0) };
+    to { -webkit-transform: none; transform: none };
 }
 
 .slide-right {
-    animation: slide-right;
-    animation-duration: 0.5s;
+    -webkit-animation: slide-right;
+            animation: slide-right;
+    -webkit-animation-duration: 0.5s;
+            animation-duration: 0.5s;
+}
+
+@-webkit-keyframes banner-in {
+    from { -webkit-transform: translate(-50vw, 50vw) skew(-55deg); transform: translate(-50vw, 50vw) skew(-55deg) }
+    to {  -webkit-transform: translate(0, 0) skew(-55deg);  transform: translate(0, 0) skew(-55deg) }
 }
 
 @keyframes banner-in {
-    from { transform: translate(-50vw, 50vw) skew(-55deg) }
-    to {  transform: translate(0, 0) skew(-55deg) }
+    from { -webkit-transform: translate(-50vw, 50vw) skew(-55deg); transform: translate(-50vw, 50vw) skew(-55deg) }
+    to {  -webkit-transform: translate(0, 0) skew(-55deg);  transform: translate(0, 0) skew(-55deg) }
+}
+
+@-webkit-keyframes banner-out {
+    from { -webkit-transform: translate(0, 0) skew(-55deg); transform: translate(0, 0) skew(-55deg) }
+    to { -webkit-transform: translate(50vw, -50vw) skew(-55deg); transform: translate(50vw, -50vw) skew(-55deg) }
 }
 
 @keyframes banner-out {
-    from { transform: translate(0, 0) skew(-55deg) }
-    to { transform: translate(50vw, -50vw) skew(-55deg) }
+    from { -webkit-transform: translate(0, 0) skew(-55deg); transform: translate(0, 0) skew(-55deg) }
+    to { -webkit-transform: translate(50vw, -50vw) skew(-55deg); transform: translate(50vw, -50vw) skew(-55deg) }
 }
 
 .banner-transition {
-    animation: banner-in 0.5s, banner-out 0.5s;
-    animation-delay: 0s, 1.5s;
+    -webkit-animation: banner-in 0.5s, banner-out 0.5s;
+            animation: banner-in 0.5s, banner-out 0.5s;
+    -webkit-animation-delay: 0s, 1.5s;
+            animation-delay: 0s, 1.5s;
+}
+
+@-webkit-keyframes text-in {
+    from { -webkit-transform: translate(-50vw, 50vw); transform: translate(-50vw, 50vw) }
+    to {  -webkit-transform: translate(0, 0);  transform: translate(0, 0) }
 }
 
 @keyframes text-in {
-    from { transform: translate(-50vw, 50vw) }
-    to {  transform: translate(0, 0) }
+    from { -webkit-transform: translate(-50vw, 50vw); transform: translate(-50vw, 50vw) }
+    to {  -webkit-transform: translate(0, 0);  transform: translate(0, 0) }
+}
+
+@-webkit-keyframes text-out {
+    from { -webkit-transform: translate(0, 0); transform: translate(0, 0) }
+    to { -webkit-transform: translate(50vw, -50vw); transform: translate(50vw, -50vw) }
 }
 
 @keyframes text-out {
-    from { transform: translate(0, 0) }
-    to { transform: translate(50vw, -50vw) }
+    from { -webkit-transform: translate(0, 0); transform: translate(0, 0) }
+    to { -webkit-transform: translate(50vw, -50vw); transform: translate(50vw, -50vw) }
 }
 
 .text-transition {
-    animation: text-in 0.5s, text-out 0.5s;
-    animation-delay: 0s, 1.5s;
+    -webkit-animation: text-in 0.5s, text-out 0.5s;
+            animation: text-in 0.5s, text-out 0.5s;
+    -webkit-animation-delay: 0s, 1.5s;
+            animation-delay: 0s, 1.5s;
+}
+
+@-webkit-keyframes slide-up-rotated {
+    from { -webkit-transform: translate(0, 50vw) rotate(11.3deg); transform: translate(0, 50vw) rotate(11.3deg);  }
+    to { -webkit-transform: none rotate(11.3geg); transform: none rotate(11.3geg) }
 }
 
 @keyframes slide-up-rotated {
-    from { transform: translate(0, 50vw) rotate(11.3deg);  }
-    to { transform: none rotate(11.3geg) }
+    from { -webkit-transform: translate(0, 50vw) rotate(11.3deg); transform: translate(0, 50vw) rotate(11.3deg);  }
+    to { -webkit-transform: none rotate(11.3geg); transform: none rotate(11.3geg) }
 }
 
 .slide-up-rotated {
-    animation: slide-up-rotated;
-    animation-duration: 0.5s;
+    -webkit-animation: slide-up-rotated;
+            animation: slide-up-rotated;
+    -webkit-animation-duration: 0.5s;
+            animation-duration: 0.5s;
 }
 /*
  * GLOBAL DEFAULTS
@@ -190,14 +249,25 @@ ul::-webkit-scrollbar-thumb {
 
 .rotate:hover {
     font-size: 5vw !important;
-    transform: rotateZ(-10deg) !important;
-    transition: all 0.2s ease;
+    -webkit-transform: rotateZ(-10deg) !important;
+            transform: rotateZ(-10deg) !important;
+    -webkit-transition: all 0.2s ease;
+            transition: all 0.2s ease;
 }
 
 .large-rotate:hover {
     font-size: 12vw !important;
-    transform: rotateZ(-10deg) !important;
-    transition: all 0.2s ease;
+    -webkit-transform: rotateZ(-10deg) !important;
+            transform: rotateZ(-10deg) !important;
+    -webkit-transition: all 0.2s ease;
+            transition: all 0.2s ease;
+}
+
+.grow:hover {
+    -webkit-transform: scale(1.2, 1.2) !important;
+            transform: scale(1.2, 1.2) !important;
+    -webkit-transition: all 0.2s ease;
+            transition: all 0.2s ease;
 }
 
 .circle {
@@ -205,5 +275,6 @@ ul::-webkit-scrollbar-thumb {
 }
 .unselected {
     -webkit-filter: grayscale(100%); /* Chrome, Safari, Opera */
-    filter: grayscale(100%);
+    -webkit-filter: grayscale(100%);
+            filter: grayscale(100%);
 }

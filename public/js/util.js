@@ -118,7 +118,7 @@ class debug {
      * @param size the size of the game board
      */
     static game(size=9) {
-        new GameController(vc, new PlayerModel('debug'), size);
+        new GameController(vc, new PlayerModel('debug'), size, null, debug.mainMenu);
     }
     
     /**
@@ -133,6 +133,27 @@ class debug {
      */
     static profile() {
         vc.profile(new PlayerModel('debug'));
+    }
+    
+    /**
+     * Put vectors in debug mode.
+     */
+    static vectors() {
+        ComponentFactory.Vector = function() {
+            return new Component()
+            .setAttr('preserveAspectRatio', 'none')
+            .background('#F00')
+            .element('svg')
+            .opacity(0.8)
+        }
+        this.reload();
+    }
+    
+    /**
+     * Reload the current UI.
+     */
+    static reload() {
+        vc.reload();    
     }
     
 }

@@ -197,7 +197,7 @@ class Component extends PropertyExpander {
         this.listProperty.action    = [];
         this.listProperty.component = [];
         // Map properties
-        this.mapProperty.attribute  = {};
+        this.mapProperty.attr       = {};
         // Expand propertoes
         super.expand();
     }
@@ -209,7 +209,7 @@ class Component extends PropertyExpander {
     render(parent) {
          parent.append('<{0} {1} class="{2}" id="{3}">{4}{5}</{0}>'.format(
             this.element(),
-            attributize(this.attribute()),
+            attributize(this.attr()),
             this.class().join(' '),
             this.id(),
             this.text(),
@@ -301,6 +301,21 @@ class Component extends PropertyExpander {
     }
     
     /**
+     * Attach data to this component.
+     * @data the data to attach
+     */
+    send(data) {
+        return this.setAttr('data', JSON.stringify(data));
+    }
+    
+    /**
+     * Read the data attached to this component.
+     */
+    recieve() {
+        return JSON.parse(this.$.attr('data'));
+    }
+    
+    /**
      * Appends inner html.
      * @param html the HTML to append
      */
@@ -315,18 +330,8 @@ class Component extends PropertyExpander {
      * @param color  the fill color of the polygon
      */
     poly(points, color) {
-        return this.append('<polygon points=' + this.formatPoints(points) + ' style="fill:' + color + '"/>');
-    }
-    
-    /**
-     * Returns a formatted a list of points.
-     * @param a list of polygon points.
-     */
-    formatPoints(points) {
-        var content = points[0];
-        for(var i = 1; i < points.length; i++) 
-            content += (i % 2 == 0 ? ' ' : ',') + points[i];
-        return '"' + content + '"';
+        this.fit(points);
+        return this.append('<polygon points=' + points + ' style="fill:' + color + '"/>');
     }
     
     /**
@@ -337,7 +342,36 @@ class Component extends PropertyExpander {
      * @param color the fill color of the circle
      */
     circle(x, y, r, color) {
+        this.fit([x, y, x + 2 * r, y + 2 * r]);
         return this.append('<circle cx="{0}" cy="{1}" r="{2}"  style="fill:{3}"/>'.format(x + r, y + r, r, color));
+    }
+    
+    /**
+     * Fits the viewport to the given set of points.
+     * @param a list of points.
+     */
+    fit(points) {
+        var xMin = 100;
+        var yMin = 50;
+        var xMax = 0;
+        var yMax = 0;
+        for(var i = 0; i < points.length; i += 2) {
+            xMin = Math.min(points[i], xMin);
+            xMax = Math.max(points[i], xMax);
+        }
+        for(var i = 1; i < points.length; i += 2) {
+            yMin = Math.min(points[i], yMin);
+            yMax = Math.max(points[i], yMax);
+        }
+        if(this.x() + this.y() + this.width() + this.height() == 0) {
+            this.x(Math.min(xMin)).y(Math.min(yMin));
+        } else {
+            xMax = Math.max(this.width() + this.x(), xMax)
+            yMax = Math.max(this.height() + this.y(), yMax)
+            this.x(Math.min(this.x(), xMin)).y(Math.min(this.y(), yMin));
+        }
+        this.width(xMax - this.x()).height(yMax - this.y());
+        this.setAttr('viewBox', [this.x(), this.y(), this.width(), this.height()].join(' '));
     }
     
 }
@@ -372,14 +406,11 @@ class ComponentFactory {
     /**
      * Returns a new Component ready to have shapes added to it.
      */
-    Vector() {
+    static Vector() {
         return new Component()
-            .setAttribute('preserveAspectRatio', 'none')
-            .setAttribute('viewBox', '0 0 100 50')
+            .setAttr('preserveAspectRatio', 'none')
             .element('svg')
             .shadow(0.2)
-            .width(100)
-            .height(50);
     }
     
     /**
@@ -387,7 +418,7 @@ class ComponentFactory {
      * @param text  the text to show
      * @param color the color of the text
      */
-    Text(text='', color=background2) {
+    static Text(text='', color=background2) {
         return new Component()
             .addClass('unselectable')
             .foreground(color)
@@ -402,8 +433,8 @@ class ComponentFactory {
      * @param text  the text to show
      * @param color the color of the text
      */
-    Title(text='', color=background2) {
-        return this.Text(text, color)
+    static Title(text='', color=background2) {
+        return ComponentFactory.Text(text, color)
             .addClass('stroke')
             .shadow(0.1)
             .size(4)
@@ -414,16 +445,31 @@ class ComponentFactory {
      * @param text  the text to show
      * @param color the color of the text
      */
-    TitleButton(text='', color=background2) {
-        return this.Title(text, color)
+    static TitleButton(text='', color=background2, select=select1) {
+        return ComponentFactory.Title(text, color)
+            .addAction(ComponentFactory.EnterAction(select))
+            .addAction(ComponentFactory.LeaveAction(color))
             .addClass('rotate')
             .shadow(0)
     }
     
     /**
+     * Returns a new Component that acts as a large clickable title.
+     * @param text  the text to show
+     * @param color the color of the text   
+     */
+    static LargeTitleButton(text='', color=background2, select=select1) {
+        return ComponentFactory.Text(text, color)
+            .addAction(ComponentFactory.EnterAction(select))
+            .addAction(ComponentFactory.LeaveAction(color))
+            .addClass('large-rotate')
+            .size(10)
+    }
+    
+    /**
      * Returns a new Component that acts as a text field.
      */
-    Input() {
+    static Input() {
         return new Component()
             .element('input')
             .background(background1)
@@ -436,7 +482,7 @@ class ComponentFactory {
             .z(10);
     }
     
-    List() {
+    static List() {
         return new Component()
             .element('ul');
     }
@@ -444,25 +490,58 @@ class ComponentFactory {
     /**
      * Returns a new Component that acts ass a password field.
      */
-    Password() {
-        return this.Input()
-            .setAttribute('type', 'password');
+    static Password() {
+        return ComponentFactory.Input()
+            .setAttr('type', 'password');
     }
     
     /** 
      * Returns a new Component that loads a resource (image) from a file.
      * @param src the path to the file to load
      */
-    Resource(src='') {
+    static Resource(src='') {
         return new Component()
-            .setAttribute('src', src)
+            .setAttr('src', src)
             .element('img');
+    }
+    
+    /** 
+     * Returns a new Component that loads a character resource.
+     * @param name the name of the character
+     */
+    static Character(name='') {
+        return ComponentFactory.Resource('rsc/characters/' + name + '.png');
+    }
+    
+    /** 
+     * Returns a new Component that loads a background resource.
+     * @param name the name of the background
+     */
+    static Background(name='') {
+        return ComponentFactory.Resource('rsc/backgrounds/' + name + '.png')
+            .width(100);
+    }
+    
+    static SelectStage(name, data) {
+        return ComponentFactory.Background(name)
+            .addClass('slide-right stage grow')
+            .addClass('unselected')
+            .send(data)
+            .width(15);      
+    }
+    
+    static SelectAi(name, data) {
+        return ComponentFactory.Character(name)
+            .addClass('slide-left ai grow')
+            .addClass('unselected')
+            .send(data)
+            .width(15)
     }
     
     /**
      * Gives focus to the component this is added to.
      */
-    FocusAction() {
+    static FocusAction() {
         return new Action()
             .action(function(component) {
                 component.$.focus();
@@ -473,7 +552,7 @@ class ComponentFactory {
      * Returns a new Action that is triggered by clicking.
      * @param action the function to run when the Component this is added to is clicked
      */
-    ClickAction(action) {
+    static ClickAction(action) {
         return new Action()
             .trigger('click')
             .action(action);
@@ -484,7 +563,7 @@ class ComponentFactory {
      * @param val the css value 
      * @param val the css key
      */
-    EnterAction(val=select1, key='color') {
+    static EnterAction(val=select1, key='color') {
         return new Action()
             .trigger('mouseenter')
             .action(function(component) { 
@@ -499,7 +578,7 @@ class ComponentFactory {
      * @param val the css value 
      * @param val the css key
      */
-    LeaveAction(val=background2, key='color') {
+    static LeaveAction(val=background2, key='color') {
         return new Action()
             .trigger('mouseleave')
             .action(function(component) {

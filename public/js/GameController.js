@@ -33,22 +33,19 @@ class GameController {
         this.playerModel = playerModel;
         var gc = this;
         // Actions
-        var quit       = vc.factory.ClickAction(quit);
-        var pass       = vc.factory.ClickAction(function() { gc.move(0, 0, true); });
-        var enter      = vc.factory.EnterAction();
-        var passEnter  = vc.factory.EnterAction(select2);
-        var leave      = vc.factory.LeaveAction();
+        var quit = ComponentFactory.ClickAction(quit);
+        var pass = ComponentFactory.ClickAction(function() { gc.move(0, 0, true); });
         // Vectors
-        vc.add( vc.factory.Resource('rsc/backgrounds/' + background + '.png').width(100) );
-        vc.add( vc.factory.Vector().poly([0,25, 10,0, 0,0], background1).addClass('slide-right') );
-        vc.add( vc.factory.Vector()
+        vc.add( ComponentFactory.Background(background) );
+        vc.add( ComponentFactory.Vector().poly([0,25, 10,0, 0,0], background1).addClass('slide-right') );
+        vc.add( ComponentFactory.Vector()
                  .poly([35,0,  75,0,  65,50, 25,50], background1)
                  .poly([3,41,  4,46,  20,45, 23,41], background1)
                  .poly([97,41, 96,46, 80,45, 77,41], background1)
                  .z(2).addClass('slide-up') 
         );
         // Board   
-        vc.add( vc.factory.Vector().addClass('slide-down').z(3) );
+        vc.add( ComponentFactory.Vector().addClass('slide-down').z(3) );
         var offset = this.side / 2 + 2.5 / this.size;
         for(var y = 0; y < this.size - 1; y++) 
             for(var x = 0; x < size - 1; x++) {
@@ -59,19 +56,19 @@ class GameController {
                 vc.last.poly([x1, y2, x1, y1, x2, y1, x2, y2], color);
             }
         // Text
-        vc.add( vc.factory.Text(playerModel.username()).xy(5, 41.5).addClass('slide-up') );
+        vc.add( ComponentFactory.Text(playerModel.username()).xy(5, 41.5).addClass('slide-up') );
         this.player1 = vc.last;
-        vc.add( vc.factory.Text('PLAYER 2').xy(81, 41.5).addClass('slide-up') );
+        vc.add( ComponentFactory.Text(this.ai ? this.ai.name : 'PLAYER 2').xy(81, 41.5).addClass('slide-up') );
         this.player2 = vc.last;
         // Images
-        vc.add( vc.factory.Resource('rsc/characters/player1.png').xyz(3, 15, 2).width(21).height(28).addClass('slide-up') )
+        vc.add( ComponentFactory.Character('player1').xyz(3, 15, 2).width(21).height(28).addClass('slide-up') )
         if (!ai)
-            vc.add( vc.factory.Resource('rsc/characters/player2.png').xyz(76, 15, 2).width(21).height(28).addClass('slide-up') )
+            vc.add( ComponentFactory.Character('player2').xyz(76, 15, 2).width(21).height(28).addClass('slide-up') )
         // else 
-        //    vc.add( vc.factory.Resource('rsc/characters/' + this.ai.name + '.png').xyz(3, 15, 2).width(21).height(28).addClass('slide-up') )
+        //    vc.add( ComponentFactory.Resource('rsc/characters/' + this.ai.name + '.png').xyz(3, 15, 2).width(21).height(28).addClass('slide-up') )
         // Buttons
-        vc.add( vc.factory.TitleButton('QUIT').xy(3, 5).addClass('slide-right').addAction(enter).addAction(leave).addAction(quit) );
-        vc.add( vc.factory.TitleButton('PASS').xy(62, 45).addClass('slide-right').addAction(passEnter).addAction(leave).addAction(pass) );
+        vc.add( ComponentFactory.TitleButton('QUIT').xy(3, 5).addClass('slide-right').addAction(quit) );
+        vc.add( ComponentFactory.TitleButton('PASS', background2, select2).xy(62, 45).addClass('slide-right').addAction(pass) );
         // Render
         vc.clear();
         vc.update();
@@ -105,7 +102,7 @@ class GameController {
      */
     getMoveAction(x, y) {
         var gc = this;
-        return vc.factory.ClickAction(function() {
+        return ComponentFactory.ClickAction(function() {
            gc.move(x, y, false); 
         });
     }
@@ -115,12 +112,12 @@ class GameController {
      */
     update() {
         log.info('Board update', this.game.Board.toString());
-        var tokenEnter = this.vc.factory.EnterAction(select1, 'background');
-        var tokenLeave = this.vc.factory.LeaveAction('', 'background');
+        var tokenEnter = ComponentFactory.EnterAction(select1, 'background');
+        var tokenLeave = ComponentFactory.LeaveAction('', 'background');
         var size = this.size;
         var side = this.side;
         $('.token').remove();
-        var played = this.vc.factory.Vector().z(4).addClass('token');
+        var played = ComponentFactory.Vector().z(4).addClass('token');
         for(var y = 0; y < size; y++)
             for(var x = 0; x < size; x++) {
                 if ( this.game.Board.grid[x][y] == 1 ) {
