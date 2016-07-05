@@ -5,7 +5,11 @@
 //    | | / / /_  / /|_/ /     
 //    | |/ / __/ / /  / /        
 //    |___/_/   /_/  /_/   
-//                    
+//
+//==========================================================================================================================//
+if (typeof($) == 'undefined') {
+    global.$ = require('../../test/mock-jquery');
+}
 //==========================================================================================================================//
 // GLOBALS                                                                                                                  
 //==========================================================================================================================//
@@ -298,6 +302,7 @@ class Component extends PropertyExpander {
     xz(x, z) {
         this.x(x);
         this.z(z);
+        return this;
     }
     
     /**
@@ -312,7 +317,9 @@ class Component extends PropertyExpander {
      * Read the data attached to this component.
      */
     recieve() {
-        return JSON.parse(this.$.attr('data'));
+        var data =  JSON.parse(this.$.attr('data'));
+        log.info('Recieved data', data)
+        return data;
     }
     
     /**
@@ -331,7 +338,7 @@ class Component extends PropertyExpander {
      */
     poly(points, color) {
         this.fit(points);
-        return this.append('<polygon points=' + points + ' style="fill:' + color + '"/>');
+        return this.append('<polygon points="' + points + '" style="fill:' + color + '"/>');
     }
     
     /**
@@ -343,7 +350,7 @@ class Component extends PropertyExpander {
      */
     circle(x, y, r, color) {
         this.fit([x, y, x + 2 * r, y + 2 * r]);
-        return this.append('<circle cx="{0}" cy="{1}" r="{2}"  style="fill:{3}"/>'.format(x + r, y + r, r, color));
+        return this.append('<circle cx="{0}" cy="{1}" r="{2}" style="fill:{3}"/>'.format(x + r, y + r, r, color));
     }
     
     /**
@@ -366,6 +373,7 @@ class Component extends PropertyExpander {
         if(this.x() + this.y() + this.width() + this.height() == 0) {
             this.x(Math.min(xMin)).y(Math.min(yMin));
         } else {
+            
             xMax = Math.max(this.width() + this.x(), xMax)
             yMax = Math.max(this.height() + this.y(), yMax)
             this.x(Math.min(this.x(), xMin)).y(Math.min(this.y(), yMin));
@@ -552,7 +560,7 @@ class ComponentFactory {
      * Returns a new Action that is triggered by clicking.
      * @param action the function to run when the Component this is added to is clicked
      */
-    static ClickAction(action) {
+    static ClickAction(action=function(){}) {
         return new Action()
             .trigger('click')
             .action(action);
@@ -589,4 +597,13 @@ class ComponentFactory {
     }
     
 }
+
+//==========================================================================================================================//
+if (typeof(module) != 'undefined')
+    module.exports = {
+        PropertyExpander : PropertyExpander,
+        Component : Component,
+        Action : Action,
+        ComponentFactory : ComponentFactory
+    }
 //==========================================================================================================================//

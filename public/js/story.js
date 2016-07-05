@@ -24,8 +24,8 @@ var story = [
         game: {
             size: 9,               // Board size
             ai: 'AIC',             // Ai to use
-            color: select1,        // Color of the obard
-            background: '1'        // Backgroudn image
+            color: select1,        // Color of the board
+            background: '1'        // Background image
         }
     }, { // Level 2
         scenes: [

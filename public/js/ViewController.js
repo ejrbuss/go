@@ -63,20 +63,20 @@ class ViewController {
     message(message, color=background1, callback=function(){}) {
         log.info('sent message', arguments);
         // Remove after second animation
-        var removeActionCallback = new Action().trigger('animationend').action(function(component) {
+        var ready = false;
+        var removeAction = new Action().trigger('animationend').action(function(component) {
             if (component.visited != undefined) {
-                component.$.remove();
-                callback();
+                $.when( component.$.remove() ).then( function() {
+                    if (ready) 
+                        callback();
+                    else 
+                        ready = true;
+                });
             }
             component.visited = true;                                                
         });
-        var removeAction= new Action().trigger('animationend').action(function(component) {
-            if (component.visited != undefined) 
-                component.$.remove();
-            component.visited = true;                                                
-        });
         this.add( ComponentFactory.Vector().poly([40,0, 60,0, 60,50, 40,50], color).z('60').addClass('banner-transition').skew('-55deg').addAction(removeAction) );
-        this.add( ComponentFactory.Title().text(message).width(100).yz(22, 61).addClass('text-transition').addAction(removeActionCallback).size(5) );
+        this.add( ComponentFactory.Title().text(message).width(100).yz(22, 61).addClass('text-transition').addAction(removeAction).size(5) );
         this.update();
     }
     
@@ -148,7 +148,7 @@ class ViewController {
         this.add( ComponentFactory.Text('PLAYING AS').xy(72, 8.5).addClass('slide-left') );
         this.add( ComponentFactory.Text(playerModel.username(), select1).xy(83, 8.5).addClass('slide-left').weight('bold') );
         this.add( ComponentFactory.Text('RANK', '#444').xy(84, 14).size(5).addClass('slide-left') );
-        this.add( ComponentFactory.Text(playerModel.rank(), select2).xy(85, 16).size(4).addClass('slide-left') );   
+        this.add( ComponentFactory.Text(playerModel.rank(), select2).size(4).xy(80, 16).width(16).addClass('slide-left') );   
         this.add( ComponentFactory.Text('W/L'     ).xy(66,   12  ).size(2).addClass('slide-left') );
         this.add( ComponentFactory.Text('K/D'     ).xy(65.5, 14.5).size(2).addClass('slide-left') );
         this.add( ComponentFactory.Text('TIME'    ).xy(65,   17  ).size(2).addClass('slide-left') );
@@ -302,7 +302,7 @@ class ViewController {
         if (data.character)
             this.add( ComponentFactory.Character(data.character).xy(65, 9).width(25).addClass('slide-up') );
         // Text
-        this.add( ComponentFactory.Text(data.name).size(4).xy(71, 35.5).addClass('slide-up') ); 
+        this.add( ComponentFactory.Text(data.name).size(4).xy(70, 35.5).width(18).addClass('slide-up') ); 
         this.add( ComponentFactory.Text().element('pre').size(2).family('sans-serif').xy(13, 39).addClass('slide-up').addAction(typed) );
         // Buttons
         this.add( ComponentFactory.TitleButton('QUIT').xy(3, 5).addClass('slide-right').addAction(quit) );
@@ -449,8 +449,11 @@ class ViewController {
         // Actions
         var menu  = ComponentFactory.ClickAction(function() { vc.mainMenu(playerModel); });
         // Vectors
-        this.add( ComponentFactory.Vector().poly([0,0,     30,0,  45,50,  0,50], background1).addClass('slide-right') );
-        this.add( ComponentFactory.Vector().poly([100,50,  100,25,  90,50], background1).z(1).addClass('slide-left') );
+        this.add( ComponentFactory.Vector().poly([0,0,     50,0,  35,50,  0,50], background1).z(1).addClass('slide-right') );
+        this.add( ComponentFactory.Vector().poly([100,50,  100,25,  90,50], background1).z(2).addClass('slide-left') );
+        // Background
+        this.add( ComponentFactory.Background('2') );
+        this.add( ComponentFactory.Title('VS').size(10).xy(70, 10) );
         // List
         this.add( ComponentFactory.List()
                  .addComponent( ComponentFactory.Text('TESTING').element('li').position('relative') )

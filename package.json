@@ -1,0 +1,30 @@
+{
+  "name": "go299",
+  "version": "1.0.0",
+  "description": "Web app of the game Go",
+  "main": "server.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "body-parser": "^1.15.1",
+    "express": "^4.13.4",
+    "mongodb": "^2.1.18"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "mocha",
+    "start": "node server.js",
+    "test": "istanbul cover node_modules/mocha/bin/_mocha -- -R spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/balancededge/go299.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/balancededge/go299/issues"
+  },
+  "homepage": "https://github.com/balancededge/go299#readme"
+}
