@@ -7,6 +7,7 @@ function saveMove(move, gameID, callback){
 		'player':move.c,
 		'x':move.x,
 		'y':move.y,
+		'pass':move.pass,
 		'time':Date.now()
 	};
 
