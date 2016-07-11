@@ -17,13 +17,23 @@ String.prototype.capitalize = function() {
 }
 
 /**
+ * Replaces a search term with replacement everywhere it occurs in a string.
+ * @param search      the string to search for
+ * @param replacement the replacement string
+ */
+String.prototype.replaceAll = function(search, replacement) {
+    var target = this;
+    return target.split(search).join(replacement);
+};
+
+/**
  * Formats a string with the provided args. {#} will be replaced with the # argument.
  * @param arg any number of arguments to format
  */
 String.prototype.format = function() {
    var content = this;
    for (var i=0; i < arguments.length; i++) 
-        content = content.replace('{' + i + '}', arguments[i]);  
+        content = content.replaceAll('{' + i + '}', arguments[i]);  
    return content;
 };
 
@@ -85,8 +95,6 @@ class debug {
     
     /**
      * Load a story screen.
-     * @param level the level to load
-     * @param scene the scene to load
      */
     static story(level=0, scene=0) {
         vc.story(new PlayerModel('debug'), level, scene);
@@ -115,10 +123,16 @@ class debug {
     
     /**
      * Load a game.
-     * @param size the size of the game board
      */
     static game(size=9) {
-        new GameController(vc, new PlayerModel('debug'), size, null, debug.mainMenu);
+        debug.gc = new GameController(vc, new PlayerModel('debug'), size, null, debug.mainMenu);
+    }
+    
+    /**
+     * Make a move in a debug game.
+     */
+    static move(x, y, pass=false) {
+        debug.gc.move(x, y, pass);
     }
     
     /**
@@ -154,6 +168,24 @@ class debug {
      */
     static reload() {
         vc.reload();    
+    }
+    
+    /**
+     * Set a new logging level.
+     */
+    static log(level=DEBUG) {
+        log = new Logger(level);
+    }
+    
+    /**
+     * Lists debug functions.
+     */
+    static help() {
+        debug.toString().replace(/\/\**\s+\*\s+.*\s+\**\/\s+static\s+.*\{/g, function(match) {
+            var groups = /\/\**\s+\*\s+(.*)\s+\**\/\s+static\s+(.*)\{/.exec(match);
+            console.log('%c' + groups[2], 'color:#0000FF');
+            console.log(groups[1]);
+        }); 
     }
     
 }
@@ -228,4 +260,3 @@ class Logger {
 }
 
 var log = new Logger(DEBUG); // logger instance to use
-//==========================================================================================================================//
