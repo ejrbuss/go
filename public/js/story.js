@@ -23,7 +23,7 @@ var story = [
         ],
         game: {
             size: 9,               // Board size
-            ai: 'AIC',             // Ai to use
+            ai: 'AI1',             // Ai to use
             color: select1,        // Color of the board
             background: '1'        // Background image
         }
@@ -55,7 +55,7 @@ var story = [
         ],
         game: {
             size: 9,
-            ai: 'AI2',
+            ai: 'AI3',
             color: accent,
             background: '3'
         }
@@ -87,7 +87,7 @@ var story = [
         ],
         game: {
             size: 9,
-            ai: 'AI2',
+            ai: 'AI5',
             color: select2,
             background: '5'
         }

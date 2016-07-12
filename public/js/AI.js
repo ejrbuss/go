@@ -12,6 +12,89 @@ class AI{
 	}
 }
 
+class AI2 {
+	constructor(Game) {
+		this.name = "AI2";
+		this.size = Game.Board.size;
+		var i = Math.floor(this.size / 2);
+		this.move = {x: i, y: i};
+		this.direction = "up";
+		this.spirallength = 1;
+		this.spiralcount = 1;
+	}
+
+	getMove(Game){
+		var pass = true;
+		while(this.move != null){
+			try{
+				var movetomake = new Move(this.move.x, this.move.y, Game.player2)
+				Game.Board.move(movetomake);
+				Game.Board.rollbackBoard(Game.Board.diff.Move, Game.Board.diff.captured, Game.Board.grid);
+				pass = null;
+				break;
+			}
+			catch(err){
+				if (err == "InvalidMoveException" || err == "SuicideException" || err == "ReturnToOldStateException"){
+				}
+				else
+					throw err;
+			}
+			finally{
+				this.swirl();
+			}
+		}
+		if (pass){
+			return {x: 0, y: 0, pass: true}
+		}
+		else{
+			return {x: movetomake.x, y: movetomake.y};
+		}
+	}
+
+	swirl(){
+		if (this.move.x < 0 || this.move.y < 0 || this.move.x >= this.size || this.move.y >= this.size){
+			this.move = null;
+			return;
+		}
+		if (this.direction == "up"){
+			this.move = {x: this.move.x, y: this.move.y-1};
+			this.spiralcount--;
+			if (this.spiralcount == 0){
+				this.spirallength++;
+				this.spiralcount = this.spirallength;
+				this.direction = "left";
+			}
+		}
+		else if (this.direction == "left"){
+			this.move = {x: this.move.x-1, y: this.move.y};
+			this.spiralcount--;
+			if (this.spiralcount == 0){
+				this.spirallength++;
+				this.spiralcount = this.spirallength;
+				this.direction = "down";
+			}
+		}
+		else if (this.direction == "down"){
+			this.move = {x: this.move.x, y: this.move.y+1};
+			this.spiralcount--;
+			if (this.spiralcount == 0){
+				this.spirallength++;
+				this.spiralcount = this.spirallength;
+				this.direction = "right";
+			}
+		}
+		else if (this.direction == "right"){
+			this.move = {x: this.move.x+1, y: this.move.y};
+			this.spiralcount--;
+			if (this.spiralcount == 0){
+				this.spirallength++;
+				this.spiralcount = this.spirallength;
+				this.direction = "up";
+			}
+		}
+	}
+}
+
 class AI3 {
 
 	constructor(Game) {
@@ -226,12 +309,13 @@ class AI3 {
 }
 
 
-class AI2{
+class AI1{
 	constructor(Game){
-        this.name = 'AI2';
+        this.name = 'AI1';
 		var i = Math.floor(Game.Board.size / 2);
 		var j = i;
-		this.blobmoves = [{x: i, y: j}, {x: i+1, y: j}]
+		var moves = findPossibleMoves(Game.Board);
+		this.blobmoves = [moves[randomInt(moves.length)]];
 	}
 	getMove(Game){
 		var pass = "pass";
@@ -268,8 +352,8 @@ class AI5{
     
 	constructor(Game){
         this.name = 'AI5';
-		this.SIMULATIONS = Math.floor(Math.pow(0.016*Game.Board.size, -2.9));
-		this.MAXMOVES = 90;
+		this.SIMULATIONS = Math.floor(0.25*Math.pow(0.016*Game.Board.size, -2.9));
+		this.MAXMOVES = 30;
 	}
 
 	getMove(Game){
