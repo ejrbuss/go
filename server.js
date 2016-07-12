@@ -32,6 +32,25 @@ app.post("/checkLogin", function(req, res) {
     db.checkLogin(req.body, res);
 });
 
+app.post("/saveGame", function(req, res) {
+    console.log("Saving game...");
+    console.log(req.body);
+    db.saveGame(req.body.game, function(err, data){
+        if(err)
+            res.status(500).send();
+        else{
+            var id = json(data).id;
+            var obj = {
+                gameid:id,
+                moves:req.moves
+            };
+            db.addMovesList(obj);
+
+            res.status(200).send();
+        }
+    });
+});
+
 app.post("/addMove", function(req, res) {
 	console.log("Storing move...");
 	console.log(req.body);

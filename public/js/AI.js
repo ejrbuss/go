@@ -37,21 +37,45 @@ class AI3 {
 		var grid = Game.Board.grid;
 		var n = grid.size;
 
-		if(this.moves > 5){
+		if(this.moves > 3){
 			//needs a lot of work
 			//play in main territory until own 50% then move right
-			var quad = this.getQuadrant(Game.Board, 2);
-			var side = this.getSide(Game.Board, 2);
+			//var quad = this.getQuadrants(Game.Board, 2);
+			//var side = this.getSides(Game.Board, 2);
 
-			if (quad.n >= side.n && quad.n < quad.spaces.length){
-				possiblemoves = quad.spaces;
-			} else if (side.n >= quad.n && side.n < side.spaces.length) {
+			var spaces = this.getSpaces(Game.Board, 2);
+
+			var i = 0;
+
+			while(spaces[i].n > spaces[i].spaces.length)
+				i++;
+
+			possiblemoves = spaces[i].spaces;
+			console.log(possiblemoves);
+
+			/*while(i > 0){
+				i--;
+				possiblemoves = this.subtractSpaces(possiblemoves, spaces[i].spaces);
+			}*/
+			if(i > 0)
+				possiblemoves = this.subtractSpaces(possiblemoves, spaces[0].spaces);
+
+			console.log(possiblemoves);
+
+			//var oppquad = this.getQuadrants(Game.Board, 1);
+			//var oppside = this.getSides(Game.Board, 2);
+
+			/*if (quad[0].n >= side[0].n && quad[0].n < quad[0].spaces.length){
+				possiblemoves = quad[0].spaces;
+			} else if (side[0].n >= quad[0].n && side[0].n < side[0].spaces.length) {
 				possiblemoves = side.spaces;
-			} else if (quad.n >= side.n) {
-				possiblemoves = side.spaces;
+			} else if (quad[0].n >= side[0].n) {
+				possiblemoves = side[0].spaces;
 			} else {
-				possiblemoves = quad.spaces;
-			}
+				possiblemoves = quad[0].spaces;
+			}*/
+
+			
 		}
 
 
@@ -83,7 +107,7 @@ class AI3 {
 				Game.resetState(gamestate);
 			}
 		}
-		console.log(movescore);
+		//console.log(movescore);
 		var max = 0;
 		var maxindex = 0;
 		for (var k = 0; k < movescore.length; k++){
@@ -102,7 +126,41 @@ class AI3 {
 	
 	}
 
-	getQuadrant(board, player){
+	subtractSpaces(source, removal){
+		var src = source;
+		var rmv = removal;
+		var returnVal = [];
+
+		var remove = false;
+
+		for(var i = 0; i < src.length; i++){
+			for(var j = 0; j < rmv.length; j++){
+				if(src[i].x == rmv[j].x && src[i].y == rmv[j].y){
+					remove = true;
+				}
+			}
+			if(!remove){
+				returnVal.push(src[i]);
+			}
+			remove = false;
+		}
+
+		return returnVal;
+	}
+
+	getSpaces(board, player){
+		var quads = this.getQuadrants(board, player);
+		var sides = this.getSides(board, player);
+
+		var returnVal = quads.concat(sides);
+		returnVal.sort(function(a,b) {
+			return a.n < b.n
+		});
+
+		return returnVal;
+	}
+
+	getQuadrants(board, player){
 		var grid = board.gridCopy(board.grid);
 		var n = grid.length;
 		var q1 = 0;
@@ -113,7 +171,8 @@ class AI3 {
 		var s2 = [];
 		var s3 = [];
 		var s4 = [];
-		
+
+		//QUADRANTS
 		//q1 = top left
 		for(var i = 0; i < (n-1)/2; i++){
 			for(var j = 0; j < (n-1)/2; j++){
@@ -153,18 +212,22 @@ class AI3 {
 			}
 		}
 
-		if(q1 >= q2 && q1 >= q3 && q1 >= q4)
+
+		var returnVal = [{n:q1, spaces:s1}, {n:q2, spaces:s2}, {n:q3, spaces:s3}, {n:q4, spaces:s4}];
+
+		return returnVal;
+		/*if(q1 >= q2 && q1 >= q3 && q1 >= q4)
 			return {q:1, n:q1, spaces:s1}
 		else if(q2 >= q1 && q2 >= q3 && q2 >= q4)
 			return {q:2, n:q2, spaces:s2}
 		else if(q3 >= q1 && q3 >= q2 && q2 >= q4)
 			return {q:3, n:q3, spaces:s3}
 		else
-			return {q:4, n:q4, spaces:s4}
+			return {q:4, n:q4, spaces:s4}*/
 
 	}
 
-	getSide(board, player){
+	getSides(board, player){
 		var grid = board.gridCopy(board.grid);
 		var n = grid.length ;
 		var l = 0;
@@ -212,14 +275,18 @@ class AI3 {
 			}
 		}
 
-		if(t >= l && t >= r && t >= b)
+		var returnVal = [{n:t, spaces:st}, {n:l, spaces:sl}, {n:r, spaces:sr}, {n:b, spaces:sb}]
+
+		return returnVal;
+
+		/*if(t >= l && t >= r && t >= b)
 			return {s:1, n:t, spaces:st}
 		if(l >= t && l >= r && l >= b)
 			return {s:2, n:l, spaces:sl}
 		if(r >= l && r >= t && r >= b)
 			return {s:3, n:r, spaces:sr}
 		else
-			return {s:4, n:b, spaces:sb}
+			return {s:4, n:b, spaces:sb}*/
 	}
 
 
