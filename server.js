@@ -26,6 +26,12 @@ app.post("/checkDuplicateUsername", function(req, res) {
     db.checkUsername(req.body.username, res);
 });
 
+// Checks login info in accounts database.
+app.post("/checkLogin", function(req, res) {
+    console.log("Checking username " + req.body);
+    db.checkLogin(req.body, res);
+});
+
 app.post("/addMove", function(req, res) {
 	console.log("Storing move...");
 	console.log(req.body);

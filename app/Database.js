@@ -41,13 +41,25 @@ class Database {
     
     // Checks a username against the database for duplicates.
     checkUsername(obj, res) {
-        console.log("in checkUsername..." + obj);
+        console.log("in checkPassword..." + obj);
         this._db.collection('accounts').count({username: obj}).then(function(count) {
             if (count == 0) {
                 console.log('fine');
                 res.send(false);
             } else {
                 console.log('duplicate');
+                res.send(true);
+            }
+        });
+    }
+    
+    // Checks login info.
+    checkLogin(obj, res) {
+        console.log("in checkUsername..." + obj);
+        this._db.collection('accounts').count({username: obj.username, password: obj.password}).then(function(count) {
+            if (count == 0) {
+                res.send(false);
+            } else {
                 res.send(true);
             }
         });
