@@ -3,9 +3,9 @@
 class AI{
 	//class interface
 	// make your AI implement this
-	constructor(Game){
+	constructor(Game) {
         this.name = 'placeholder';
-	}  
+	}
 
 	getMove(Game){
 		return {x: 0, y: 0};
@@ -13,7 +13,6 @@ class AI{
 }
 
 class AI3 {
-
 	constructor(Game) {
 		this.name = 'AI3';
 		this.boardSize = Game.Board.size - 1;
@@ -43,11 +42,20 @@ class AI3 {
 
 			var i = 0;
 
-			while(spaces[i].n > spaces[i].spaces.length)
+			while(spaces[i].n > spaces[i].spaces.length && i < spaces.length)
 				i++;
 
 			possiblemoves = spaces[i].spaces;
-			console.log(possiblemoves);
+			//console.log(possiblemoves);
+
+			var oppSpaces = this.getSpaces(Game.Board, 1);
+			var j = 0;
+
+			while(oppSpaces[j].n > spaces[j].spaces.length && j < spaces.length)
+				j++;
+
+			if(j > 0)
+				possiblemoves = possiblemoves.concat(oppSpaces[j].spaces);
 
 			if(i > 0)
 				possiblemoves = this.subtractSpaces(possiblemoves, spaces[0].spaces);
@@ -156,7 +164,7 @@ class AI3 {
 				if(grid[i][j] == player)
 					q1++;
 				else if(grid[i][j] == 0)
-					s1.push({x: i, y: j})
+					s1.push({x: i, y: j});
 			}
 		}
 		//q2 = top right
@@ -165,7 +173,7 @@ class AI3 {
 				if(grid[i][j] == player)
 					q2++;
 				else if(grid[i][j] == 0)
-					s2.push({x: i, y: j})
+					s2.push({x: i, y: j});
 				
 			}
 		}
@@ -175,7 +183,7 @@ class AI3 {
 				if(grid[i][j] == player)
 					q3++;
 				else if(grid[i][j] == 0)
-					s3.push({x: i, y: j})
+					s3.push({x: i, y: j});
 				
 			}
 		}
@@ -185,7 +193,7 @@ class AI3 {
 				if(grid[i][j] == player)
 					q4++;
 				else if(grid[i][j] == 0)
-					s4.push({x: i, y: j})
+					s4.push({x: i, y: j});
 			}
 		}
 
@@ -212,7 +220,7 @@ class AI3 {
 				if(grid[i][j] == player)
 					t++;
 				else if(grid[i][j] == 0)
-					st.push({x: i, y: j})
+					st.push({x: i, y: j});
 			}
 		}
 		//l
@@ -221,7 +229,7 @@ class AI3 {
 				if(grid[i][j] == player)
 					l++;
 				else if(grid[i][j] == 0)
-					sl.push({x: i, y: j})
+					sl.push({x: i, y: j});
 			}
 		}
 		//r
@@ -230,7 +238,7 @@ class AI3 {
 				if(grid[i][j] == player)
 					r++;
 				else if(grid[i][j] == 0)
-					sr.push({x: i, y: j})
+					sr.push({x: i, y: j});
 			}
 		}
 		//b
@@ -239,17 +247,16 @@ class AI3 {
 				if(grid[i][j] == player)
 					b++;
 				else if(grid[i][j] == 0)
-					sb.push({x: i, y: j})
+					sb.push({x: i, y: j});
 			}
 		}
 
-		var returnVal = [{n:t, spaces:st}, {n:l, spaces:sl}, {n:r, spaces:sr}, {n:b, spaces:sb}]
+		var returnVal = [{n:t, spaces:st}, {n:l, spaces:sl}, {n:r, spaces:sr}, {n:b, spaces:sb}];
 
 		return returnVal;
 	}
-
-
 }
+
 
 
 class AI2{
@@ -374,9 +381,8 @@ class AIX{
 				headers: {
 					'Content-Type':'application/json'
 				}
-			}
-		}	
-		
+			};
+		}
 
 		var callback = function(res){
 			var str = '';
@@ -399,7 +405,7 @@ class AIX{
 
 		    	return newMove;
 		    });
-		}
+		};
 
 	    var req = http.request(options, callback);
 
@@ -413,7 +419,7 @@ class AIX{
 	    var postData = JSON.stringify({
 	    	'size': Game.Board.size,
 	    	'board': Game.Board.grid,
-	    	'last': lastMove(x:Game.Board.diff.move.x, y:Game.Board.diff.move.y, c:1, pass:pass);
+	    	'last': {x:Game.Board.diff.move.x, y:Game.Board.diff.move.y, c:1, pass:pass}
 	    });
 
 	    req.write(postData);
