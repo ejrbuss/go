@@ -38,10 +38,6 @@ class AI3 {
 		var n = grid.size;
 
 		if(this.moves > 3){
-			//needs a lot of work
-			//play in main territory until own 50% then move right
-			//var quad = this.getQuadrants(Game.Board, 2);
-			//var side = this.getSides(Game.Board, 2);
 
 			var spaces = this.getSpaces(Game.Board, 2);
 
@@ -53,29 +49,10 @@ class AI3 {
 			possiblemoves = spaces[i].spaces;
 			console.log(possiblemoves);
 
-			/*while(i > 0){
-				i--;
-				possiblemoves = this.subtractSpaces(possiblemoves, spaces[i].spaces);
-			}*/
 			if(i > 0)
 				possiblemoves = this.subtractSpaces(possiblemoves, spaces[0].spaces);
 
 			console.log(possiblemoves);
-
-			//var oppquad = this.getQuadrants(Game.Board, 1);
-			//var oppside = this.getSides(Game.Board, 2);
-
-			/*if (quad[0].n >= side[0].n && quad[0].n < quad[0].spaces.length){
-				possiblemoves = quad[0].spaces;
-			} else if (side[0].n >= quad[0].n && side[0].n < side[0].spaces.length) {
-				possiblemoves = side.spaces;
-			} else if (quad[0].n >= side[0].n) {
-				possiblemoves = side[0].spaces;
-			} else {
-				possiblemoves = quad[0].spaces;
-			}*/
-
-			
 		}
 
 
@@ -216,15 +193,6 @@ class AI3 {
 		var returnVal = [{n:q1, spaces:s1}, {n:q2, spaces:s2}, {n:q3, spaces:s3}, {n:q4, spaces:s4}];
 
 		return returnVal;
-		/*if(q1 >= q2 && q1 >= q3 && q1 >= q4)
-			return {q:1, n:q1, spaces:s1}
-		else if(q2 >= q1 && q2 >= q3 && q2 >= q4)
-			return {q:2, n:q2, spaces:s2}
-		else if(q3 >= q1 && q3 >= q2 && q2 >= q4)
-			return {q:3, n:q3, spaces:s3}
-		else
-			return {q:4, n:q4, spaces:s4}*/
-
 	}
 
 	getSides(board, player){
@@ -278,15 +246,6 @@ class AI3 {
 		var returnVal = [{n:t, spaces:st}, {n:l, spaces:sl}, {n:r, spaces:sr}, {n:b, spaces:sb}]
 
 		return returnVal;
-
-		/*if(t >= l && t >= r && t >= b)
-			return {s:1, n:t, spaces:st}
-		if(l >= t && l >= r && l >= b)
-			return {s:2, n:l, spaces:sl}
-		if(r >= l && r >= t && r >= b)
-			return {s:3, n:r, spaces:sr}
-		else
-			return {s:4, n:b, spaces:sb}*/
 	}
 
 
@@ -298,7 +257,7 @@ class AI2{
         this.name = 'AI2';
 		var i = Math.floor(Game.Board.size / 2);
 		var j = i;
-		this.blobmoves = [{x: i, y: j}, {x: i+1, y: j}]
+		this.blobmoves = [{x: i, y: j}, {x: i+1, y: j}];
 	}
 	getMove(Game){
 		var pass = "pass";
@@ -385,5 +344,80 @@ class AI5{
 			return {x: 0, y: 0, pass: true};
 		else
 			return {x: possiblemoves[maxindex].x, y: possiblemoves[maxindex].y};
+	}
+}
+
+class AIX{
+
+	constructor(Game){
+		this.name = 'AIX';
+	}
+
+	getMove(Game){
+		var options;
+		if(Game.player1score > Game.player2score){
+			options = {
+				host:'roberts.seng.uvic.ca',
+				path:'/ai/formEyes',
+				port:30000,
+				method:'POST',
+				headers: {
+					'Content-Type':'application/json'
+				}
+			};
+		} else {
+			options = {
+				host:'roberts.seng.uvic.ca',
+				path:'/ai/attackEnemy',
+				port:30000,
+				method:'POST',
+				headers: {
+					'Content-Type':'application/json'
+				}
+			}
+		}	
+		
+
+		var callback = function(res){
+			var str = '';
+			console.log(res.statusCode);
+
+		    res.on('data', function(chunk){
+		    	console.log(chunk.toString());
+		    	str += chunk.toString();
+		    });
+
+		    res.on('end', function(){
+		    	console.log('final data: ' + str);
+		    	var move = JSON.parse(str);
+		    	var newMove = {
+		    		x:move.x,
+		    		y:move.y,
+		    		side:move.c,
+		    		pass:move.pass
+		    	};
+
+		    	return newMove;
+		    });
+		}
+
+	    var req = http.request(options, callback);
+
+	    req.on('error', function(e){
+	    	console.log('problem with request: ' + e.message);
+	    	return {x:0, y:0, pass:true};
+	    });
+
+	    var pass = (Game.Board.diff.move.side == 2);
+
+	    var postData = JSON.stringify({
+	    	'size': Game.Board.size,
+	    	'board': Game.Board.grid,
+	    	'last': lastMove(x:Game.Board.diff.move.x, y:Game.Board.diff.move.y, c:1, pass:pass);
+	    });
+
+	    req.write(postData);
+
+	    req.end();
 	}
 }
