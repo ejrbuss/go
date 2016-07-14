@@ -1,6 +1,7 @@
 "use strict";
 var MongoClient = require("mongodb").MongoClient;
 var mongodb = require("mongodb");
+var ObjectID = require('mongodb').ObjectID;
 
 class Database {
     
@@ -69,50 +70,44 @@ class Database {
     //get move list for replay
     //obj in the form {id:gameID}
     getMoveList(obj, res) {
-        var gameID = obj.id;
         console.log("Getting list of moves...");
+        var gameID = new ObjectID(obj.id);
         var collection = this._db.collection('moves');
-        collection.find({gameid:gameID}, function(err, docs){
+        collection.findOne({'_id': gameID}, function(err, docs){
             if(err){
-                res.send(null);
+                res.status(500).send(null);
             } else {
-                res.send(docs.moves);
+                console.log(docs.moves);
+                res.status(200).send(docs.moves);
             }
         });
-        /*.toArray(function(err, docs){
-            if(err)
-                res.send(null);
-            else {
-                console.log(docs);
-                res.send(docs);
-            }
-        })*/
     }
 
     //save completed game
-    saveGame(obj, callback) {
+    saveGame(obj, cb) {
         console.log("Saving new completed game to database...");
         var collection = this._db.collection('games');
+        console.log(obj);
 
-        var body = obj.game;
-        body.time = Date.now();
-
-        collection.insert(body, function(err, docs) {
+        collection.insert(obj, function(err, docs) {
                 if(err)
-                    callback(err, null);
+                   cb(err,null);
                 else
-                    callback(null, docs.ops[0]);
+                   cb(null,docs.ops[0]);
         });
     }
 
     addMovesList(obj, res) {
         console.log("Adding move list to db...");
-        var collection = this._db.collection('games');
+
+        var collection = this._db.collection('moves');
+
+
         collection.insert(obj, function(err, docs) {
             if(err)
-                res.send(null);
+                res.status(500).send();
             else {
-                res.send(docs.ops[0]);
+                res.status(200).send(docs.ops[0]);
             }
         });
     }
@@ -122,7 +117,7 @@ class Database {
         var username = obj.name;
         console.log(username);
         var collection = this._db.collection('games');
-        collection.find({$or: [{player1: username}, {player2: username}]}).toArray(function(err, docs){
+        collection.find({player1: username}).toArray(function(err, docs){
             if(err){
                 res.send(null);
             } else {

@@ -24,13 +24,14 @@ class GameController {
     constructor(vc, playerModel, size, ai, quit, callback, color=accent, background='0') {
         log.info('new game started', arguments);
         this.vc = vc;
-        this.id = 0;
         this.size = size;
+        this.moveList = [];
         this.side = (40 / size) - (5 / this.size); // Make tokens less than the distance between two lines
         this.turn = 1;
         this.game = new Game(this.id, this.size);
         this.ai = assembleAI(ai, this.game);
         this.playerModel = playerModel;
+
         var gc = this;
         // Actions
         var quit = ComponentFactory.ClickAction(quit);
@@ -144,14 +145,19 @@ class GameController {
         var gm = this;
         try {
             this.game.move(x, y, pass);
-            // Succes
+            // Success
             this.update();
             if (this.ai) {
                 this.player1.$.css({'color' : background2});
                 this.player2.$.css({'color' : select2});
+                this.moveList.push({'x':x,'y':y,'pass':pass});
+
+                log.debug(this.moveList);
+
                 vc.message(this.ai.name + ' TURN', select1, function() {
                     var move = gm.ai.getMove(gm.game);
                     gm.game.move(move.x, move.y, move.pass);
+                    gm.moveList.push({'x':move.x,'y':move.y,'pass':move.pass});
                     gm.update();
                     vc.message(gm.playerModel.username() + ' TURN', select1);
                     gm.player1.$.css({'color' : select2});
@@ -174,13 +180,25 @@ class GameController {
             log.warn('Move error', err, arguments)
             vc.message(err, select1);
         }
+
     }
     
     /**
      * TODO implement game end
      */
     end() {
-        console.log(endGame(this.Game.Board));
+    	var scores = endGame(this.game);
+    	console.log(this.moveList);
+    	saveGameToDB({
+    		'player1': this.playerModel.username(), 
+    		'player2': this.ai ? this.ai.name : 'PLAYER 2', 
+    		'score1': scores.player1score, 
+    		'score2': scores.player2score, 
+    		'size': this.size,
+    	}, this.moveList, function(res){
+    		log.info('Game saved to database.', res);
+    	});
+        //console.log(endGame(this.Game.Board));
 		// server/database call for stats storage can go here.
 		// UI call can go here
     }

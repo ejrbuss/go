@@ -24,17 +24,18 @@ function saveMove(move, gameID, callback){
 
 }
 
-function saveGameToDB(game, moves){
+function saveGameToDB(game, moves, callback){
 	xmlhr = new XMLHttpRequest();
 
 	var obj = {
-		game:game,
-		moves:moves
+		'game': game,
+		'moves': moves,
 	};
 
 	xmlhr.onreadystatechange = function() {
 		if(xmlhr.readyState == 4 && xmlhr.status == 200) {
 			//handle response
+			callback(xmlhr.responseText);
 		}
 	};
 
@@ -104,13 +105,14 @@ function getMatchHistory(username, callback){
 
 }
 
-function getMoveList(gameID){
+function getMoveList(gameID, callback){
 	var xmlhr = new XMLHttpRequest();
 	var obj = {id:gameID};
 
 	xmlhr.onreadystatechange = function(){
 		if(xmlhr.readyState == 4 && xmlhr.status == 200){
 			//handle response
+			callback(xmlhr.responseText);
 		}
 	}
 
