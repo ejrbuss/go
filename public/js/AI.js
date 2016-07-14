@@ -401,7 +401,7 @@ class AI5{
 		for (var i = 0; i < possiblemoves.length; i++){
 			var gamestate = Game.copyState();
 			try{
-				Game.move(possiblemoves[i].x, possiblemoves[i].y); // will except if fails
+				Game.move(possiblemoves[i].x, possiblemoves[i].y, possiblemoves[i].pass); // will except if fails
 				var aftermovestate = Game.copyState();
 				for (var sims = 0; sims < this.SIMULATIONS; sims++){
 					makeRandomMoves(Game, Math.floor((Game.Board.size*Game.Board.size)*1.25));
@@ -422,7 +422,7 @@ class AI5{
 				Game.resetState(gamestate);
 			}
 		}
-		log.debug(movescore);
+
 		var max = -1;
 		var maxindex = 0;
 		for (var k = 0; k < movescore.length; k++){
@@ -431,10 +431,12 @@ class AI5{
 				maxindex = k;
 			}
 		}
-		if (max == -1)
+		log.debug(movescore[maxindex] + "/" + this.SIMULATIONS);
+		var score = endGame(Game);
+		if (max == -1 || max < Math.floor(0.25*this.SIMULATIONS) || (score.player2score >= score.player1score && max > Math.floor(0.75*this.SIMULATIONS)))
 			return {x: 0, y: 0, pass: true};
 		else
-			return {x: possiblemoves[maxindex].x, y: possiblemoves[maxindex].y};
+			return {x: possiblemoves[maxindex].x, y: possiblemoves[maxindex].y, pass: possiblemoves[maxindex].pass};
 	}
 }
 

@@ -16,15 +16,16 @@ class Game{
 	}
 
 	move(x, y, pass){
+		var captured = []
 		if (this.turn == this.player1){
 			if (!pass){
-				var captured = this.Board.move(new Move(x, y, this.player1));
+				captured = this.Board.move(new Move(x, y, this.player1));
 				this.player1score += captured.length;
 			}
 			this.turn = this.player2;
 		} else {
 			if (!pass){
-				var captured = this.Board.move(new Move(x, y, this.player2));
+				captured = this.Board.move(new Move(x, y, this.player2));
 				this.player2score += captured.length;
 			}
 			this.turn = this.player1;
@@ -33,7 +34,12 @@ class Game{
 	}
 
 	copyState() { 
-		return {player1score: this.player1score, player2score: this.player2score, turn: this.turn, board: this.Board.gridCopy(this.Board.grid)};
+		return {player1score: this.player1score,
+				player2score: this.player2score,
+				turn: this.turn,
+				board: this.Board.gridCopy(this.Board.grid),
+				diff: this.Board.diff,
+				oldGrid: this.Board.oldGrid};
 	}
 
 	resetState(gamestate) {
@@ -45,6 +51,12 @@ class Game{
 				this.Board.grid[i][j] = gamestate.board[i][j];
 			}
 		}
+		for (var i = 0; i < gamestate.board.length; i++){
+			for (var j = 0; j < gamestate.board.length; j++){
+				this.Board.oldGrid[i][j] = gamestate.oldGrid[i][j];
+			}
+		}
+		this.Board.diff = gamestate.diff;
 	}
 }
 

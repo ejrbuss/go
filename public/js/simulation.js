@@ -9,7 +9,7 @@ function makeRandomMoves(Game, numberofmoves){
 	while (possiblemoves.length != 0 && numberofmoves != 0){
 		var n = randomInt(possiblemoves.length);
 		try{
-			var captures = Game.move(possiblemoves[n].x, possiblemoves[n].y);
+			var captures = Game.move(possiblemoves[n].x, possiblemoves[n].y, possiblemoves[n].pass);
 		}
 		catch(err){
 			if (err == "InvalidMoveException" || err == "SuicideException" || err == "ReturnToOldStateException"){
@@ -35,9 +35,10 @@ function findPossibleMoves(Board){
 	for (var i = 0; i < Board.size; i++){
 		for (var j = 0; j < Board.size; j++){
 			if (Board.grid[i][j] == 0)
-				possiblemoves.push({x: i, y: j});
+				possiblemoves.push({x: i, y: j, pass: false});
 		}
 	}
+	possiblemoves.push({x: 0, y: 0, pass: true});
 	return possiblemoves;
 }
 
