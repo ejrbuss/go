@@ -418,7 +418,6 @@ class ComponentFactory {
         return new Component()
             .setAttr('preserveAspectRatio', 'none')
             .element('svg')
-            .shadow(0.2)
     }
     
     /**

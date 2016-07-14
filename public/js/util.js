@@ -127,7 +127,7 @@ class debug {
     static game(size=9) {
         debug.gc = new GameController(vc, new PlayerModel('debug'), size, null, debug.mainMenu);
     }
-    
+
     /**
      * Make a move in a debug game.
      */

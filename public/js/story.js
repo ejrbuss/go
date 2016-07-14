@@ -26,6 +26,10 @@ var story = [
             ai: 'AIC',             // Ai to use
             color: select1,        // Color of the board
             background: '1'        // Background image
+        },
+        next: function(vc, playerModel) {
+            // Update player level completed
+            vc.story(playerModel, 2, 1);
         }
     }, { // Level 2
         scenes: [
@@ -90,7 +94,24 @@ var story = [
             ai: 'AI2',
             color: select2,
             background: '5'
+        },
+        next: function(vc, playerModel) {
+            vc.story(playerModel, 5, 0);
         }
+    }, { // Epilogue
+        scenes: [
+            {
+                text: 'Testing the text',
+                name: 'Admin',
+                color: select2,
+                character: '5',
+                background: '5',   
+            }
+        ],
+        next: function(vc, playerModel) {
+            vc.mainMenu(playerModel);
+        }
+        
     }
 ]
 

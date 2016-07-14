@@ -80,6 +80,12 @@ class ViewController {
         this.update();
     }
     
+    message2(message) {
+        this.add( ComponentFactory.Vector().poly([20,50, 50,0, 60,0, 30,50], background1).addClass('slide-up-right') );
+        this.add( ComponentFactory.Vector().poly([30,50, 60,0, 70,0, 40,50], accent).addClass('slide-down-left') );
+        this.update();
+    }
+    
     /**
      * Load the login screen.
      */
@@ -265,16 +271,20 @@ class ViewController {
         }
         var vc = this;
         // Actions
-        var skip = ComponentFactory.ClickAction(function() { new GameController(
-            vc, 
-            playerModel, 
-            story[level].game.size, 
-            story[level].game.ai, 
-            function(){ vc.levelSelect(playerModel); },
-            undefined,
-            story[level].game.color,
-            story[level].game.background
-        )});
+        var skip = ComponentFactory.ClickAction(function() { 
+            if ( story[level].game != undefined )
+                new GameController(
+                vc, 
+                playerModel, 
+                story[level].game.size, 
+                story[level].game.ai, 
+                function(){ vc.levelSelect(playerModel); },
+                undefined,
+                story[level].game.color,
+                story[level].game.background
+            );
+            story[level].next(vc, playerModel);
+        });
         if (story[level].scenes.length <= scene) {
             skip.action()();
             return;
@@ -350,27 +360,54 @@ class ViewController {
     versusPvP(playerModel) {
         log.info('loaded versusPvP', arguments);
         // Reload function
-        this.reload = function() {
-            this.versusPvP(playerModel);
+        this.reload = function() { this.versusPvP(playerModel); };
+        var size = {
+            '9✕9': 9, '13✕13': 13, '19✕19': 19,
+            'right': { '9✕9': '13✕13', '13✕13': '19✕19', '19✕19': '9✕9' },
+            'left':  { '9✕9': '19✕19', '19✕19': '13✕13', '13✕13': '9✕9' }
         }
         var vc = this;
         var background = '1';
         // Actions
         var menu  = ComponentFactory.ClickAction(function() { vc.mainMenu(playerModel); });
         var play  = ComponentFactory.ClickAction(function() { 
-            new GameController(vc, playerModel, 9, null, function(){ vc.versusPvP(playerModel); }, function() {}, accent, background); 
+            new GameController(
+                vc, playerModel, 
+                size[$('.size').text()], 
+                null, 
+                function(){ vc.versusPvP(playerModel); }, 
+                function() {}, 
+                accent, background); 
         });
         var stageSelect = ComponentFactory.ClickAction(function(component) {
             background = component.recieve();
             $( '.stage' ).addClass('unselected');
-            component.$.removeClass('unselected')
+            component.$.removeClass('unselected');
         });
+        var sizeSelect = new Action().trigger('mouseenter').action(function(component) {
+            $( '#' + component.id() + ' polygon' ).css('fill', select1);
+        })
+        var sizeLeave = new Action().trigger('mouseleave').action(function(component) {
+            $( '#' + component.id() + ' polygon' ).css('fill', background1);
+        });
+        var direction = function(direction) {
+            return ComponentFactory.ClickAction(function(component) {
+                $('.size').text(size[direction][$('.size').text()]); 
+                log.info('size: ' + $('.size').text());
+            });
+        }
         // Vectors
         this.add( ComponentFactory.Vector()
             .poly([0,5, 0,50, 7,50], accent)
             .poly([32,0, 76,0, 66,50, 22,50], background1)
             .poly([0,25,  10,50,   0,50], background1)
             .addClass('slide-right') );
+        this.add( ComponentFactory.Vector()
+             .poly([83,30, 85,29, 85,31], background1)
+             .z(61).addClass('slide-right').addAction(sizeSelect).addAction(sizeLeave).addAction(direction('left')) );
+        this.add( ComponentFactory.Vector()
+             .poly([93,30, 91,29, 91,31], background1)
+             .z(61).addClass('slide-right').addAction(sizeSelect).addAction(sizeLeave).addAction(direction('right')) );
         // Selections
         this.add( ComponentFactory.SelectStage('select1', 1).xy(17, 13).addAction(stageSelect).removeClass('unselected') );
         this.add( ComponentFactory.SelectStage('select2', 2).xy(29, 13).addAction(stageSelect) );
@@ -379,7 +416,9 @@ class ViewController {
         this.add( ComponentFactory.SelectStage('select5', 5).xy(65, 13).addAction(stageSelect) );
         // Buttons
         this.add( ComponentFactory.LargeTitleButton('PlAY', background1).xy(80, 19).style('normal').addClass('slide-right').addAction(play) );
+        this.add( ComponentFactory.Text('9✕9', background1).size(2).xy(83, 28.7).addClass('slide-right size').width(10) );
         this.add( ComponentFactory.TitleButton('RETURN').xy(1,  40).addClass('slide-right').addAction(menu) );
+        this.add( new Component().xyz(80, 28, 60).width(15).height(5) );
         // Render
         this.clear();
         this.update();
@@ -392,15 +431,24 @@ class ViewController {
     versusAi(playerModel) {
         log.info('loaded versusAi', arguments);
         // Reload function
-        this.reload = function() {
-            this.versusAi(playerModel);
+        this.reload = function() { this.versusAi(playerModel); };
+        var size = {
+            '9✕9': 9, '13✕13': 13, '19✕19': 19,
+            'right': { '9✕9': '13✕13', '13✕13': '19✕19', '19✕19': '9✕9' },
+            'left':  { '9✕9': '19✕19', '19✕19': '13✕13', '13✕13': '9✕9' }
         }
         var vc = this;
         var background = '1';
         // Actions
         var menu   = ComponentFactory.ClickAction(function() { vc.mainMenu(playerModel); });
         var play   = ComponentFactory.ClickAction(function() { 
-            new GameController(vc, playerModel, 9, 'AI2', function(){ vc.versusAi(playerModel); }, function() {}, accent, background); 
+            new GameController(
+                vc, playerModel, 
+                size[$('.size').text()], 
+                'AI2', 
+                function(){ vc.versusAi(playerModel); }, 
+                function() {}, 
+                accent, background); 
         });
         var aiSelect = ComponentFactory.ClickAction(function(component) {
             $( '.ai' ).addClass('unselected');
@@ -411,12 +459,30 @@ class ViewController {
             $( '.stage' ).addClass('unselected');
             component.$.removeClass('unselected')
         });
+        var sizeSelect = new Action().trigger('mouseenter').action(function(component) {
+            $( '#' + component.id() + ' polygon' ).css('fill', select1);
+        })
+        var sizeLeave = new Action().trigger('mouseleave').action(function(component) {
+            $( '#' + component.id() + ' polygon' ).css('fill', background1);
+        });
+        var direction = function(direction) {
+            return ComponentFactory.ClickAction(function(component) {
+                $('.size').text(size[direction][$('.size').text()]); 
+                log.info('size: ' + $('.size').text());
+            });
+        }
         // Vectors
         this.add( ComponentFactory.Vector()
             .poly([0,5, 0,50, 7,50], accent)
             .poly([32,0, 76,0, 66,50, 22,50], background1)
             .poly([0,25,  10,50,   0,50], background1)
             .addClass('slide-right') );
+        this.add( ComponentFactory.Vector()
+             .poly([83,30, 85,29, 85,31], background1)
+             .z(61).addClass('slide-right').addAction(sizeSelect).addAction(sizeLeave).addAction(direction('left')) );
+        this.add( ComponentFactory.Vector()
+             .poly([93,30, 91,29, 91,31], background1)
+             .z(61).addClass('slide-right').addAction(sizeSelect).addAction(sizeLeave).addAction(direction('right')) );
         // Selections
         this.add( ComponentFactory.SelectAi('select1', 1).xy(20, 2).addAction(aiSelect).removeClass('unselected') );
         this.add( ComponentFactory.SelectAi('select2', 2).xy(32, 2).addAction(aiSelect) );
@@ -430,6 +496,7 @@ class ViewController {
         this.add( ComponentFactory.SelectStage('select5', 5).xy(68, 26).addAction(stageSelect) );   
         // Buttons
         this.add( ComponentFactory.LargeTitleButton('PlAY', background1).xy(80, 19).style('normal').addClass('slide-right').addAction(play) );
+         this.add( ComponentFactory.Text('9✕9', background1).size(2).xy(83, 28.7).addClass('slide-right size').width(10) );
         this.add( ComponentFactory.TitleButton('RETURN').xy(1,  40).addClass('slide-right').addAction(menu) );
         // Render
         this.clear();

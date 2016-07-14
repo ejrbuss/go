@@ -30,6 +30,7 @@ class GameController {
         this.turn = 1;
         this.game = new Game(this.id, this.size);
         this.ai = assembleAI(ai, this.game);
+        this.pass = false;
         this.playerModel = playerModel;
         var gc = this;
         // Actions
@@ -144,6 +145,12 @@ class GameController {
         var gm = this;
         try {
             this.game.move(x, y, pass);
+            if ( this.pass && pass ) {
+                this.end();
+                return;
+            } else {
+                this.pass = pass;
+            }
             // Succes
             this.update();
             if (this.ai) {
@@ -152,6 +159,12 @@ class GameController {
                 vc.message(this.ai.name + ' TURN', select1, function() {
                     var move = gm.ai.getMove(gm.game);
                     gm.game.move(move.x, move.y, move.pass);
+                    if ( this.pass && move.pass ) {
+                        this.end();
+                        return;
+                    } else {
+                        this.pass = move.pass;
+                    }
                     gm.update();
                     vc.message(gm.playerModel.username() + ' TURN', select1);
                     gm.player1.$.css({'color' : select2});
@@ -180,7 +193,13 @@ class GameController {
      * TODO implement game end
      */
     end() {
-        console.log(endGame(this.Game.Board));
+        vc.add( ComponentFactory.Text('YOU WIN', select2).size(10).xy(20, 2).addClass('slide-up') );
+        vc.add( ComponentFactory.Vector()
+             .poly([35,0,  75,0,  65,50, 25,50], background2)
+             .z(6).addClass('slide-up') 
+        );
+        vc.update();
+        
 		// server/database call for stats storage can go here.
 		// UI call can go here
     }
