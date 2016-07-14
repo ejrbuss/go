@@ -7,6 +7,7 @@ function saveMove(move, gameID, callback){
 		'player':move.c,
 		'x':move.x,
 		'y':move.y,
+		'pass':move.pass,
 		'time':Date.now()
 	};
 
@@ -21,6 +22,26 @@ function saveMove(move, gameID, callback){
 	xmlhr.setRequestHeader("content-type", "application/json");
 	xmlhr.send(JSON.stringify(obj));
 
+}
+
+function saveGameToDB(game, moves, callback){
+	xmlhr = new XMLHttpRequest();
+
+	var obj = {
+		'game': game,
+		'moves': moves,
+	};
+
+	xmlhr.onreadystatechange = function() {
+		if(xmlhr.readyState == 4 && xmlhr.status == 200) {
+			//handle response
+			callback(xmlhr.responseText);
+		}
+	};
+
+	xmlhr.open('POST', '/saveGame', true);
+	xmlhr.setRequestHeader("content-type", "application/json");
+	xmlhr.send(JSON.stringify(obj));
 }
 
 function updateGame(game, callback){

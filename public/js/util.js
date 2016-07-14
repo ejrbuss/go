@@ -134,7 +134,15 @@ class debug {
     static move(x, y, pass=false) {
         debug.gc.move(x, y, pass);
     }
-    
+
+    /**
+     * Ends ongoing game no matter the status, scores, and sends to database.
+     */
+
+    static endGame() {
+        debug.gc.end();
+    }
+
     /**
      * Load the replay list screen.
      */

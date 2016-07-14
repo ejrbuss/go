@@ -26,6 +26,38 @@ app.post("/checkDuplicateUsername", function(req, res) {
     db.checkUsername(req.body.username, res);
 });
 
+// Checks login info in accounts database.
+app.post("/checkLogin", function(req, res) {
+    console.log("Checking username " + req.body);
+    db.checkLogin(req.body, res);
+});
+
+app.post("/saveGame", function(req, res) {
+    console.log("Saving game...");
+    console.log(req.body);
+    var obj = {
+        player1: req.body.game.player1,
+        player2: req.body.game.player2,
+        score1: req.body.game.score1,
+        score2: req.body.game.score2,
+        size: req.body.game.size,
+        time: Date.now(),
+    }
+
+    db.saveGame(obj, function(err, data) {
+        if(err)
+            res.status(500).send();
+        else {
+            var id = data._id;
+            obj = {
+                moves: req.body.moves,
+                _id: id,
+            }
+            db.addMovesList(obj,res);
+        }
+    });
+});
+
 app.post("/addMove", function(req, res) {
 	console.log("Storing move...");
 	console.log(req.body);

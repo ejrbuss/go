@@ -7,7 +7,7 @@ class PlayerModel extends PropertyExpander {
         
         if (player == 'debug') {
             player = {
-                username :            'debug',
+                username:            'debug',
                 highscore:            Math.randomInt(1000),
                 totalScore:           Math.randomInt(5000),
                 gamesWon:             Math.randomInt(100),
@@ -18,13 +18,17 @@ class PlayerModel extends PropertyExpander {
                 piecesLost:           Math.randomInt(100),
                 playtime:             Math.randomInt(100),
                 levels:               4,
-                rank :                Math.randomInt(1000)
+                rank:                 Math.randomInt(1000)
             }
         }
         
         this.property = player;
         
         super.expand();
+    }
+    
+    username() {
+        return this.username;
     }
     
     winLoss() {
@@ -41,9 +45,12 @@ class PlayerModel extends PropertyExpander {
     
 }
 
+/*
+ *  Creates a new entry in the 'accounts' database.
+ */
 function newAccount(username, password) {
     
-    console.log('newAccount called with username: ' + username + ' password: ' + password);
+    //log.info('newAccount called with username: ' + username + ' password: ' + password);
 	
 	// used to generate random information for a new user into the database. 
 	var highScore = Math.floor((Math.random() * 1000) +1);
@@ -57,17 +64,18 @@ function newAccount(username, password) {
 	var totalPlayingTime = Math.floor((Math.random() * 100) +1);
 	var storyLevelsCompleted = Math.floor((Math.random() * 5) +1);
     
-    // Check for blank username or password.
+    // Check for blank username/password.
     if (username == '') {
-        console.log("Please enter a username");
+        log.info("Please enter a username");
         vc.message('please enter a username');
         return
     }
     if (password == '') {
-        console.log("Please enter a password");
+        log.info("Please enter a password");
         vc.message('please enter a password');
         return
     }
+    
     // Check for duplicate username.
     $.ajax({
         url: 'http://localhost:8080/checkDuplicateUsername', 
@@ -76,13 +84,13 @@ function newAccount(username, password) {
         data: JSON.stringify({username: username})
     }).done(function(isduplicate) {
         if(isduplicate) {
-            console.log("Username already taken.");
+            log.info("Username already taken.");
             vc.message('username already taken');
         } else if (!isValid(password)) {
-            console.log("Invalid Password");
+            log.info("Invalid Password");
             vc.message('Invalid Password');
         } else {
-            console.log('Creating account...')
+            log.info('Creating account...')
             // Add the user to the database.
             $.ajax({
                 url: 'http://localhost:8080/storeNewAccount', 
@@ -90,7 +98,7 @@ function newAccount(username, password) {
                 contentType: 'application/json', 
                 data: JSON.stringify({username: username, password: password, highScore: highScore, totalScore: totalScore, gamesWon: gamesWon, gamesLost: gamesLost, currentStreak: currentStreak, longestStreak: longestStreak, piecesWon: piecesWon, piecesLost: piecesLost, totalPlayingTime: totalPlayingTime, storyLevelsCompleted: storyLevelsCompleted})
             }).done(function(player) {
-                console.log('..Account created')
+                log.info('..Account created')
                 vc.mainMenu(new PlayerModel(player));
             });
         }
@@ -98,28 +106,23 @@ function newAccount(username, password) {
     
 }
 
+/*
+ * Checks player login info.
+ */
 function login(username, password) {
     
-    console.log('login called with username: ' + username + ' password: ' + password);
-    
-    // Check if valid login
-    
-    var canLogin = false;
-    
-    // Handle error messages (wrong password, blank username/password, etc.)
-    
-    if (!canLogin)  {
-        vc.message('Wrong password');
-        return;
-    }
-        
-    // Get account info
-        
-    player = null;
-    
-    playerManager = new PlayerManager(player);
-    
-    vc.menu(playerManager);
+    $.ajax({
+        url: 'http://localhost:8080/checkLogin', 
+        type: 'POST', 
+        contentType: 'application/json',
+        data: JSON.stringify({username: username, password: password})
+    }).done(function(isCorrect) {
+        if (!isCorrect)  {
+            vc.message('wrong username/password');
+        } else {
+            vc.mainMenu(new PlayerModel('debug'));
+        }
+    });
 }
 
 /*

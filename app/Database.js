@@ -1,6 +1,7 @@
 "use strict";
 var MongoClient = require("mongodb").MongoClient;
 var mongodb = require("mongodb");
+var ObjectID = require('mongodb').ObjectID;
 
 class Database {
     
@@ -41,7 +42,7 @@ class Database {
     
     // Checks a username against the database for duplicates.
     checkUsername(obj, res) {
-        console.log("in checkUsername..." + obj);
+        console.log("in checkPassword..." + obj);
         this._db.collection('accounts').count({username: obj}).then(function(count) {
             if (count == 0) {
                 console.log('fine');
@@ -52,7 +53,80 @@ class Database {
             }
         });
     }
-     
+    
+    // Checks login info.
+    checkLogin(obj, res) {
+        console.log("in checkUsername..." + obj);
+        this._db.collection('accounts').count({username: obj.username, password: obj.password}).then(function(count) {
+            if (count == 0) {
+                res.send(false);
+            } else {
+                res.send(true);
+            }
+        });
+    }
+   
+
+    //get move list for replay
+    //obj in the form {id:gameID}
+    getMoveList(obj, res) {
+        console.log("Getting list of moves...");
+        var gameID = new ObjectID(obj.id);
+        var collection = this._db.collection('moves');
+        collection.findOne({'_id': gameID}, function(err, docs){
+            if(err){
+                res.status(500).send(null);
+            } else {
+                console.log(docs.moves);
+                res.status(200).send(docs.moves);
+            }
+        });
+    }
+
+    //save completed game
+    saveGame(obj, cb) {
+        console.log("Saving new completed game to database...");
+        var collection = this._db.collection('games');
+        console.log(obj);
+
+        collection.insert(obj, function(err, docs) {
+                if(err)
+                   cb(err,null);
+                else
+                   cb(null,docs.ops[0]);
+        });
+    }
+
+    addMovesList(obj, res) {
+        console.log("Adding move list to db...");
+
+        var collection = this._db.collection('moves');
+
+
+        collection.insert(obj, function(err, docs) {
+            if(err)
+                res.status(500).send();
+            else {
+                res.status(200).send(docs.ops[0]);
+            }
+        });
+    }
+    //get games by username
+    //obj in the form of {name:username}
+    getGames(obj, res){
+        var username = obj.name;
+        console.log(username);
+        var collection = this._db.collection('games');
+        collection.find({player1: username}).toArray(function(err, docs){
+            if(err){
+                res.send(null);
+            } else {
+                console.log(docs);
+                res.send(docs);
+            }
+        });
+    }
+
     //add new move
     addNewMove(obj, res) {
         console.log("Adding new move to database...");
@@ -62,25 +136,9 @@ class Database {
                 res.send(null);
             else{
                 console.log(docs);
-                res.send(doc.ops[0]);
+                res.send(docs.ops[0]);
             }
         });
-    }
-
-    //get move list for replay
-    //obj in the form {id:gameID}
-    getMoveList(obj, res) {
-        var gameID = obj.id;
-        console.log("Getting list of moves...");
-        var collection = this._db.collection('moves');
-        collection.find({gameid:gameID}).toArray(function(err, docs){
-            if(err)
-                res.send(null);
-            else {
-                console.log(docs);
-                res.send(docs);
-            }
-        })
     }
 
     //add new game (happens at beginning of each game)
@@ -91,11 +149,12 @@ class Database {
             if(err) 
                 res.send(null);
             else {
-                console.log(docs);
                 res.send(docs.ops[0]);
             }    
         });
     }
+
+
 
     //completes the game
     updateGame(obj, res) {
@@ -114,21 +173,7 @@ class Database {
         res.send(true);
     }
 
-    //get games by username
-    //obj in the form of {name:username}
-    getGames(obj, res){
-        var username = obj.name;
-        console.log(username);
-        var collection = this._db.collection('games');
-        collection.find({$or: [{player1: username}, {player2: username}]}).toArray(function(err, docs){
-            if(err){
-                res.send(null);
-            } else {
-                console.log(docs);
-                res.send(docs);
-            }
-        });
-    }
+
     
 }
 

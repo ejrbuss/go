@@ -3,17 +3,99 @@
 class AI{
 	//class interface
 	// make your AI implement this
-	constructor(Game){
+	constructor(Game) {
         this.name = 'placeholder';
-	}  
+	}
 
 	getMove(Game){
 		return {x: 0, y: 0};
 	}
 }
 
-class AI3 {
+class AI2 {
+	constructor(Game) {
+		this.name = "AI2";
+		this.size = Game.Board.size;
+		var i = Math.floor(this.size / 2);
+		this.move = {x: i, y: i};
+		this.direction = "up";
+		this.spirallength = 1;
+		this.spiralcount = 1;
+	}
 
+	getMove(Game){
+		var pass = true;
+		while(this.move != null){
+			try{
+				var movetomake = new Move(this.move.x, this.move.y, Game.player2)
+				Game.Board.move(movetomake);
+				Game.Board.rollbackBoard(Game.Board.diff.Move, Game.Board.diff.captured, Game.Board.grid);
+				pass = null;
+				break;
+			}
+			catch(err){
+				if (err == "InvalidMoveException" || err == "SuicideException" || err == "ReturnToOldStateException"){
+				}
+				else
+					throw err;
+			}
+			finally{
+				this.swirl();
+			}
+		}
+		if (pass){
+			return {x: 0, y: 0, pass: true}
+		}
+		else{
+			return {x: movetomake.x, y: movetomake.y};
+		}
+	}
+
+	swirl(){
+		if (this.move.x < 0 || this.move.y < 0 || this.move.x >= this.size || this.move.y >= this.size){
+			this.move = null;
+			return;
+		}
+		if (this.direction == "up"){
+			this.move = {x: this.move.x, y: this.move.y-1};
+			this.spiralcount--;
+			if (this.spiralcount == 0){
+				this.spirallength++;
+				this.spiralcount = this.spirallength;
+				this.direction = "left";
+			}
+		}
+		else if (this.direction == "left"){
+			this.move = {x: this.move.x-1, y: this.move.y};
+			this.spiralcount--;
+			if (this.spiralcount == 0){
+				this.spirallength++;
+				this.spiralcount = this.spirallength;
+				this.direction = "down";
+			}
+		}
+		else if (this.direction == "down"){
+			this.move = {x: this.move.x, y: this.move.y+1};
+			this.spiralcount--;
+			if (this.spiralcount == 0){
+				this.spirallength++;
+				this.spiralcount = this.spirallength;
+				this.direction = "right";
+			}
+		}
+		else if (this.direction == "right"){
+			this.move = {x: this.move.x+1, y: this.move.y};
+			this.spiralcount--;
+			if (this.spiralcount == 0){
+				this.spirallength++;
+				this.spiralcount = this.spirallength;
+				this.direction = "up";
+			}
+		}
+	}
+}
+
+class AI3 {
 	constructor(Game) {
 		this.name = 'AI3';
 		this.boardSize = Game.Board.size - 1;
@@ -37,21 +119,31 @@ class AI3 {
 		var grid = Game.Board.grid;
 		var n = grid.size;
 
-		if(this.moves > 5){
-			//needs a lot of work
-			//play in main territory until own 50% then move right
-			var quad = this.getQuadrant(Game.Board, 2);
-			var side = this.getSide(Game.Board, 2);
+		if(this.moves > 3){
 
-			if (quad.n >= side.n && quad.n < quad.spaces.length){
-				possiblemoves = quad.spaces;
-			} else if (side.n >= quad.n && side.n < side.spaces.length) {
-				possiblemoves = side.spaces;
-			} else if (quad.n >= side.n) {
-				possiblemoves = side.spaces;
-			} else {
-				possiblemoves = quad.spaces;
-			}
+			var spaces = this.getSpaces(Game.Board, 2);
+
+			var i = 0;
+
+			while(spaces[i].n > spaces[i].spaces.length && i < spaces.length)
+				i++;
+
+			possiblemoves = spaces[i].spaces;
+			//console.log(possiblemoves);
+
+			var oppSpaces = this.getSpaces(Game.Board, 1);
+			var j = 0;
+
+			while(oppSpaces[j].n > spaces[j].spaces.length && j < spaces.length)
+				j++;
+
+			if(j > 0)
+				possiblemoves = possiblemoves.concat(oppSpaces[j].spaces);
+
+			if(i > 0)
+				possiblemoves = this.subtractSpaces(possiblemoves, spaces[0].spaces);
+
+			console.log(possiblemoves);
 		}
 
 
@@ -83,7 +175,7 @@ class AI3 {
 				Game.resetState(gamestate);
 			}
 		}
-		console.log(movescore);
+		//console.log(movescore);
 		var max = 0;
 		var maxindex = 0;
 		for (var k = 0; k < movescore.length; k++){
@@ -102,7 +194,41 @@ class AI3 {
 	
 	}
 
-	getQuadrant(board, player){
+	subtractSpaces(source, removal){
+		var src = source;
+		var rmv = removal;
+		var returnVal = [];
+
+		var remove = false;
+
+		for(var i = 0; i < src.length; i++){
+			for(var j = 0; j < rmv.length; j++){
+				if(src[i].x == rmv[j].x && src[i].y == rmv[j].y){
+					remove = true;
+				}
+			}
+			if(!remove){
+				returnVal.push(src[i]);
+			}
+			remove = false;
+		}
+
+		return returnVal;
+	}
+
+	getSpaces(board, player){
+		var quads = this.getQuadrants(board, player);
+		var sides = this.getSides(board, player);
+
+		var returnVal = quads.concat(sides);
+		returnVal.sort(function(a,b) {
+			return a.n < b.n
+		});
+
+		return returnVal;
+	}
+
+	getQuadrants(board, player){
 		var grid = board.gridCopy(board.grid);
 		var n = grid.length;
 		var q1 = 0;
@@ -113,14 +239,15 @@ class AI3 {
 		var s2 = [];
 		var s3 = [];
 		var s4 = [];
-		
+
+		//QUADRANTS
 		//q1 = top left
 		for(var i = 0; i < (n-1)/2; i++){
 			for(var j = 0; j < (n-1)/2; j++){
 				if(grid[i][j] == player)
 					q1++;
 				else if(grid[i][j] == 0)
-					s1.push({x: i, y: j})
+					s1.push({x: i, y: j});
 			}
 		}
 		//q2 = top right
@@ -129,7 +256,7 @@ class AI3 {
 				if(grid[i][j] == player)
 					q2++;
 				else if(grid[i][j] == 0)
-					s2.push({x: i, y: j})
+					s2.push({x: i, y: j});
 				
 			}
 		}
@@ -139,7 +266,7 @@ class AI3 {
 				if(grid[i][j] == player)
 					q3++;
 				else if(grid[i][j] == 0)
-					s3.push({x: i, y: j})
+					s3.push({x: i, y: j});
 				
 			}
 		}
@@ -149,22 +276,17 @@ class AI3 {
 				if(grid[i][j] == player)
 					q4++;
 				else if(grid[i][j] == 0)
-					s4.push({x: i, y: j})
+					s4.push({x: i, y: j});
 			}
 		}
 
-		if(q1 >= q2 && q1 >= q3 && q1 >= q4)
-			return {q:1, n:q1, spaces:s1}
-		else if(q2 >= q1 && q2 >= q3 && q2 >= q4)
-			return {q:2, n:q2, spaces:s2}
-		else if(q3 >= q1 && q3 >= q2 && q2 >= q4)
-			return {q:3, n:q3, spaces:s3}
-		else
-			return {q:4, n:q4, spaces:s4}
 
+		var returnVal = [{n:q1, spaces:s1}, {n:q2, spaces:s2}, {n:q3, spaces:s3}, {n:q4, spaces:s4}];
+
+		return returnVal;
 	}
 
-	getSide(board, player){
+	getSides(board, player){
 		var grid = board.gridCopy(board.grid);
 		var n = grid.length ;
 		var l = 0;
@@ -181,7 +303,7 @@ class AI3 {
 				if(grid[i][j] == player)
 					t++;
 				else if(grid[i][j] == 0)
-					st.push({x: i, y: j})
+					st.push({x: i, y: j});
 			}
 		}
 		//l
@@ -190,7 +312,7 @@ class AI3 {
 				if(grid[i][j] == player)
 					l++;
 				else if(grid[i][j] == 0)
-					sl.push({x: i, y: j})
+					sl.push({x: i, y: j});
 			}
 		}
 		//r
@@ -199,7 +321,7 @@ class AI3 {
 				if(grid[i][j] == player)
 					r++;
 				else if(grid[i][j] == 0)
-					sr.push({x: i, y: j})
+					sr.push({x: i, y: j});
 			}
 		}
 		//b
@@ -208,30 +330,25 @@ class AI3 {
 				if(grid[i][j] == player)
 					b++;
 				else if(grid[i][j] == 0)
-					sb.push({x: i, y: j})
+					sb.push({x: i, y: j});
 			}
 		}
 
-		if(t >= l && t >= r && t >= b)
-			return {s:1, n:t, spaces:st}
-		if(l >= t && l >= r && l >= b)
-			return {s:2, n:l, spaces:sl}
-		if(r >= l && r >= t && r >= b)
-			return {s:3, n:r, spaces:sr}
-		else
-			return {s:4, n:b, spaces:sb}
+		var returnVal = [{n:t, spaces:st}, {n:l, spaces:sl}, {n:r, spaces:sr}, {n:b, spaces:sb}];
+
+		return returnVal;
 	}
-
-
 }
 
 
-class AI2{
+
+class AI1{
 	constructor(Game){
-        this.name = 'AI2';
+        this.name = 'AI1';
 		var i = Math.floor(Game.Board.size / 2);
 		var j = i;
-		this.blobmoves = [{x: i, y: j}, {x: i+1, y: j}]
+		var moves = findPossibleMoves(Game.Board);
+		this.blobmoves = [moves[randomInt(moves.length)]];
 	}
 	getMove(Game){
 		var pass = "pass";
@@ -268,8 +385,8 @@ class AI5{
     
 	constructor(Game){
         this.name = 'AI5';
-		this.SIMULATIONS = Math.floor(Math.pow(0.016*Game.Board.size, -2.9));
-		this.MAXMOVES = 90;
+		this.SIMULATIONS = Math.floor(0.25*Math.pow(0.016*Game.Board.size, -2.9));
+		this.MAXMOVES = 30;
 	}
 
 	getMove(Game){
@@ -318,5 +435,79 @@ class AI5{
 			return {x: 0, y: 0, pass: true};
 		else
 			return {x: possiblemoves[maxindex].x, y: possiblemoves[maxindex].y};
+	}
+}
+
+class AIX{
+
+	constructor(Game){
+		this.name = 'AIX';
+	}
+
+	getMove(Game){
+		var options;
+		if(Game.player1score > Game.player2score){
+			options = {
+				host:'roberts.seng.uvic.ca',
+				path:'/ai/formEyes',
+				port:30000,
+				method:'POST',
+				headers: {
+					'Content-Type':'application/json'
+				}
+			};
+		} else {
+			options = {
+				host:'roberts.seng.uvic.ca',
+				path:'/ai/attackEnemy',
+				port:30000,
+				method:'POST',
+				headers: {
+					'Content-Type':'application/json'
+				}
+			};
+		}
+
+		var callback = function(res){
+			var str = '';
+			console.log(res.statusCode);
+
+		    res.on('data', function(chunk){
+		    	console.log(chunk.toString());
+		    	str += chunk.toString();
+		    });
+
+		    res.on('end', function(){
+		    	console.log('final data: ' + str);
+		    	var move = JSON.parse(str);
+		    	var newMove = {
+		    		x:move.x,
+		    		y:move.y,
+		    		side:move.c,
+		    		pass:move.pass
+		    	};
+
+		    	return newMove;
+		    });
+		};
+
+	    var req = http.request(options, callback);
+
+	    req.on('error', function(e){
+	    	console.log('problem with request: ' + e.message);
+	    	return {x:0, y:0, pass:true};
+	    });
+
+	    var pass = (Game.Board.diff.move.side == 2);
+
+	    var postData = JSON.stringify({
+	    	'size': Game.Board.size,
+	    	'board': Game.Board.grid,
+	    	'last': {x:Game.Board.diff.move.x, y:Game.Board.diff.move.y, c:1, pass:pass}
+	    });
+
+	    req.write(postData);
+
+	    req.end();
 	}
 }

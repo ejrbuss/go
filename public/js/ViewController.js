@@ -494,9 +494,9 @@ class ViewController {
         this.add( ComponentFactory.SelectStage('select3', 3).xy(44, 26).addAction(stageSelect) );
         this.add( ComponentFactory.SelectStage('select4', 4).xy(56, 26).addAction(stageSelect) );
         this.add( ComponentFactory.SelectStage('select5', 5).xy(68, 26).addAction(stageSelect) );   
-        // Buttons
-        this.add( ComponentFactory.LargeTitleButton('PlAY', background1).xy(80, 19).style('normal').addClass('slide-right').addAction(play) );
-         this.add( ComponentFactory.Text('9✕9', background1).size(2).xy(83, 28.7).addClass('slide-right size').width(10) );
+        
+        this.add( ComponentFactory.Text('9✕9', background1).size(2).xy(83, 28.7).addClass('slide-right size').width(10) );
+        this.add( ComponentFactory.LargeTitleButton('PLAY', background1).xy(80, 19).style('normal').addClass('slide-right').addAction(play) );
         this.add( ComponentFactory.TitleButton('RETURN').xy(1,  40).addClass('slide-right').addAction(menu) );
         // Render
         this.clear();
@@ -513,35 +513,66 @@ class ViewController {
         this.reload = function() {
             this.replayList(playerModel);
         }
+
+        var vc = this;
         // Actions
         var menu  = ComponentFactory.ClickAction(function() { vc.mainMenu(playerModel); });
+        var enter = ComponentFactory.EnterAction();
+        var leave = ComponentFactory.LeaveAction();
         // Vectors
         this.add( ComponentFactory.Vector().poly([0,0,     50,0,  35,50,  0,50], background1).z(1).addClass('slide-right') );
         this.add( ComponentFactory.Vector().poly([100,50,  100,25,  90,50], background1).z(2).addClass('slide-left') );
         // Background
         this.add( ComponentFactory.Background('2') );
         this.add( ComponentFactory.Title('VS').size(10).xy(70, 10) );
-        // List
-        this.add( ComponentFactory.List()
-                 .addComponent( ComponentFactory.Text('TESTING').element('li').position('relative') )
-                 .addComponent( ComponentFactory.Text('TESTING').element('li').position('relative') )
-                 .addComponent( ComponentFactory.Text('TESTING').element('li').position('relative') )
-                 .addComponent( ComponentFactory.Text('TESTING').element('li').position('relative') )
-                 .addComponent( ComponentFactory.Text('TESTING').element('li').position('relative') )
-                 .addComponent( ComponentFactory.Text('TESTING').element('li').position('relative') )
-                 .addComponent( ComponentFactory.Text('TESTING').element('li').position('relative') )
-                 .addComponent( ComponentFactory.Text('TESTING').element('li').position('relative') )
-                 .addComponent( ComponentFactory.Text('TESTING').element('li').position('relative') )
-                 .addComponent( ComponentFactory.Text('TESTING').element('li').position('relative') )
-        .background(background1).xy(15, 3).width(40).height(44).addClass('slide-right') );
-        // Buttons
-        this.add( ComponentFactory.TitleButton('RETURN').xy(1, 40).addClass('slide-right').addAction(menu) );
-        this.add( ComponentFactory.TitleButton('REPLAY').xy(88, 40).addClass('slide-left').addAction(menu) );
-        // Render
-        this.clear();
-        this.update();
+
+        // Replay Controller
+        var rc = new ReplayList(playerModel.username(), function() {
+            
+
+            // List
+            if(rc.matchList. length > 0) {
+
+                var replayList = ComponentFactory.List();
+                for(var match in rc.matchList) {
+
+                    var component = ComponentFactory.Text(rc.matchList[match].player1 + " vs. " + rc.matchList[match].player2 + ' - ' + (new Date(rc.matchList[match].time)).toLocaleString()).element('li').position('relative');
+                    var replay = ComponentFactory.ClickAction(function() {vc.replayGame(rc.matchList[match], playerModel)});
+                    component.addAction(enter).addAction(leave).addAction(replay);
+                    replayList.addComponent(component);
+                    
+                }
+
+                vc.add(replayList.background(background1).xy(15, 3).width(40).height(44).addClass('slide-right'));
+            } else {
+                log.debug('No games found in database for replay.');
+                var noneFound = ComponentFactory.Text('No games found!');
+                vc.add(noneFound.background(background1).xy(15, 3).width(40).height(44).addClass('slide-right'));
+            }
+
+            // Buttons
+            vc.add( ComponentFactory.TitleButton('RETURN').xy(1, 40).addClass('slide-right').addAction(enter).addAction(leave).addAction(menu) );
+            // Render
+            vc.clear();
+            vc.update();
+
+        });
     }
-    
+
+   /*
+     * Starts a replay of a game, given its gameID.
+     * @param match An object containing information about the match to be replayed.
+     */
+
+    replayGame(match, playerModel) {
+        log.info('loaded replayGame', arguments);
+        var vc = this;
+
+        //DEBUG: Note some of these parameters are hard-coded in for debugging purposes.
+        var play = new ReplayController(this, match.player1, match.player2, match._id, 9, function() {vc.replayList(playerModel)}, accent, '0');
+           
+    }
+
     /**
      * Load the profile screen.
      * @param playerModel the PlayerModel used for states
