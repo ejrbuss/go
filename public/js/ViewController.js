@@ -508,11 +508,15 @@ class ViewController {
      * @param playerModel the PlayerModel used for states
      */
     replayList(playerModel) {
+
+
         log.info('loaded replayList', arguments);
         // Reload function
         this.reload = function() {
             this.replayList(playerModel);
         }
+
+
 
         var vc = this;
         // Actions
@@ -526,18 +530,23 @@ class ViewController {
         this.add( ComponentFactory.Background('2') );
         this.add( ComponentFactory.Title('VS').size(10).xy(70, 10) );
 
-        // Replay Controller
-        var rc = new ReplayList(playerModel.username(), function() {
-            
 
-            // List
+
+
+        // Replay List
+        var rc = new ReplayList(playerModel.username(), function() {
             if(rc.matchList. length > 0) {
 
-                var replayList = ComponentFactory.List();
-                for(var match in rc.matchList) {
+                function callback(i) {
+                    return function() {vc.replayGame(rc.matchList[i], playerModel)};
+                }
 
-                    var component = ComponentFactory.Text(rc.matchList[match].player1 + " vs. " + rc.matchList[match].player2 + ' - ' + (new Date(rc.matchList[match].time)).toLocaleString()).element('li').position('relative');
-                    var replay = ComponentFactory.ClickAction(function() {vc.replayGame(rc.matchList[match], playerModel)});
+                var replayList = ComponentFactory.List();
+                for(var i = 0; i < rc.matchList.length; i++) {
+
+                    var component = ComponentFactory.Text(rc.matchList[i].player1 + " vs. " + rc.matchList[i].player2 + ' - ' + (new Date(rc.matchList[i].time)).toLocaleString()).element('li').position('relative');
+                   var replay = ComponentFactory.ClickAction(callback(i));
+                    log.info(rc.matchList[i]);
                     component.addAction(enter).addAction(leave).addAction(replay);
                     replayList.addComponent(component);
                     
@@ -567,9 +576,7 @@ class ViewController {
     replayGame(match, playerModel) {
         log.info('loaded replayGame', arguments);
         var vc = this;
-
-        //DEBUG: Note some of these parameters are hard-coded in for debugging purposes.
-        var play = new ReplayController(this, match.player1, match.player2, match._id, 9, function() {vc.replayList(playerModel)}, accent, '0');
+        var play = new ReplayController(this, match.player1, match.player2, match._id, match.size, function() {vc.replayList(playerModel)}, accent, '0');
            
     }
 

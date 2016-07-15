@@ -159,16 +159,14 @@ class GameController {
                 this.player2.$.css({'color' : select2});
                 this.moveList.push({'x':x,'y':y,'pass':pass});
 
-                log.debug(this.moveList);
-
                 vc.message(this.ai.name + ' TURN', select1, function() {
                     var move = gm.ai.getMove(gm.game);
                     gm.game.move(move.x, move.y, move.pass);
-                    if ( this.pass && move.pass ) {
-                        this.end();
+                    if ( gm.pass && move.pass ) {
+                        gm.end();
                         return;
                     } else {
-                        this.pass = move.pass;
+                        gm.pass = move.pass;
                     }
                     gm.moveList.push({'x':move.x,'y':move.y,'pass':move.pass});
                     gm.update();

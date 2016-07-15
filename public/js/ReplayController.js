@@ -11,8 +11,9 @@ class ReplayController {
     constructor(vc, player1, player2, gameID, size, quit, color=accent, background = '0') {
         var rc = this;
         this.vc = vc;
+        this.grid;
         this.timeout = null;
-        this.id = 0;
+        this.id = gameID;
         this.size = size;
         this.side = (40 / size) - (5 / this.size); // Make tokens less than the distance between two lines
         this.turn = 1;
@@ -21,7 +22,7 @@ class ReplayController {
         this.player2 = player2;
         this.quit = quit;
         var gc = this;
-        this.iterator = new ReplayIterator(gameID);
+        this.iterator = new ReplayIterator(gameID, size);
 
 
         // Actions
@@ -30,7 +31,6 @@ class ReplayController {
             rc.quit();
         });
         var next = ComponentFactory.ClickAction(function () {rc.next()});
-        var prev = ComponentFactory.ClickAction(function () {rc.prev()});
         var enter = ComponentFactory.EnterAction();
         var leave = ComponentFactory.LeaveAction();
         // Vectors
@@ -64,8 +64,7 @@ class ReplayController {
         vc.add(ComponentFactory.Resource('rsc/characters/player2.png').xyz(76, 15, 2).width(21).height(28).addClass('slide-up'))
 
         vc.add(ComponentFactory.TitleButton('QUIT').xy(3, 5).addClass('slide-right').addAction(enter).addAction(leave).addAction(quit));
-        vc.add(ComponentFactory.TitleButton('NEXT').xy(62, 45).addClass('slide-right').addAction(next));
-        vc.add(ComponentFactory.TitleButton('PREVIOUS').xy(48,45).addClass('slide-right').addAction(prev));
+        vc.add(ComponentFactory.TitleButton('NEXT').xy(62, 45).addClass('slide-right').addAction(next).addClass('next'));
         // Render
         vc.clear();
         vc.update();
@@ -81,20 +80,40 @@ class ReplayController {
     */
 
     next() {
-        if(!this.timeout) {
-            clearTimeout(this.timeout);
-            this.timeout = null;
-        }
+        clearTimeout(this.timeout);
 
         if(this.iterator.hasNext()) {
+        	if (!this.iterator.hasBoard()) {
+            	this.iterator.boardList.push(this.game.Board.gridCopy(this.game.Board.grid));
+        	}
             var move = this.iterator.next();
             var rc = this;
 
-            this.game.move(move.x,move.y,move.pass);
-            this.update();
-            if(this.iterator.hasNext()) {
-                this.timeout = setTimeout(function(){rc.next()}, 3000);
+            try {
+           		this.game.move(move.x,move.y,move.pass);
+            } catch (err) {
+            	log.warn(err);
             }
+            this.update();
+            if (this.iterator.hasNext()) {
+                this.timeout = setTimeout(function(){rc.next()}, 2000);
+            } else {
+            	var end = ComponentFactory.ClickAction(function() {
+            		clearTimeout(rc.timeout);
+            		log.debug('running end');
+            		rc.quit();
+            	});
+            	$('.next').remove();
+            	vc.add(ComponentFactory.TitleButton('END').xy(62, 45).addAction(end).addClass('end'));
+            	
+            }
+
+            if(this.iterator.hasPrev() && $('.prev').length === 0) {
+            	var prev = ComponentFactory.ClickAction(function () {rc.prev()});
+            	vc.add(ComponentFactory.TitleButton('PREVIOUS').xy(48,45).addAction(prev).addClass('prev'));
+            }
+
+            vc.update();
 
         } else {
             log.info('Game finished - game should end here once it is implemented properly.')
@@ -102,8 +121,47 @@ class ReplayController {
         }
     }
 
-    // unimplemented: Reverts one move back to previous board state -> might not be in final version
+    /*
+    * Reverts one move back to previous board state -> might not be in final version
+    */
     prev() {
+        clearTimeout(this.timeout);
+        var end = $('.end');
+        if(end.length > 0){
+        	end.remove();
+        	var next = ComponentFactory.ClickAction(function () {rc.next()});
+        	vc.add(ComponentFactory.TitleButton('NEXT').xy(62, 45).addAction(next).addClass('next'));
+
+        }
+
+        if(this.iterator.hasPrev()) {
+        	var board = this.iterator.prev();
+        	//log.info(board);
+        	var rc = this;
+
+        	this.game.Board.grid = this.game.Board.gridCopy(board);
+
+
+        	//switch turns around when going back one move
+
+        	if(this.game.turn === this.game.player1)
+        		this.game.turn = this.game.player2;
+        	else
+        		this.game.turn = this.game.player1;
+
+        	if(this.iterator.hasPrev())
+        		this.game.Board.oldGrid = this.game.Board.gridCopy(this.iterator.peekPrev());
+        	else 
+        		this.game.Board.grid = this.game.Board.gridCopy(board);
+
+        	this.update();
+
+        	var prev = $('.prev');
+        	if(prev.length > 0 && !this.iterator.hasPrev()) {
+        		prev.remove();
+        	}
+
+        }
 
     }
 
@@ -129,6 +187,7 @@ class ReplayController {
         var size = this.size;
         var side = this.side;
         var played = ComponentFactory.Vector().z(4).addClass('token');
+        $('.token').remove();
         for(var y = 0; y < size; y++)
             for(var x = 0; x < size; x++) {
                 if ( this.game.Board.grid[x][y] == 1 ) {
@@ -169,19 +228,21 @@ class ReplayIterator {
     * @param id The game id for the game to be loaded and played.
     */
 
-    constructor(id) {
+    constructor(id, size) {
         var rc = this;
+        var gm = new Game(0, size);
+        this.boardList = [];
         this.current = 0;
         
         getMoveList(id, function (response) {
         	log.debug(response);
-            rc.moveList = JSON.parse(response);
+            rc.moveList = JSON.parse(response);            
         });
         
     }
 
     /*
-    * Returns the next move, will increase iterator up by one move.
+    * Returns the next move; will increment iterator by one move.
     */
 
     next() {
@@ -191,16 +252,15 @@ class ReplayIterator {
             log.warn('Attempting to load from next() when there are no more elements.');
             return null;
         }
-
     }
 
     /*
-    * Returns the previous move, will decrement iterator by one move.
+    * Returns the previous move; will decrement iterator by one move.
     */
 
     prev() {
         if (this.hasPrev()) {
-            return this.moveList[--this.current];
+            return this.boardList[--this.current];
         } else {
             log.warn('Attempting to load from prev() when there are no more elements.');
             return null;
@@ -214,6 +274,18 @@ class ReplayIterator {
     peek() {
         if(this.hasNext()) {
             return this.moveList[this.current];
+        } else {
+            return null;
+        }
+    }
+
+
+     /*
+    * Returns the previous move in the list, but does not decrement the iterator.
+    */
+    peekPrev() {
+        if(this.hasNext()) {
+            return this.boardList[this.current - 1];
         } else {
             return null;
         }
@@ -233,6 +305,10 @@ class ReplayIterator {
 
     hasPrev() {
         return this.current > 0;
+    }
+
+    hasBoard() {
+    	return !!this.boardList[this.current];
     }
 
 }
