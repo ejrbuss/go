@@ -88,6 +88,17 @@ app.post("/getMoves", function(req, res) {
     db.getMoveList(req.body, res);
 });
 
+
+// updating stats in accounts
+app.post("/updateStats", function(req, res) {
+    console.log("updating Stats");
+    console.log(req.body);
+    db.updateStats(req.body, res);
+});
+
+
+
+
 app.listen(8080, function() {
     console.log('Started!');
 });

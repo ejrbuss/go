@@ -175,6 +175,117 @@ class Database {
     }
 
 
+
+//update stats 
+    updateStats(obj, res) {
+
+        var userName = 'aaa';
+
+        var collection = this._db.collection('accounts');
+        collection.findOne({username:userName}, function(err, docs) {
+            if(err){
+                res.send(null);
+            } else {
+            console.log("doc found");
+            console.log(docs);
+
+            //var userName = obj.username;    
+
+            
+            var userName = obj.userName;
+            var highScore = obj.score;
+            var totalScore = obj.score
+            var gamesWon = docs.gamesWon;
+            var gamesLost = docs.gamesLost;
+            var currentStreak = docs.currentStreak;
+            var longestStreak = docs.longestStreak;
+            var piecesWon = docs.piecesWon;
+            var piecesLost = docs.piecesLost;
+            var totalPlayingTime;
+            var storyLevelsComplete; 
+       
+            /* Testing stuff
+            var userName = 'aaa';
+            var highScore = 100;
+            var totalScore = 100;
+            var gamesWon = docs.gamesWon;
+            var gamesLost = docs.gamesLost;
+            var currentStreak = docs.currentStreak;
+            var longestStreak = docs.longestStreak;
+            var piecesWon = docs.piecesWon;
+            var piecesLost = docs.piecesLost;
+            var totalPlayingTime;
+            var storyLevelsComplete;
+            */
+
+             //high score condition
+             console.log(docs.highScore);
+             if(docs.highScore > highScore){
+                highScore = docs.highScore;
+             }
+
+             // total score condition
+             totalScore = totalScore + docs.totalScore;
+
+
+             // games won 
+             if(obj.Won == true) {
+                gamesWon = gamesWon + 1;
+                currentStreak = currentSteak + 1;
+            }
+
+
+             
+            
+            // games lost        
+             if(obj.Won == false) {
+                gamesLost = gamesLost + 1;
+                currentStreak = 0;
+             } 
+
+
+
+            // currentStreak check    
+            if (currentStreak > longestStreak) {
+                    longestStreak = currentStreak;
+                }
+              
+
+             // number of pieces won   
+             piecesWon = docs.piencesWon + obj.piecesWon;
+
+             // number of pieces lost
+             piecesLost = docs.piecesLost + obj.piecesLost;
+
+             
+            // TODO Implement this!!!  
+             //totalPlayingTime = docs.totalPlayingTime + obj.totalPlayingTime; // something
+
+             //storyLevelsComplete = //Eric's Code; */
+
+                
+            var body = { 
+            'highScore':highScore,
+            'totalScore':totalScore,
+            'gamesWon':gamesWon,
+            'gamesLost':gamesLost,
+            'currentStreak':currentStreak,
+            'longestStreak':longestStreak,
+            'piecesWon':piecesWon,
+            'piecesLost':pieceLost,
+        };
+
+        collection.updateOne({username:userName},{$set:body});
+        res.send(true);
+                }
+             });
+
+            }
+
+
+    
+
+
     
 }
 
