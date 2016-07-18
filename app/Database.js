@@ -76,6 +76,7 @@ class Database {
         collection.findOne({'_id': gameID}, function(err, docs){
             if(err){
                 res.status(500).send(null);
+                console.log('get moves failed');
             } else {
                 console.log(docs.moves);
                 res.status(200).send(docs.moves);

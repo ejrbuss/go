@@ -154,10 +154,11 @@ class GameController {
             }
             // Success
             this.update();
+            this.moveList.push({'x':x,'y':y,'pass':pass});
             if (this.ai) {
                 this.player1.$.css({'color' : background2});
                 this.player2.$.css({'color' : select2});
-                this.moveList.push({'x':x,'y':y,'pass':pass});
+                
 
                 vc.message(this.ai.name + ' TURN', select1, function() {
                     var move = gm.ai.getMove(gm.game);
