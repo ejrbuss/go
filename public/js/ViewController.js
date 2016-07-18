@@ -7,7 +7,7 @@
 //    |___/_/\___/|__/|__/   \____/\____/_/ /_/\__/_/   \____/_/_/\___/_/                                                                           
 //
 //==========================================================================================================================//
-// Manages game views.
+// Manages views.
 //==========================================================================================================================//
 class ViewController {
     
@@ -27,6 +27,9 @@ class ViewController {
         this.mainMenu(new PlayerModel('debug'));
     }
     
+    //======================================================================================================================//
+    // UTILITY
+    //======================================================================================================================//
     /**
      * Adds a component to the list components ready to update.
      * @param comopnent the component to add
@@ -52,6 +55,15 @@ class ViewController {
         for(var i = 0; i < this.live.length; i++)
             this.live[i].ready();
         this.live = [];
+    }
+    
+    /**
+     * Override the current screen directly with HTML to display.
+     * @param html the HTML to display
+     */
+    override(html) {
+        log.info('overriding', arguments);
+        this.parent.html(html);
     }
     
     /**
@@ -86,6 +98,9 @@ class ViewController {
         this.update();
     }
     
+    //======================================================================================================================//
+    // MENUS
+    //======================================================================================================================//
     /**
      * Load the login screen.
      */
@@ -620,15 +635,6 @@ class ViewController {
         // Render
         this.clear();
         this.update();
-    }
-    
-    /**
-     * Override the current screen directly with HTML to display.
-     * @param html the HTML to display
-     */
-    override(html) {
-        log.info('overriding', arguments);
-        this.parent.html(html);
     }
     
 }
