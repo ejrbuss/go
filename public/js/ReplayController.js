@@ -13,9 +13,9 @@ class ReplayController {
         this.timeout = null;
         this.turn = 1;
         this.id = gameID;
-        this.game = new Game(this.id, this.size);
+        this.game = new Game(this.id, size);
         this.player1 = {
-            name: player1,
+            name: Fplayer1,
             image: 'Player1'
         }
         this.player2 = {
@@ -23,11 +23,12 @@ class ReplayController {
             image: 'Player1'
         }
         this.iterator = new ReplayIterator(gameID, size);
-        this.gvc = new GameViewController(vc, stageID, size, quit, this);
+        this.gvc = new GameViewController(vc, 0, size, quit, this);
         // Update
         this.gvc.update();
         this.gvc.player1turn();
-        setTimeout(function(){this.next()}, 3000);        
+        var rc = this;
+        setTimeout(function(){rc.next()}, 3000);        
     }
 
     /*

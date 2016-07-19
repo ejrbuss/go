@@ -41,7 +41,7 @@ class PlayerModel extends PropertyExpander {
     }
     
     progress() {
-        return 100 * ( this.levels() / 5 ) + '%';
+        return this.levels() + ' / 5';
     }
     
     stats(type, cb) {
