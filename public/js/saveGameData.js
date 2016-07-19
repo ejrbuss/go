@@ -24,14 +24,14 @@ function saveMove(move, gameID, callback){
 
 }
 
-function saveGameToDB(game, moves, callback){
+function saveGameToDB(game, moves, user, callback){
 	xmlhr = new XMLHttpRequest();
 
 	var obj = {
 		'game': game,
 		'moves': moves,
+		'user': user,
 	};
-	obj.game.score = endGame(game);
 
 	xmlhr.onreadystatechange = function() {
 		if(xmlhr.readyState == 4 && xmlhr.status == 200) {
