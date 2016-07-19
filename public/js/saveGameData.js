@@ -24,12 +24,13 @@ function saveMove(move, gameID, callback){
 
 }
 
-function saveGameToDB(game, moves, callback){
+function saveGameToDB(game, moves, user, callback){
 	xmlhr = new XMLHttpRequest();
 
 	var obj = {
 		'game': game,
 		'moves': moves,
+		'user': user,
 	};
 
 	xmlhr.onreadystatechange = function() {

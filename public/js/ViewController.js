@@ -7,7 +7,7 @@
 //    |___/_/\___/|__/|__/   \____/\____/_/ /_/\__/_/   \____/_/_/\___/_/                                                                           
 //
 //==========================================================================================================================//
-// Manages game views.
+// Manages views.
 //==========================================================================================================================//
 class ViewController {
     
@@ -27,6 +27,9 @@ class ViewController {
         this.mainMenu(new PlayerModel('debug'));
     }
     
+    //======================================================================================================================//
+    // UTILITY
+    //======================================================================================================================//
     /**
      * Adds a component to the list components ready to update.
      * @param comopnent the component to add
@@ -55,6 +58,15 @@ class ViewController {
     }
     
     /**
+     * Override the current screen directly with HTML to display.
+     * @param html the HTML to display
+     */
+    override(html) {
+        log.info('overriding', arguments);
+        this.parent.html(html);
+    }
+    
+    /**
      * Send a temporary message to the screen.
      * @param message  the text of the message
      * @param color    the background color of the message
@@ -80,12 +92,29 @@ class ViewController {
         this.update();
     }
     
-    message2(message) {
-        this.add( ComponentFactory.Vector().poly([20,50, 50,0, 60,0, 30,50], background1).addClass('slide-up-right') );
-        this.add( ComponentFactory.Vector().poly([30,50, 60,0, 70,0, 40,50], accent).addClass('slide-down-left') );
-        this.update();
+    message(message, background=background1, color=background2) {
+        var lock = this.message;
+        if(lock.blocked == undefined) {
+            lock.blocked = true;
+            var off = new Action().trigger('animationend').action(function(component) {
+                if(component.visited != undefined) {
+                    component.$.remove();
+                    lock.blocked = undefined;
+                } else {
+                    component.visited = true;
+                    component.$.addClass('slide-right-off');
+                }
+            });
+            this.add( ComponentFactory.Vector().poly([72,5, 100,7, 100,12, 70,12], background).z(60).addClass('slide-left').addAction(off) );
+            this.add( ComponentFactory.Text(message, color).xyz(72, 7.5, 61).addClass('slide-left').addAction(off) );
+
+            this.update();
+        }
     }
     
+    //======================================================================================================================//
+    // MENUS
+    //======================================================================================================================//
     /**
      * Load the login screen.
      */
@@ -137,7 +166,7 @@ class ViewController {
         var toStory   = ComponentFactory.ClickAction(function() { vc.levelSelect(playerModel) });
         var toVersus  = ComponentFactory.ClickAction(function() { vc.pvpAi(playerModel) });
         var toReplay  = ComponentFactory.ClickAction(function() { vc.replayList(playerModel) });
-        var toProfile = ComponentFactory.ClickAction(function() { vc.profile(playerModel) });
+        var toProfile = ComponentFactory.ClickAction(function() { vc.profile(playerModel, null, null) });
         var toLogin   = ComponentFactory.ClickAction(function() { vc.login(); });
         // Vectors
         this.add( ComponentFactory.Vector()
@@ -154,7 +183,7 @@ class ViewController {
         this.add( ComponentFactory.Text('PLAYING AS').xy(72, 8.5).addClass('slide-left') );
         this.add( ComponentFactory.Text(playerModel.username(), select1).xy(83, 8.5).addClass('slide-left').weight('bold') );
         this.add( ComponentFactory.Text('RANK', '#444').xy(84, 14).size(5).addClass('slide-left') );
-        this.add( ComponentFactory.Text(playerModel.rank(), select2).size(4).xy(80, 16).width(16).addClass('slide-left') );   
+        this.add( ComponentFactory.Text(playerModel.lrank(), select2).size(4).xy(80, 16).width(16).addClass('slide-left') );   
         this.add( ComponentFactory.Text('W/L'     ).xy(66,   12  ).size(2).addClass('slide-left') );
         this.add( ComponentFactory.Text('K/D'     ).xy(65.5, 14.5).size(2).addClass('slide-left') );
         this.add( ComponentFactory.Text('TIME'    ).xy(65,   17  ).size(2).addClass('slide-left') );
@@ -280,8 +309,7 @@ class ViewController {
                 story[level].game.ai, 
                 function(){ vc.levelSelect(playerModel); },
                 undefined,
-                story[level].game.color,
-                story[level].game.background
+                story[level].game.stageID
             );
             story[level].next(vc, playerModel);
         });
@@ -367,7 +395,7 @@ class ViewController {
             'left':  { '9✕9': '19✕19', '19✕19': '13✕13', '13✕13': '9✕9' }
         }
         var vc = this;
-        var background = '1';
+        var stageID = 1;
         // Actions
         var menu  = ComponentFactory.ClickAction(function() { vc.mainMenu(playerModel); });
         var play  = ComponentFactory.ClickAction(function() { 
@@ -377,10 +405,10 @@ class ViewController {
                 null, 
                 function(){ vc.versusPvP(playerModel); }, 
                 function() {}, 
-                accent, background); 
+                stageID); 
         });
         var stageSelect = ComponentFactory.ClickAction(function(component) {
-            background = component.recieve();
+            stageID = parseInt(component.recieve());
             $( '.stage' ).addClass('unselected');
             component.$.removeClass('unselected');
         });
@@ -409,11 +437,11 @@ class ViewController {
              .poly([93,30, 91,29, 91,31], background1)
              .z(61).addClass('slide-right').addAction(sizeSelect).addAction(sizeLeave).addAction(direction('right')) );
         // Selections
-        this.add( ComponentFactory.SelectStage('select1', 1).xy(17, 13).addAction(stageSelect).removeClass('unselected') );
-        this.add( ComponentFactory.SelectStage('select2', 2).xy(29, 13).addAction(stageSelect) );
-        this.add( ComponentFactory.SelectStage('select3', 3).xy(41, 13).addAction(stageSelect) );
-        this.add( ComponentFactory.SelectStage('select4', 4).xy(53, 13).addAction(stageSelect) );
-        this.add( ComponentFactory.SelectStage('select5', 5).xy(65, 13).addAction(stageSelect) );
+        this.add( ComponentFactory.SelectStage('select1', 0).xy(17, 13).addAction(stageSelect).removeClass('unselected') );
+        this.add( ComponentFactory.SelectStage('select2', 1).xy(29, 13).addAction(stageSelect) );
+        this.add( ComponentFactory.SelectStage('select3', 2).xy(41, 13).addAction(stageSelect) );
+        this.add( ComponentFactory.SelectStage('select4', 3).xy(53, 13).addAction(stageSelect) );
+        this.add( ComponentFactory.SelectStage('select5', 4).xy(65, 13).addAction(stageSelect) );
         // Buttons
         this.add( ComponentFactory.LargeTitleButton('PlAY', background1).xy(80, 19).style('normal').addClass('slide-right').addAction(play) );
         this.add( ComponentFactory.Text('9✕9', background1).size(2).xy(83, 28.7).addClass('slide-right size').width(10) );
@@ -438,7 +466,7 @@ class ViewController {
             'left':  { '9✕9': '19✕19', '19✕19': '13✕13', '13✕13': '9✕9' }
         }
         var vc = this;
-        var background = '1';
+        var stageID = 0;
         // Actions
         var menu   = ComponentFactory.ClickAction(function() { vc.mainMenu(playerModel); });
         var play   = ComponentFactory.ClickAction(function() { 
@@ -448,14 +476,14 @@ class ViewController {
                 'AI2', 
                 function(){ vc.versusAi(playerModel); }, 
                 function() {}, 
-                accent, background); 
+                stageID); 
         });
         var aiSelect = ComponentFactory.ClickAction(function(component) {
             $( '.ai' ).addClass('unselected');
             component.$.removeClass('unselected')
         });
         var stageSelect = ComponentFactory.ClickAction(function(component) {
-            background = component.recieve();
+            stageID = component.recieve();
             $( '.stage' ).addClass('unselected');
             component.$.removeClass('unselected')
         });
@@ -484,16 +512,16 @@ class ViewController {
              .poly([93,30, 91,29, 91,31], background1)
              .z(61).addClass('slide-right').addAction(sizeSelect).addAction(sizeLeave).addAction(direction('right')) );
         // Selections
-        this.add( ComponentFactory.SelectAi('select1', 1).xy(20, 2).addAction(aiSelect).removeClass('unselected') );
-        this.add( ComponentFactory.SelectAi('select2', 2).xy(32, 2).addAction(aiSelect) );
-        this.add( ComponentFactory.SelectAi('select3', 3).xy(44, 2).addAction(aiSelect) );
-        this.add( ComponentFactory.SelectAi('select4', 4).xy(56, 2).addAction(aiSelect) );
-        this.add( ComponentFactory.SelectAi('select5', 5).xy(68, 2).addAction(aiSelect) );
-        this.add( ComponentFactory.SelectStage('select1', 1).xy(20, 26).addAction(stageSelect).removeClass('unselected') );
-        this.add( ComponentFactory.SelectStage('select2', 2).xy(32, 26).addAction(stageSelect) );
-        this.add( ComponentFactory.SelectStage('select3', 3).xy(44, 26).addAction(stageSelect) );
-        this.add( ComponentFactory.SelectStage('select4', 4).xy(56, 26).addAction(stageSelect) );
-        this.add( ComponentFactory.SelectStage('select5', 5).xy(68, 26).addAction(stageSelect) );   
+        this.add( ComponentFactory.SelectAi('select1', 0).xy(20, 2).addAction(aiSelect).removeClass('unselected') );
+        this.add( ComponentFactory.SelectAi('select2', 1).xy(32, 2).addAction(aiSelect) );
+        this.add( ComponentFactory.SelectAi('select3', 2).xy(44, 2).addAction(aiSelect) );
+        this.add( ComponentFactory.SelectAi('select4', 3).xy(56, 2).addAction(aiSelect) );
+        this.add( ComponentFactory.SelectAi('select5', 4).xy(68, 2).addAction(aiSelect) );
+        this.add( ComponentFactory.SelectStage('select1', 0).xy(20, 26).addAction(stageSelect).removeClass('unselected') );
+        this.add( ComponentFactory.SelectStage('select2', 1).xy(32, 26).addAction(stageSelect) );
+        this.add( ComponentFactory.SelectStage('select3', 2).xy(44, 26).addAction(stageSelect) );
+        this.add( ComponentFactory.SelectStage('select4', 3).xy(56, 26).addAction(stageSelect) );
+        this.add( ComponentFactory.SelectStage('select5', 4).xy(68, 26).addAction(stageSelect) );   
         
         this.add( ComponentFactory.Text('9✕9', background1).size(2).xy(83, 28.7).addClass('slide-right size').width(10) );
         this.add( ComponentFactory.LargeTitleButton('PLAY', background1).xy(80, 19).style('normal').addClass('slide-right').addAction(play) );
@@ -508,15 +536,11 @@ class ViewController {
      * @param playerModel the PlayerModel used for states
      */
     replayList(playerModel) {
-
-
         log.info('loaded replayList', arguments);
         // Reload function
         this.reload = function() {
             this.replayList(playerModel);
         }
-
-
 
         var vc = this;
         // Actions
@@ -529,9 +553,6 @@ class ViewController {
         // Background
         this.add( ComponentFactory.Background('2') );
         this.add( ComponentFactory.Title('VS').size(10).xy(70, 10) );
-
-
-
 
         // Replay List
         var rc = new ReplayList(playerModel.username(), function() {
@@ -590,15 +611,28 @@ class ViewController {
         this.reload = function() {
             this.profile(playerModel);
         }
+        var vc = this;
         // Actions
         var menu  = ComponentFactory.ClickAction(function() { vc.mainMenu(playerModel); });
         // Vectors
         
         // Buttons
         this.add( ComponentFactory.TitleButton('RETURN').xy(1, 40).addClass('slide-right').addAction(menu) );
+        
+        var callback = function(leaderboard) {
+            var leaderboardList = ComponentFactory.List().background(accent).width(40).height(20);
+            for(var i = 0; i< leaderboard.length; i++) {
+                leaderboardList.addComponent(ComponentFactory.Text(leaderboard[i].username).element('li').position('relative'));
+            }
+            vc.add(leaderboardList);
+            vc.update();
+        }
+        
         // Render
         this.clear();
         this.update();
+        
+        playerModel.stats('l', callback);
     }
     
     /**
@@ -617,18 +651,10 @@ class ViewController {
         
         // Buttons
         this.add( ComponentFactory.TitleButton('RETURN').xy(1, 40).addClass('slide-right').addAction(menu) );
+        
         // Render
         this.clear();
         this.update();
-    }
-    
-    /**
-     * Override the current screen directly with HTML to display.
-     * @param html the HTML to display
-     */
-    override(html) {
-        log.info('overriding', arguments);
-        this.parent.html(html);
     }
     
 }

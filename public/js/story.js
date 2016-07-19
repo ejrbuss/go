@@ -1,3 +1,26 @@
+var stages = [
+    {
+        background: 1,
+        color: accent,
+        select: select1,
+    }, {
+        background: 2,
+        color: accent,
+        select: select1,
+    }, {
+        background: 3,
+        color: accent,
+        select: select1,
+    }, {
+        background: 4,
+        color: accent,
+        select: select1,
+    }, {
+        background: 5,
+        color: accent,
+        select: select1,
+    },
+];
 var story = [
     { // Level 1
         scenes: [
@@ -156,8 +179,7 @@ var story = [
         game: {
             size: 9,               // Board size
             ai: 'AI1',             // Ai to use
-            color: select1,        // Color of the board
-            background: '1'        // Background image
+            stageID: 0
         },
         next: function(vc, playerModel) {
             // Update player level completed
@@ -176,8 +198,7 @@ var story = [
         game: {
             size: 9,
             ai: 'AI2',
-            color: select2,
-            background: '2'
+            stageID: 1
         }
     }, { // Level 3
         scenes: [
@@ -192,8 +213,7 @@ var story = [
         game: {
             size: 9,
             ai: 'AI3',
-            color: accent,
-            background: '3'
+            stageID: 2
         }
     }, { // Level 4
         scenes: [
@@ -208,8 +228,7 @@ var story = [
         game: {
             size: 9,
             ai: 'AI2',
-            color: select1,
-            background: '4'
+            stageID: 3
         }
     }, { // Level 5
         scenes: [
@@ -224,8 +243,7 @@ var story = [
         game: {
             size: 9,
             ai: 'AI5',
-            color: select2,
-            background: '5'
+            stageID: 4
         },
         next: function(vc, playerModel) {
             vc.story(playerModel, 5, 0);
