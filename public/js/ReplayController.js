@@ -15,7 +15,7 @@ class ReplayController {
         this.id = gameID;
         this.game = new Game(this.id, size);
         this.player1 = {
-            name: Fplayer1,
+            name: player1,
             image: 'Player1'
         }
         this.player2 = {

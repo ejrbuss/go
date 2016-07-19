@@ -33,12 +33,12 @@ class PlayerModel extends PropertyExpander {
     }
     
     winLoss() {
-        if (this.gamesLost() == 0) return 0;
+        if (this.gamesLost() == 0) return this.gamesWon();
         else return ( this.gamesWon() / this.gamesLost() ).toFixed(2);
     }
     
     killDeath() {
-        if (this.piecesLost() == 0) return 0;
+        if (this.piecesLost() == 0) return this.piecesWon();
         else return ( this.piecesWon() / this.piecesLost() ).toFixed(2);
     }
     
