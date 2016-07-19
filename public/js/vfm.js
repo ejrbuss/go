@@ -19,6 +19,12 @@ var background2 = '#FFFFFF';    // White background
 var accent      = '#0000FF';    // Blue accent
 var select1     = '#C80164';    // Purple select
 var select2     = '#00C864';    // Green select
+// Character colours
+var player      = '#00009d';
+var simon       = '#ff8000';
+var rallien     = '#000059';
+var sensei      = '#c0c0c0';
+var goat        = '#ffcc00';
 //==========================================================================================================================//
 // PRELOAD RESOURCES                                                                                                                 
 //==========================================================================================================================//
