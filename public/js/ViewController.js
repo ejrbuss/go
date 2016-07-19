@@ -92,10 +92,24 @@ class ViewController {
         this.update();
     }
     
-    message2(message) {
-        this.add( ComponentFactory.Vector().poly([20,50, 50,0, 60,0, 30,50], background1).addClass('slide-up-right') );
-        this.add( ComponentFactory.Vector().poly([30,50, 60,0, 70,0, 40,50], accent).addClass('slide-down-left') );
-        this.update();
+    message(message, background=background1, color=background2) {
+        var lock = this.message;
+        if(lock.blocked == undefined) {
+            lock.blocked = true;
+            var off = new Action().trigger('animationend').action(function(component) {
+                if(component.visited != undefined) {
+                    component.$.remove();
+                    lock.blocked = undefined;
+                } else {
+                    component.visited = true;
+                    component.$.addClass('slide-right-off');
+                }
+            });
+            this.add( ComponentFactory.Vector().poly([72,5, 100,7, 100,12, 70,12], background).z(60).addClass('slide-left').addAction(off) );
+            this.add( ComponentFactory.Text(message, color).xyz(72, 7.5, 61).addClass('slide-left').addAction(off) );
+
+            this.update();
+        }
     }
     
     //======================================================================================================================//

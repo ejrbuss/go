@@ -39,6 +39,15 @@
             animation-duration: 0.5s;
 }
 
+.slide-down-off {
+    -webkit-animation: slide-up;
+            animation: slide-up;
+    -webkit-animation-duration: 0.5s;
+            animation-duration: 0.5s;
+    -webkit-animation-direction: reverse;
+            animation-direction: reverse;
+}
+
 @-webkit-keyframes slide-up {
     from { -webkit-transform: translate(0, 50vw); transform: translate(0, 50vw) }
     to { -webkit-transform: none; transform: none }
@@ -90,92 +99,15 @@
             animation-duration: 0.5s;
 }
 
-@-webkit-keyframes slide-up-right {
-    from { -webkit-transform: translate(-50vw, 50vw); transform: translate(-50vw, 50vw) };
-    to { -webkit-transform: none; transform: none };
-}
-
-@keyframes slide-up-right {
-    from { -webkit-transform: translate(-50vw, 50vw); transform: translate(-50vw, 50vw) };
-    to { -webkit-transform: none; transform: none };
-}
-
-.slide-up-right {
-    -webkit-animation: slide-up-right;
-            animation: slide-up-right;
+.slide-right-off {
+    -webkit-animation: slide-left;
+            animation: slide-left;
+    -webkit-animation-direction: reverse;
+            animation-direction: reverse;
     -webkit-animation-duration: 0.5s;
             animation-duration: 0.5s;
-}
-
-@-webkit-keyframes slide-down-left {
-    from { -webkit-transform: translate(50vw, -50vw); transform: translate(50vw, -50vw) };
-    to { -webkit-transform: none; transform: none };
-}
-
-@keyframes slide-down-left {
-    from { -webkit-transform: translate(50vw, -50vw); transform: translate(50vw, -50vw) };
-    to { -webkit-transform: none; transform: none };
-}
-
-.slide-down-left {
-    -webkit-animation: slide-down-left;
-            animation: slide-down-left;
-    -webkit-animation-duration: 0.5s;
-            animation-duration: 0.5s;
-}
-
-@-webkit-keyframes banner-in {
-    from { -webkit-transform: translate(-50vw, 50vw) skew(-55deg); transform: translate(-50vw, 50vw) skew(-55deg) }
-    to {  -webkit-transform: translate(0, 0) skew(-55deg);  transform: translate(0, 0) skew(-55deg) }
-}
-
-@keyframes banner-in {
-    from { -webkit-transform: translate(-50vw, 50vw) skew(-55deg); transform: translate(-50vw, 50vw) skew(-55deg) }
-    to {  -webkit-transform: translate(0, 0) skew(-55deg);  transform: translate(0, 0) skew(-55deg) }
-}
-
-@-webkit-keyframes banner-out {
-    from { -webkit-transform: translate(0, 0) skew(-55deg); transform: translate(0, 0) skew(-55deg) }
-    to { -webkit-transform: translate(50vw, -50vw) skew(-55deg); transform: translate(50vw, -50vw) skew(-55deg) }
-}
-
-@keyframes banner-out {
-    from { -webkit-transform: translate(0, 0) skew(-55deg); transform: translate(0, 0) skew(-55deg) }
-    to { -webkit-transform: translate(50vw, -50vw) skew(-55deg); transform: translate(50vw, -50vw) skew(-55deg) }
-}
-
-.banner-transition {
-    -webkit-animation: banner-in 0.5s, banner-out 0.5s;
-            animation: banner-in 0.5s, banner-out 0.5s;
-    -webkit-animation-delay: 0s, 1.5s;
-            animation-delay: 0s, 1.5s;
-}
-
-@-webkit-keyframes text-in {
-    from { -webkit-transform: translate(-50vw, 50vw); transform: translate(-50vw, 50vw) }
-    to {  -webkit-transform: translate(0, 0);  transform: translate(0, 0) }
-}
-
-@keyframes text-in {
-    from { -webkit-transform: translate(-50vw, 50vw); transform: translate(-50vw, 50vw) }
-    to {  -webkit-transform: translate(0, 0);  transform: translate(0, 0) }
-}
-
-@-webkit-keyframes text-out {
-    from { -webkit-transform: translate(0, 0); transform: translate(0, 0) }
-    to { -webkit-transform: translate(50vw, -50vw); transform: translate(50vw, -50vw) }
-}
-
-@keyframes text-out {
-    from { -webkit-transform: translate(0, 0); transform: translate(0, 0) }
-    to { -webkit-transform: translate(50vw, -50vw); transform: translate(50vw, -50vw) }
-}
-
-.text-transition {
-    -webkit-animation: text-in 0.5s, text-out 0.5s;
-            animation: text-in 0.5s, text-out 0.5s;
-    -webkit-animation-delay: 0s, 1.5s;
-            animation-delay: 0s, 1.5s;
+    -webkit-animation-delay: 1.5s;
+            animation-delay: 1.5s;
 }
 
 @-webkit-keyframes slide-up-rotated {
@@ -319,6 +251,7 @@ ul::-webkit-scrollbar-thumb {
 .circle {
     border-radius: 50%;
 }
+
 .unselected {
     -webkit-filter: grayscale(100%); /* Chrome, Safari, Opera */
     -webkit-filter: grayscale(100%);
