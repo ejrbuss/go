@@ -21,17 +21,18 @@ class GameController {
      * @param color       The color of the board
      * @param background  The name of the background file
      */
-    constructor(vc, playerModel, size, ai, quit, callback, color=accent, background='0') {
+    constructor(vc, playerModel, size, ai, quit, callback, stageID) {
         log.info('new game started', arguments);
-        this.size = size;
+
         this.turn = 1;
+        this.size = size;
+        this.pass = false;
         this.moveList = [];
-        
+        this.stageID = stageID;
+        this.playerModel = playerModel;
         this.game = new Game(this.id, this.size);
         this.ai = assembleAI(ai, this.game);
-        this.pass = false;
-        this.playerModel = playerModel;
-        
+       
         this.player1 = {
             name: playerModel.username(),
             image: 'Player1'
@@ -43,11 +44,7 @@ class GameController {
 
         var gc = this;
         
-        this.gvc = new GameViewController(vc, {
-            background: background,
-            color: accent,
-            select: select1
-        }, size, quit, this);
+        this.gvc = new GameViewController(vc, stageID, size, quit, this);
         
         this.gvc.update(this.game.Board);
         this.gvc.gameInput(this.game.Board);
@@ -120,6 +117,7 @@ class GameController {
     	
     	console.log(this.moveList);
     	saveGameToDB({
+            'stageID': this.stageID,
     		'player1': this.player1.name, 
     		'player2': this.player2.name, 
     		'score1': scores.player1score, 

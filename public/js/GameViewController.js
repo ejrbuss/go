@@ -14,16 +14,16 @@ class GameViewController {
     /**
      * Creates a new a GameViewController.
      */
-    constructor(vc, stage, size, quit, controller) {
+    constructor(vc, stageID, size, quit, controller) {
         this.vc = vc;
         this.size = size;
-        this.stage = stage;
+        this.stage = stages[stageID];
         this.controller = controller;
         this.side = (40 / size) - (5 / this.size); // Make tokens less than the distance between two lines
         
         var quit = ComponentFactory.ClickAction(quit);
         
-        vc.add( ComponentFactory.Background(stage.background) );
+        vc.add( ComponentFactory.Background(this.stage.background) );
         vc.add( ComponentFactory.Vector().poly([0,25, 10,0, 0,0],background1).addClass('slide-right') );
         vc.add( ComponentFactory.Vector()
             .poly([3,41,  4,46,  20,45, 23,41], background1)
@@ -39,7 +39,7 @@ class GameViewController {
                 var x2 = x1 + this.side + 2.5 / this.size;
                 var y1 = this.getY(y) + offset;
                 var y2 = y1 + this.side + 2.5 / this.size;
-                vc.last.poly([x1, y2, x1, y1, x2, y1, x2, y2], stage.color);
+                vc.last.poly([x1, y2, x1, y1, x2, y1, x2, y2], this.stage.color);
             }
         // Text
         vc.add( ComponentFactory.Text(controller.player1.name).xy(5, 41.5).addClass('slide-up') );
