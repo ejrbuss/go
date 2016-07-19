@@ -112,8 +112,8 @@ class GameController {
         var user = {
             'username': this.player1.name,
             'score': scores.player1score,
-            'piecestaken': this.player1.score,
-            'pieceslost': this.player2.score,
+            'piecestaken': this.game.player1score,
+            'pieceslost': this.game.player2score,
             'win': scores.player1score > scores.player2score,
         };
 

@@ -109,8 +109,19 @@ class Database {
     //get move list for replay
     //obj in the form {id:gameID}
     getMoveList(obj, res) {
-        console.log("Getting list of moves...");
+        //console.log("Getting list of moves...");
         var gameID = new ObjectID(obj.id);
+        //var gameID = obj.id;
+        console.log("Getting list of moves..." + gameID);
+        var collection = this._db.collection('moves');
+        collection.findOne({gameid: gameID}, function(err, docs){
+            if(err){
+                res.send(null);
+            } else {
+                console.log(docs);
+                res.send(docs.moves);
+            }
+        }); 
     }
     
     //add new move
@@ -144,13 +155,7 @@ class Database {
     addMovesList(obj, res) {
         console.log("Adding move list to db...");
         var collection = this._db.collection('moves');
-        collection.insert(obj, function(err, docs) {
-            if(err)
-                res.status(500).send();
-            else {
-                res.status(200).send(docs.ops[0]);
-            }
-        });
+        collection.insert(obj);
     }
     
     //get games by username
@@ -214,8 +219,8 @@ class Database {
     }
 
     //update stats
-    updateStats(obj, res) {
-        var userName = 'aaa';
+    updateStats(obj) {
+        var userName = obj.username;
 
         var collection = this._db.collection('accounts');
         collection.findOne({username:userName}, function(err, docs) {
@@ -226,9 +231,9 @@ class Database {
                 console.log(docs);
 
                 //var userName = obj.username;
-                var userName = obj.userName;
+                var userName = obj.username;
                 var highScore = obj.score;
-                var totalScore = obj.score
+                var totalScore = obj.score;
                 var gamesWon = docs.gamesWon;
                 var gamesLost = docs.gamesLost;
                 var currentStreak = docs.currentStreak;
@@ -260,15 +265,17 @@ class Database {
 
                 // total score condition
                 totalScore = totalScore + docs.totalScore;
+                console.log('docs' + docs.totalScore);
+                console.log('re' + totalScore);
 
                 // games won 
-                if(obj.Won == true) {
+                if(obj.win == true) {
                     gamesWon = gamesWon + 1;
-                    currentStreak = currentSteak + 1;
+                    currentStreak = currentStreak + 1;
                 }
                 
                 // games lost        
-                if(obj.Won == false) {
+                if(obj.win == false) {
                     gamesLost = gamesLost + 1;
                     currentStreak = 0;
                 }
@@ -279,11 +286,13 @@ class Database {
                 }
                 
                 // number of pieces won   
-                piecesWon = docs.piencesWon + obj.piecesWon;
+                piecesWon = docs.piecesWon + obj.piecestaken;
 
                 // number of pieces lost
-                piecesLost = docs.piecesLost + obj.piecesLost;
+                piecesLost = docs.piecesLost + obj.pieceslost;
                 
+                console.log('docs' + docs.piecesWon);
+                console.log('obj' + obj.piecestaken);
                 // TODO Implement this!!!  
                 //totalPlayingTime = docs.totalPlayingTime + obj.totalPlayingTime; // something
 
@@ -297,11 +306,10 @@ class Database {
                     'currentStreak':currentStreak,
                     'longestStreak':longestStreak,
                     'piecesWon':piecesWon,
-                    'piecesLost':pieceLost,
+                    'piecesLost':piecesLost,
                 };
 
                 collection.updateOne({username:userName},{$set:body});
-                res.send(true);
             }
         });
     }

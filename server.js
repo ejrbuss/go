@@ -69,11 +69,14 @@ app.post("/saveGame", function(req, res) {
             var id = data._id;
             obj = {
                 moves: req.body.moves,
-                _id: id,
+                gameid: id,
             }
-            db.addMovesList(obj,res);
+            db.addMovesList(obj);
 
             obj = req.body.user;
+            console.log(obj);
+            db.updateStats(obj);
+            res.sendStatus(200);
         }
     });
 });
