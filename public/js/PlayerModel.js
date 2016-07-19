@@ -18,7 +18,8 @@ class PlayerModel extends PropertyExpander {
                 piecesLost:           Math.randomInt(100),
                 playtime:             Math.randomInt(100),
                 levels:               4,
-                rank:                 Math.randomInt(1000)
+                lrank:                Math.randomInt(1000),
+                hrank:                Math.randomInt(1000)
             }
         }
         
@@ -43,6 +44,15 @@ class PlayerModel extends PropertyExpander {
         return 100 * ( this.levels() / 5 ) + '%';
     }
     
+    stats(type, cb) {
+        toServer('getStats', {
+            type: type, 
+            username: this.username()
+        }, function(leaderboard) {
+            cb(leaderboard);
+        });
+    }
+    
 }
 
 /*
@@ -53,7 +63,7 @@ function newAccount(username, password) {
     //log.info('newAccount called with username: ' + username + ' password: ' + password);
 	
 	// used to generate random information for a new user into the database. 
-	var highScore = Math.floor((Math.random() * 1000) +1);
+	var highscore = Math.floor((Math.random() * 1000) +1);
 	var totalScore = Math.floor((Math.random() * 5000) +1);
 	var gamesWon = Math.floor((Math.random() * 100) +1);
 	var gamesLost = Math.floor((Math.random() * 100) +1);
@@ -61,66 +71,72 @@ function newAccount(username, password) {
 	var longestStreak = Math.floor((Math.random() * 10) +1);
 	var piecesWon = Math.floor((Math.random() * 100) +1);
 	var piecesLost = Math.floor((Math.random() * 100) +1);
-	var totalPlayingTime = Math.floor((Math.random() * 100) +1);
-	var storyLevelsCompleted = Math.floor((Math.random() * 5) +1);
+	var playtime = Math.floor((Math.random() * 100) +1);
+	var levels = Math.floor((Math.random() * 5) +1);
     
     // Check for blank username/password.
     if (username == '') {
-        log.info("Please enter a username");
+        //log.info("Please enter a username");
         vc.message('please enter a username');
         return
     }
     if (password == '') {
-        log.info("Please enter a password");
+        //log.info("Please enter a password");
         vc.message('please enter a password');
         return
     }
     
     // Check for duplicate username.
-    $.ajax({
-        url: 'http://localhost:8080/checkDuplicateUsername', 
-        type: 'POST', 
-        contentType: 'application/json', 
-        data: JSON.stringify({username: username})
-    }).done(function(isduplicate) {
+    toServer('checkDuplicateUsername', {username: username}, function(isduplicate) {
         if(isduplicate) {
-            log.info("Username already taken.");
+            //log.info("Username already taken.");
             vc.message('username already taken');
         } else if (!isValid(password)) {
-            log.info("Invalid Password");
+            //log.info("Invalid Password");
             vc.message('Invalid Password');
         } else {
             log.info('Creating account...')
             // Add the user to the database.
-            $.ajax({
-                url: 'http://localhost:8080/storeNewAccount', 
-                type: 'POST', 
-                contentType: 'application/json', 
-                data: JSON.stringify({username: username, password: password, highScore: highScore, totalScore: totalScore, gamesWon: gamesWon, gamesLost: gamesLost, currentStreak: currentStreak, longestStreak: longestStreak, piecesWon: piecesWon, piecesLost: piecesLost, totalPlayingTime: totalPlayingTime, storyLevelsCompleted: storyLevelsCompleted})
-            }).done(function(player) {
-                log.info('..Account created')
-                vc.mainMenu(new PlayerModel(player));
+            toServer('storeNewAccount', {
+                username: username, 
+                password: password, 
+                highscore: highscore, 
+                totalScore: totalScore, 
+                gamesWon: gamesWon, 
+                gamesLost: gamesLost, 
+                currentStreak: currentStreak, 
+                longestStreak: longestStreak, 
+                piecesWon: piecesWon, 
+                piecesLost: piecesLost, 
+                playtime: playtime, 
+                levels: levels
+            }, function(success) {
+                if (success) {
+                    toServer('getPlayer', {username: username}, function(player) {
+                        // this player will also have the two ranks.
+                        vc.mainMenu(new PlayerModel(player));
+                    });                    
+                } else {
+                    log.info('Could not add new user to database. Loading as debug.');
+                    vc.mainMenu(new PlayerModel('debug'));
+                }
             });
         }
     });
-    
 }
 
 /*
  * Checks player login info.
  */
 function login(username, password) {
-    
-    $.ajax({
-        url: 'http://localhost:8080/checkLogin', 
-        type: 'POST', 
-        contentType: 'application/json',
-        data: JSON.stringify({username: username, password: password})
-    }).done(function(isCorrect) {
-        if (!isCorrect)  {
+    toServer('checkLogin', {username: username, password: password}, function(isCorrect) {
+        if (!isCorrect) {
             vc.message('wrong username/password');
         } else {
-            vc.mainMenu(new PlayerModel('debug'));
+            toServer('getPlayer', {username: username}, function(player) {
+                // this player will also have the two ranks.
+                vc.mainMenu(new PlayerModel(player));
+            });
         }
     });
 }
@@ -133,4 +149,16 @@ function isValid(password) {
     var pattern = /\W/;
     var result = pattern.test(password);
     return !result;
+}
+
+/*
+ *  Utility function for making a request to the server.
+ */
+function toServer(url, data, cb) {
+    $.ajax({
+        url: 'http://localhost:8080/' + url, 
+        type: 'POST', 
+        contentType: 'application/json',
+        data: JSON.stringify(data)
+    }).done(cb);
 }

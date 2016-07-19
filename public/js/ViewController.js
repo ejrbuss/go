@@ -152,7 +152,7 @@ class ViewController {
         var toStory   = ComponentFactory.ClickAction(function() { vc.levelSelect(playerModel) });
         var toVersus  = ComponentFactory.ClickAction(function() { vc.pvpAi(playerModel) });
         var toReplay  = ComponentFactory.ClickAction(function() { vc.replayList(playerModel) });
-        var toProfile = ComponentFactory.ClickAction(function() { vc.profile(playerModel) });
+        var toProfile = ComponentFactory.ClickAction(function() { vc.profile(playerModel, null, null) });
         var toLogin   = ComponentFactory.ClickAction(function() { vc.login(); });
         // Vectors
         this.add( ComponentFactory.Vector()
@@ -169,7 +169,7 @@ class ViewController {
         this.add( ComponentFactory.Text('PLAYING AS').xy(72, 8.5).addClass('slide-left') );
         this.add( ComponentFactory.Text(playerModel.username(), select1).xy(83, 8.5).addClass('slide-left').weight('bold') );
         this.add( ComponentFactory.Text('RANK', '#444').xy(84, 14).size(5).addClass('slide-left') );
-        this.add( ComponentFactory.Text(playerModel.rank(), select2).size(4).xy(80, 16).width(16).addClass('slide-left') );   
+        this.add( ComponentFactory.Text(playerModel.lrank(), select2).size(4).xy(80, 16).width(16).addClass('slide-left') );   
         this.add( ComponentFactory.Text('W/L'     ).xy(66,   12  ).size(2).addClass('slide-left') );
         this.add( ComponentFactory.Text('K/D'     ).xy(65.5, 14.5).size(2).addClass('slide-left') );
         this.add( ComponentFactory.Text('TIME'    ).xy(65,   17  ).size(2).addClass('slide-left') );
@@ -605,15 +605,28 @@ class ViewController {
         this.reload = function() {
             this.profile(playerModel);
         }
+        var vc = this;
         // Actions
         var menu  = ComponentFactory.ClickAction(function() { vc.mainMenu(playerModel); });
         // Vectors
         
         // Buttons
         this.add( ComponentFactory.TitleButton('RETURN').xy(1, 40).addClass('slide-right').addAction(menu) );
+        
+        var callback = function(leaderboard) {
+            var leaderboardList = ComponentFactory.List().background(accent).width(40).height(20);
+            for(var i = 0; i< leaderboard.length; i++) {
+                leaderboardList.addComponent(ComponentFactory.Text(leaderboard[i].username).element('li').position('relative'));
+            }
+            vc.add(leaderboardList);
+            vc.update();
+        }
+        
         // Render
         this.clear();
         this.update();
+        
+        playerModel.stats('l', callback);
     }
     
     /**
@@ -632,6 +645,7 @@ class ViewController {
         
         // Buttons
         this.add( ComponentFactory.TitleButton('RETURN').xy(1, 40).addClass('slide-right').addAction(menu) );
+        
         // Render
         this.clear();
         this.update();

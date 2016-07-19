@@ -15,21 +15,40 @@ app.get('/', function(req, res) {
 
 // Stores username and password in the database.
 app.post("/storeNewAccount", function(req, res) {
-    console.log("Storing data...");
+    console.log("SERVER: Storing data...");
     console.log(req.body);
     db.addNewAccount(req.body, res);
 });
 
 // Checks username against the database.
 app.post("/checkDuplicateUsername", function(req, res) {
-    console.log("Checking username " + req.body.username);
+    console.log("SERVER: Checking username " + req.body.username);
     db.checkUsername(req.body.username, res);
 });
 
 // Checks login info in accounts database.
 app.post("/checkLogin", function(req, res) {
-    console.log("Checking username " + req.body);
+    console.log("SERVER: Checking login info");
+    console.log(req.body);
     db.checkLogin(req.body, res);
+});
+
+// Gets a player object with ranks.
+app.post("/getPlayer", function(req, res) {
+    console.log("SERVER: Retrieving player");
+    db.getPlayer(req.body, res);
+});
+
+// Get leaderboard or high scores board.
+app.post("/getStats", function(req, res) {
+    var type = req.body.type;
+    console.log(req.body);
+    if (type == 'l') {
+        console.log("SERVER: Getting leaderboard");
+    } else if (type == 'h') {
+        console.log("SERVER: Getting high scores");
+    } else console.log('incorrect type');
+    db.getStats(type, req.body, res);
 });
 
 app.post("/saveGame", function(req, res) {
@@ -88,16 +107,12 @@ app.post("/getMoves", function(req, res) {
     db.getMoveList(req.body, res);
 });
 
-
 // updating stats in accounts
 app.post("/updateStats", function(req, res) {
     console.log("updating Stats");
     console.log(req.body);
     db.updateStats(req.body, res);
 });
-
-
-
 
 app.listen(8080, function() {
     console.log('Started!');
