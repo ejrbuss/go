@@ -65,48 +65,25 @@ class ViewController {
         log.info('overriding', arguments);
         this.parent.html(html);
     }
-    
-    /**
-     * Send a temporary message to the screen.
-     * @param message  the text of the message
-     * @param color    the background color of the message
-     * @param callback a function to run upon the completion of the message
-     */
-    message(message, color=background1, callback=function(){}) {
-        log.info('sent message', arguments);
-        // Remove after second animation
-        var ready = false;
-        var removeAction = new Action().trigger('animationend').action(function(component) {
-            if (component.visited != undefined) {
-                $.when( component.$.remove() ).then( function() {
-                    if (ready) 
-                        callback();
-                    else 
-                        ready = true;
-                });
-            }
-            component.visited = true;                                                
-        });
-        this.add( ComponentFactory.Vector().poly([40,0, 60,0, 60,50, 40,50], color).z('60').addClass('banner-transition').skew('-55deg').addAction(removeAction) );
-        this.add( ComponentFactory.Title().text(message).width(100).yz(22, 61).addClass('text-transition').addAction(removeAction).size(5) );
-        this.update();
-    }
-    
+
     message(message, background=background1, color=background2) {
         var lock = this.message;
+        var vc = this;
         if(lock.blocked == undefined) {
             lock.blocked = true;
             var off = new Action().trigger('animationend').action(function(component) {
-                if(component.visited != undefined) {
-                    component.$.remove();
+                var remove = new Action().trigger('animationend').action(function(component) {
+                    component.$.remove();    
                     lock.blocked = undefined;
-                } else {
-                    component.visited = true;
-                    component.$.addClass('slide-right-off');
-                }
+                });
+                component.$.remove();
+                vc.add( ComponentFactory.Vector().poly([68,5, 100,7, 100,12, 66,12], background).z(60).addClass('slide-right-off').addAction(remove) );
+                vc.add( ComponentFactory.Text(message, color).xyz(68, 7.5, 61).addClass('slide-right-off').addAction(remove) );
+
+                vc.update();
             });
-            this.add( ComponentFactory.Vector().poly([72,5, 100,7, 100,12, 70,12], background).z(60).addClass('slide-left').addAction(off) );
-            this.add( ComponentFactory.Text(message, color).xyz(72, 7.5, 61).addClass('slide-left').addAction(off) );
+            this.add( ComponentFactory.Vector().poly([68,5, 100,7, 100,12, 66,12], background).z(60).addClass('slide-left').addAction(off) );
+            this.add( ComponentFactory.Text(message, color).xyz(68, 7.5, 61).addClass('slide-left').addAction(off) );
 
             this.update();
         }
@@ -175,7 +152,7 @@ class ViewController {
                  .addClass('slide-right') );
         this.add( ComponentFactory.Vector()
                  .poly([68,9, 94,8,  94,14], accent)
-                 .poly([65,8, 97,14, 97,20, 60,25], background1)
+                 .poly([65,8, 97,14, 97,20, 60,23], background1)
                  .circle(85.5, 14, 3, '#444')
                  .circle(86, 14.5, 2.5, background1)
                  .addClass('slide-left') );
@@ -186,15 +163,13 @@ class ViewController {
         this.add( ComponentFactory.Text(playerModel.lrank(), select2).size(4).xy(80, 16).width(16).addClass('slide-left') );   
         this.add( ComponentFactory.Text('W/L'     ).xy(66,   12  ).size(2).addClass('slide-left') );
         this.add( ComponentFactory.Text('K/D'     ).xy(65.5, 14.5).size(2).addClass('slide-left') );
-        this.add( ComponentFactory.Text('TIME'    ).xy(65,   17  ).size(2).addClass('slide-left') );
-        this.add( ComponentFactory.Text('PROGRESS').xy(64.5, 19.5).size(2).addClass('slide-left') );
-        this.add( ComponentFactory.Text(playerModel.winLoss(), select1  ).xy(73.5, 12  ).size(2).addClass('slide-left') );
+        this.add( ComponentFactory.Text('PROGRESS').xy(65,   17).size(2).addClass('slide-left') );
+        this.add( ComponentFactory.Text(playerModel.winLoss(), select1  ).xy(73.5, 12).size(2).addClass('slide-left') );
         this.add( ComponentFactory.Text(playerModel.killDeath(), select1).xy(73,   14.5).size(2).addClass('slide-left') );
-        this.add( ComponentFactory.Text(playerModel.playtime(), select1 ).xy(72.5, 17  ).size(2).addClass('slide-left') );
-        this.add( ComponentFactory.Text(playerModel.progress(), select1 ).xy(72,   19.5).size(2).addClass('slide-left') );
+        this.add( ComponentFactory.Text(playerModel.progress(), select1 ).xy(72.6, 17).size(2).addClass('slide-left') );
         // Buttons
-        this.add( ComponentFactory.TitleButton('STORY'  ).xy(6, 10).addAction(toStory).addClass('slide-up') );
-        this.add( ComponentFactory.TitleButton('VERSUS' ).xy(9, 15).addAction(toVersus).addClass('slide-up') );
+        this.add( ComponentFactory.TitleButton('STORY'  ).xy(6,  10).addAction(toStory).addClass('slide-up') );
+        this.add( ComponentFactory.TitleButton('VERSUS' ).xy(9,  15).addAction(toVersus).addClass('slide-up') );
         this.add( ComponentFactory.TitleButton('REPLAY' ).xy(12, 20).addAction(toReplay).addClass('slide-up') );
         this.add( ComponentFactory.TitleButton('PROFILE').xy(15, 25).addAction(toProfile).addClass('slide-up') );
         this.add( ComponentFactory.TitleButton('LOGOUT' ).xy(18, 30).addAction(toLogin).addClass('slide-up') );
@@ -615,9 +590,28 @@ class ViewController {
         // Actions
         var menu  = ComponentFactory.ClickAction(function() { vc.mainMenu(playerModel); });
         // Vectors
-        
+        this.add( ComponentFactory.Vector()
+            .poly([0,0, 30,0, 20,50, 0,50], background1)
+            .addClass('slide-right') );
+        this.add( ComponentFactory.Vector()
+            .poly([35,0, 65,0, 65,50, 35,50], background1)
+            .poly([70,0, 100,0, 100,50, 70,50], background1)
+            .addClass('slide-left') );
         // Buttons
-        this.add( ComponentFactory.TitleButton('RETURN').xy(1, 40).addClass('slide-right').addAction(menu) );
+        this.add( ComponentFactory.TitleButton('RETURN').xy(15, 40).addClass('slide-right').addAction(menu) );
+        // Text
+        this.add( ComponentFactory.Text(playerModel.username(), select1).size(10).xy(2, 1).addClass('slide-right') );
+        this.add( ComponentFactory.Text('Progress').size(2.5).xy(2, 12).addClass('slide-right') );
+        this.add( ComponentFactory.Text('Win / Loss').size(2.5).xy(2, 15.5).addClass('slide-right') );
+        this.add( ComponentFactory.Text('Kill / Death').size(2.5).xy(2, 19).addClass('slide-right') );
+        this.add( ComponentFactory.Text('Current Streak').size(2.5).xy(2, 22.5).addClass('slide-right') );
+        this.add( ComponentFactory.Text('Longest Streak').size(2.5).xy(2, 26).addClass('slide-right') );
+        
+        this.add( ComponentFactory.Text(playerModel.progress(), select1).size(2.5).xy(16, 12).addClass('slide-right') );
+        this.add( ComponentFactory.Text(playerModel.winLoss(), select1).size(2.5).xy(16, 15.5).addClass('slide-right') );
+        this.add( ComponentFactory.Text(playerModel.killDeath(), select1).size(2.5).xy(16, 19).addClass('slide-right') );
+        this.add( ComponentFactory.Text(playerModel.currentStreak(), select1).size(2.5).xy(16, 22.5).addClass('slide-right') );
+        this.add( ComponentFactory.Text(playerModel.longestStreak(), select1).size(2.5).xy(16, 26).addClass('slide-right') );
         
         var callback = function(leaderboard) {
             var leaderboardList = ComponentFactory.List().background(accent).width(40).height(20);
@@ -632,7 +626,7 @@ class ViewController {
         this.clear();
         this.update();
         
-        playerModel.stats('l', callback);
+        //playerModel.stats('l', callback);
     }
     
     /**

@@ -5,7 +5,7 @@
 //     / / __/ __ `/ __ `__ \/ _ \ | / // // _ \ | /| / / /   / __ \/ __ \/ __/ ___/ __ \/ / / _ \/ ___/
 //    / /_/ / /_/ / / / / / /  __/ |/ // //  __/ |/ |/ / /___/ /_/ / / / / /_/ /  / /_/ / / /  __/ /    
 //    \____/\__,_/_/ /_/ /_/\___/|___/___/\___/|__/|__/\____/\____/_/ /_/\__/_/   \____/_/_/\___/_/     
-//                                                                                                                                                                      
+//                                                                                                                                                                   
 //==========================================================================================================================//
 // Manages game views.
 //==========================================================================================================================//
@@ -116,8 +116,7 @@ class GameViewController {
         var size = this.size;
         var side = this.side;
         var board = this.controller.game.Board;
-        $('.token').remove();
-        $('.pass').remove();
+        $('.pass, .token').remove();
         var played = ComponentFactory.Vector().z(4).addClass('token');
         for(var y = 0; y < size; y++)
             for(var x = 0; x < size; x++) {
@@ -125,7 +124,7 @@ class GameViewController {
                     played.circle(this.getX(x), this.getY(y), this.side / 2, background1);
                 } else if ( board.grid[x][y] == 2 ) {
                     played.circle(this.getX(x), this.getY(y), this.side / 2, background2);
-                }
+                } 
             }
         this.vc.add(played);
         this.vc.update();
@@ -140,21 +139,22 @@ class GameViewController {
         var side = this.side;
         var controller = this.controller;
         var board = this.controller.game.Board;
-        // Actions
-        var pass = ComponentFactory.ClickAction(function() { controller.move(0, 0, true); });
         var tokenEnter = ComponentFactory.EnterAction(this.stage.select, 'background');
         var tokenLeave = ComponentFactory.LeaveAction('', 'background');
+        // Actions
+        var pass = ComponentFactory.ClickAction(function() { controller.move(0, 0, true); });
         // Load input tokens
         for(var y = 0; y < size; y++)
             for(var x = 0; x < size; x++) {
                 if( board.grid[x][y] == 0 ) {
-                    this.vc.add( new Component().xyz(this.getX(x), this.getY(y), 5).width(side).height(side)
-                    .addAction(this.getMoveAction(x, y)).addAction(tokenEnter).addAction(tokenLeave).addClass('circle').addClass('token') );
+                    this.vc.add( 
+                        new Component().xyz(this.getX(x), this.getY(y), 5).width(side).height(side)
+                            .addAction(this.getMoveAction(x, y)).addAction(tokenEnter).addAction(tokenLeave)
+                            .addClass('circle').addClass('token') );
                 }
             }
         // Add pass
         this.vc.add( ComponentFactory.TitleButton('PASS', background2, select2).xy(62, 44).addClass('slide-up pass').addAction(pass) );
-        
         // Render
         this.vc.update();
     }

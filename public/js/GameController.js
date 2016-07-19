@@ -21,7 +21,7 @@ class GameController {
      * @param color       The color of the board
      * @param background  The name of the background file
      */
-    constructor(vc, playerModel, size, ai, quit, callback, stageID) {
+    constructor(vc, playerModel, size, ai, quit, callback=function(){}, stageID=0) {
         log.info('new game started', arguments);
 
         this.turn = 1;
@@ -112,8 +112,8 @@ class GameController {
         var user = {
             'username': this.player1.name,
             'score': scores.player1score,
-            'piecestaken': this.player1.score,
-            'pieceslost': this.player2.score,
+            'piecestaken': this.game.player1score,
+            'pieceslost': this.game.player2score,
             'win': scores.player1score > scores.player2score,
         };
 
