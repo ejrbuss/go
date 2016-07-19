@@ -33,11 +33,13 @@ class PlayerModel extends PropertyExpander {
     }
     
     winLoss() {
-        return ( this.gamesWon() / this.gamesLost() ).toFixed(2);
+        if (this.gamesLost() == 0) return 0;
+        else return ( this.gamesWon() / this.gamesLost() ).toFixed(2);
     }
     
     killDeath() {
-        return ( this.piecesWon() / this.piecesLost() ).toFixed(2);
+        if (this.piecesLost() == 0) return 0;
+        else return ( this.piecesWon() / this.piecesLost() ).toFixed(2);
     }
     
     progress() {
@@ -59,67 +61,57 @@ class PlayerModel extends PropertyExpander {
  *  Creates a new entry in the 'accounts' database.
  */
 function newAccount(username, password) {
-    
     //log.info('newAccount called with username: ' + username + ' password: ' + password);
-	
-	// used to generate random information for a new user into the database. 
-	var highscore = Math.floor((Math.random() * 1000) +1);
-	var totalScore = Math.floor((Math.random() * 5000) +1);
-	var gamesWon = Math.floor((Math.random() * 100) +1);
-	var gamesLost = Math.floor((Math.random() * 100) +1);
-	var currentStreak = Math.floor((Math.random() * 10) +1);
-	var longestStreak = Math.floor((Math.random() * 10) +1);
-	var piecesWon = Math.floor((Math.random() * 100) +1);
-	var piecesLost = Math.floor((Math.random() * 100) +1);
-	var playtime = Math.floor((Math.random() * 100) +1);
-	var levels = Math.floor((Math.random() * 5) +1);
     
     // Check for blank username/password.
     if (username == '') {
-        //log.info("Please enter a username");
         vc.message('please enter a username');
         return
     }
     if (password == '') {
-        //log.info("Please enter a password");
         vc.message('please enter a password');
         return
     }
     
     // Check for duplicate username.
     toServer('checkDuplicateUsername', {username: username}, function(isduplicate) {
-        if(isduplicate) {
-            //log.info("Username already taken.");
+        if (isduplicate === '') {
+            log.info('Could not check username with database. Loading as debug.');
+            vc.mainMenu(new PlayerModel('debug'));
+        } else if(isduplicate) {
             vc.message('username already taken');
+        } else if(!isValidUsername(username)) {
+            vc.message('max 8 char username')
         } else if (!isValid(password)) {
-            //log.info("Invalid Password");
-            vc.message('Invalid Password');
+            vc.message('invalid password');
         } else {
             log.info('Creating account...')
             // Add the user to the database.
-            toServer('storeNewAccount', {
-                username: username, 
-                password: password, 
-                highscore: highscore, 
-                totalScore: totalScore, 
-                gamesWon: gamesWon, 
-                gamesLost: gamesLost, 
-                currentStreak: currentStreak, 
-                longestStreak: longestStreak, 
-                piecesWon: piecesWon, 
-                piecesLost: piecesLost, 
-                playtime: playtime, 
-                levels: levels
-            }, function(success) {
-                if (success) {
-                    toServer('getPlayer', {username: username}, function(player) {
-                        // this player will also have the two ranks.
-                        vc.mainMenu(new PlayerModel(player));
-                    });                    
-                } else {
-                    log.info('Could not add new user to database. Loading as debug.');
-                    vc.mainMenu(new PlayerModel('debug'));
-                }
+            toServer('hash', {password: password}, function(password) {
+                toServer('storeNewAccount', {
+                    username: username, 
+                    password: password, 
+                    highscore: 0, 
+                    totalScore: 0, 
+                    gamesWon: 0, 
+                    gamesLost: 0, 
+                    currentStreak: 0, 
+                    longestStreak: 0, 
+                    piecesWon: 0, 
+                    piecesLost: 0, 
+                    playtime: 0, 
+                    levels: 0
+                }, function(success) {
+                    if (success) {
+                        // Retrieve player info.
+                        toServer('getPlayer', {username: username}, function(player) {
+                            vc.mainMenu(new PlayerModel(player));
+                        });                    
+                    } else {
+                        log.info('Could not add new user to database. Loading as debug.');
+                        vc.mainMenu(new PlayerModel('debug'));
+                    }
+                });
             });
         }
     });
@@ -129,15 +121,21 @@ function newAccount(username, password) {
  * Checks player login info.
  */
 function login(username, password) {
-    toServer('checkLogin', {username: username, password: password}, function(isCorrect) {
-        if (!isCorrect) {
-            vc.message('wrong username/password');
-        } else {
-            toServer('getPlayer', {username: username}, function(player) {
-                // this player will also have the two ranks.
-                vc.mainMenu(new PlayerModel(player));
-            });
-        }
+    // Check if valid login.
+    toServer('hash', {password: password}, function(password) {
+        toServer('checkLogin', {username: username, password: password}, function(isCorrect) {
+            if (isCorrect === '') {
+                log.info('Could not check login info with database. Loading as debug.');
+                vc.mainMenu(new PlayerModel('debug'));
+            } else if (isCorrect == false) {
+                vc.message('wrong username/password');
+            } else {
+                // Retrieve player info.
+                toServer('getPlayer', {username: username}, function(player) {
+                    vc.mainMenu(new PlayerModel(player));
+                });
+            }
+        });
     });
 }
 
@@ -149,6 +147,14 @@ function isValid(password) {
     var pattern = /\W/;
     var result = pattern.test(password);
     return !result;
+}
+
+/*
+ *  Check for invalid username (over 8 characters).
+ */
+function isValidUsername(username) {
+    if (username.length > 8) return false;
+    else return true;
 }
 
 /*

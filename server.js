@@ -1,5 +1,6 @@
-var express = require('express');
+var express = require("express");
 var bodyParser = require("body-parser");
+var sha1 = require("sha1");
 var app = express();
 app.use(bodyParser.json());
 
@@ -8,14 +9,18 @@ var db = new database();
 db.connect();
 
 var ais = require("./app/ai");
-
-
 var ai = null;
 
 app.use(express.static('public'));
 
 app.get('/', function(req, res) {
     res.sendFile(__dirname + '/index.html');
+});
+
+// Hashes a string.
+app.post("/hash", function(req, res) {
+    console.log("SERVER: Hashing password " + req.body.password);
+    res.send(sha1(req.body.password));
 });
 
 // Stores username and password in the database.
@@ -69,11 +74,14 @@ app.post("/saveGame", function(req, res) {
             var id = data._id;
             obj = {
                 moves: req.body.moves,
-                _id: id,
+                gameid: id,
             }
-            db.addMovesList(obj,res);
+            db.addMovesList(obj);
 
             obj = req.body.user;
+            console.log(obj);
+            db.updateStats(obj);
+            res.sendStatus(200);
         }
     });
 });
