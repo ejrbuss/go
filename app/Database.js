@@ -1,7 +1,7 @@
 "use strict";
 var MongoClient = require("mongodb").MongoClient;
 var mongodb = require("mongodb");
-var ObjectID = require('mongodb').ObjectID;
+var ObjectID = require("mongodb").ObjectID;
 
 class Database {
     
@@ -33,7 +33,8 @@ class Database {
     // Adds a new user to the database.
     addNewAccount(obj, res) {
         console.log("DATABASE: Adding new user to the database...")
-        var that = this;
+        if (this._db == null) res.send(false);
+        
         this._db.collection('accounts').insert(obj, function(err, docs) {
             if (err)
                 res.send(false);
@@ -46,7 +47,10 @@ class Database {
     // Checks a username against the database for duplicates.
     checkUsername(username, res) {
         console.log("DATABASE: checkPassword..." + username);
-        this._db.collection('accounts').count({username: username}).then(function(count) {
+        if (this._db == null) res.send(null);
+        
+        this._db.collection('accounts').count({username: username}, function(err, count) {
+            if (err) res.send(null);
             if (count == 0) {
                 res.send(false);
             } else {
@@ -58,8 +62,10 @@ class Database {
     // Checks login info.
     checkLogin(obj, res) {
         console.log("DATABASE: checkLogin...");
-        console.log(obj);
-        this._db.collection('accounts').count({username: obj.username, password: obj.password}).then(function(count) {
+        if (this._db == null) res.send(null);
+        
+        this._db.collection('accounts').count({username: obj.username, password: obj.password}, function(err, count) {
+            if (err) res.send(null);
             if (count == 0) {
                 res.send(false);
             } else {
@@ -70,8 +76,13 @@ class Database {
     
     // Returns a player object and their two ranks by username.
     getPlayer(obj, res) {
+        console.log("DATABASE: getting player info");
+        if (this._db == null) res.send(null);
+        
         var db = this._db;
-        this._db.collection('accounts').find().sort({totalScore: -1}).toArray().then(function(array) {
+        this._db.collection('accounts').find().sort({totalScore: -1}).toArray(function(err, array) {
+            if (err) res.send(null);
+            
             // iterate through array and find the index of the username
             // add it as the property 'lrank'
             for (var i = 0; i < array.length; i ++) {
@@ -80,7 +91,10 @@ class Database {
                     player.lrank = i + 1;
                 }
             }
-            db.collection('accounts').find().sort({highscore: -1}).toArray().then(function(array) {
+            
+            db.collection('accounts').find().sort({highscore: -1}).toArray(function(err, array) {
+                if (err) res.send(null);
+                
                 // iterate through array and find the index of the username
                 // add it as the property 'hrank'
                 for (var i = 0; i < array.length; i ++) {
@@ -95,15 +109,22 @@ class Database {
     
     // Get leaderboard/highscores.
     getStats(type, username, res) {
+        if (this._db == null) res.send(null);
+        
         if (type == 'l') {
-            this._db.collection('accounts').find().sort({totalScore: -1}).limit(10).toArray().then(function(array) {
-                res.send(array);                    
-            });
-        } else if (type == 'h') {
-            this._db.collection('accounts').find().sort({highscore: -1}).limit(10).toArray().then(function(array) {
+            this._db.collection('accounts').find().sort({totalScore: -1}).limit(10).toArray(function(err, array) {
+                if (err) res.send(null);
                 res.send(array);
             });
-        } else console.log('DEBUG: send a correct stats type');
+        } else if (type == 'h') {
+            this._db.collection('accounts').find().sort({highscore: -1}).limit(10).toArray(function(err, array) {
+                if (err) res.send(null);
+                res.send(array);
+            });
+        } else {
+            console.log('DEBUG: send a correct stats type');
+            res.send(null);
+        }
     }
    
     //get move list for replay
