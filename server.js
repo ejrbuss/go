@@ -7,6 +7,11 @@ var database = require("./app/Database");
 var db = new database();
 db.connect();
 
+var ais = require("./app/ai");
+
+
+var ai = null;
+
 app.use(express.static('public'));
 
 app.get('/', function(req, res) {
@@ -83,6 +88,28 @@ app.post("/addMove", function(req, res) {
 	console.log("Storing move...");
 	console.log(req.body);
 	db.addNewMove(req.body, res);
+});
+
+app.post("/aiMove", function(req, res) {
+    console.log("Getting ai move...");
+    console.log(req.body);
+    if(!ai){
+        switch(req.body.ai.toUpperCase()){
+            case("AI1"):
+                ai = new ais.AI1(req.body.Game);
+            case("AI2"):
+                ai = new ais.AI2(req.body.Game);
+            case("AI3"):
+                ai = new ais.AI3(req.body.Game);
+            case("AI4"):
+                ai = new ais.AI4(req.body.Game);
+            case("AI5"):
+                ai = new ais.AI5(req.body.Game);
+        }
+    }
+    var move = ai.getMove(req.body.Game);
+
+    res.status(200).json(move);
 });
 
 app.post("/newGame", function(req, res) {
