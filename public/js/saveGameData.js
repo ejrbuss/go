@@ -31,6 +31,7 @@ function saveGameToDB(game, moves, callback){
 		'game': game,
 		'moves': moves,
 	};
+	obj.game.score = endGame(game);
 
 	xmlhr.onreadystatechange = function() {
 		if(xmlhr.readyState == 4 && xmlhr.status == 200) {

@@ -54,14 +54,8 @@ app.post("/getStats", function(req, res) {
 app.post("/saveGame", function(req, res) {
     console.log("Saving game...");
     console.log(req.body);
-    var obj = {
-        player1: req.body.game.player1,
-        player2: req.body.game.player2,
-        score1: req.body.game.score1,
-        score2: req.body.game.score2,
-        size: req.body.game.size,
-        time: Date.now(),
-    }
+    var obj = req.body.game;
+    obj.time = Date.now();
 
     db.saveGame(obj, function(err, data) {
         if(err)
@@ -73,6 +67,14 @@ app.post("/saveGame", function(req, res) {
                 _id: id,
             }
             db.addMovesList(obj,res);
+
+            obj = {
+                username: req.body.game.player1,
+                score: req.body.game.score.player1score,
+                piecestaken: req.body.game.player1score,
+                pieceslost: req.body.game.player2score,
+                win: req.body.game.score.player1score > req.body.game.score.player2score
+            };
         }
     });
 });
