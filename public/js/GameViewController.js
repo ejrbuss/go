@@ -154,7 +154,6 @@ class GameViewController {
             }
         // Add pass
         this.vc.add( ComponentFactory.TitleButton('PASS', background2, select2).xy(62, 44).addClass('slide-up pass').addAction(pass) );
-        
         // Render
         this.vc.update();
     }

@@ -8,77 +8,31 @@
 //              /_/            /____/                                                     
 //==========================================================================================================================//
 class ReplayController {
-    constructor(vc, player1, player2, gameID, size, quit, color=accent, background = '0') {
-        var rc = this;
-        this.vc = vc;
-        this.grid;
+    constructor(vc, player1, player2, gameID, size, quit, stageID) {
+        log.info('new replay started', arguments);
         this.timeout = null;
-        this.id = gameID;
-        this.size = size;
-        this.side = (40 / size) - (5 / this.size); // Make tokens less than the distance between two lines
         this.turn = 1;
+        this.id = gameID;
         this.game = new Game(this.id, this.size);
-        this.player1 = player1;
-        this.player2 = player2;
-        this.quit = quit;
-        var gc = this;
+        this.player1 = {
+            name: player1,
+            image: 'Player1'
+        }
+        this.player2 = {
+            name: player2,
+            image: 'Player1'
+        }
         this.iterator = new ReplayIterator(gameID, size);
-
-
-        // Actions
-        var quit = ComponentFactory.ClickAction(function(){
-            clearTimeout(gc.timeout);
-            rc.quit();
-        });
-        var next = ComponentFactory.ClickAction(function () {rc.next()});
-        var enter = ComponentFactory.EnterAction();
-        var leave = ComponentFactory.LeaveAction();
-        // Vectors
-        vc.add(ComponentFactory.Resource('rsc/backgrounds/' + background + '.png').width(100));
-        vc.add(ComponentFactory.Vector().poly([0, 25, 10, 0, 0, 0], background1).addClass('slide-right'));
-        vc.add(ComponentFactory.Vector()
-                 .poly([35, 0, 75, 0, 65, 50, 25, 50], background1)
-                 .poly([3, 41, 4, 46, 20, 45, 23, 41], background1)
-                 .poly([97, 41, 96, 46, 80, 45, 77, 41], background1)
-                 .z(2).addClass('slide-up')
-        );
-        // Board   
-        vc.add(ComponentFactory.Vector().addClass('slide-down').z(3));
-        var offset = this.side / 2 + 2.5 / this.size;
-        for (var y = 0; y < this.size - 1; y++)
-            for (var x = 0; x < this.size - 1; x++) {
-                var x1 = this.getX(x) + offset;
-                var x2 = x1 + this.side + 2.5 / this.size;
-                var y1 = this.getY(y) + offset;
-                var y2 = y1 + this.side + 2.5 / this.size;
-                vc.last.poly([x1, y2, x1, y1, x2, y1, x2, y2], color);
-            }
-        
-        // Text
-        vc.add(ComponentFactory.Text(player1).xy(5, 41.5).addClass('slide-up'));
-        this.player1 = vc.last;
-        vc.add(ComponentFactory.Text(player2).xy(81, 41.5).addClass('slide-up'));
-        this.player2 = vc.last;
-        // Images
-        vc.add(ComponentFactory.Resource('rsc/characters/player1.png').xyz(3, 15, 2).width(21).height(28).addClass('slide-up'))
-        vc.add(ComponentFactory.Resource('rsc/characters/player2.png').xyz(76, 15, 2).width(21).height(28).addClass('slide-up'))
-
-        vc.add(ComponentFactory.TitleButton('QUIT').xy(3, 5).addClass('slide-right').addAction(enter).addAction(leave).addAction(quit));
-        vc.add(ComponentFactory.TitleButton('NEXT').xy(62, 45).addClass('slide-right').addAction(next).addClass('next'));
-        // Render
-        vc.clear();
-        vc.update();
+        this.gvc = new GameViewController(vc, stageID, size, quit, this);
         // Update
-        gc.update();
-        this.player1.$.css({ 'color': select2 });
-        setTimeout(function(){rc.next()}, 3000);
-        
+        this.gvc.update();
+        this.gvc.player1turn();
+        setTimeout(function(){this.next()}, 3000);        
     }
 
     /*
     * Moves the board onto the next move and adds that move to the board displayed by the UI.
     */
-
     next() {
         clearTimeout(this.timeout);
 
@@ -94,7 +48,7 @@ class ReplayController {
             } catch (err) {
             	log.warn(err);
             }
-            this.update();
+            this.gvc.update();
             if (this.iterator.hasNext()) {
                 this.timeout = setTimeout(function(){rc.next()}, 2000);
             } else {
@@ -154,7 +108,7 @@ class ReplayController {
         	else 
         		this.game.Board.grid = this.game.Board.gridCopy(board);
 
-        	this.update();
+        	this.gvc.update();
 
         	var prev = $('.prev');
         	if(prev.length > 0 && !this.iterator.hasPrev()) {
@@ -163,41 +117,6 @@ class ReplayController {
 
         }
 
-    }
-
-    /**
-     * Returns the actual x position of a token.
-     * @param x the x coordinate on the board grid
-     */
-    getX(x) {
-        return 30 + ( x * 40 / (this.size - 1)) - this.side / 2;
-    }
-    
-    /**
-     * Returns the actual y position of a token.
-     * @param y the y coordinate on the board grid
-     */
-    getY(y) {
-        return 3 + ( y * 40 / (this.size  - 1)) - this.side / 2;
-    }
-
-
-    update() {
-        log.info('Board update', this.game.Board.toString());
-        var size = this.size;
-        var side = this.side;
-        var played = ComponentFactory.Vector().z(4).addClass('token');
-        $('.token').remove();
-        for(var y = 0; y < size; y++)
-            for(var x = 0; x < size; x++) {
-                if ( this.game.Board.grid[x][y] == 1 ) {
-                    played.circle(this.getX(x), this.getY(y), this.side / 2, background1);
-                } else if ( this.game.Board.grid[x][y] == 2 ) {
-                    played.circle(this.getX(x), this.getY(y), this.side / 2, background2);
-                } 
-            }
-        this.vc.add(played);
-        this.vc.update();
     }
 
 }

@@ -21,7 +21,7 @@ class GameController {
      * @param color       The color of the board
      * @param background  The name of the background file
      */
-    constructor(vc, playerModel, size, ai, quit, callback, stageID) {
+    constructor(vc, playerModel, size, ai, quit, callback=function(){}, stageID=0) {
         log.info('new game started', arguments);
 
         this.turn = 1;
