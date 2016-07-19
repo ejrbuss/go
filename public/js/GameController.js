@@ -106,6 +106,17 @@ class GameController {
      */
     end() {
         var scores = endGame(this.game);
+
+        //stats for updating user
+
+        var user = {
+            'username': this.player1.name,
+            'score': scores.player1score,
+            'piecestaken': this.player1.score,
+            'pieceslost': this.player2.score,
+            'win': scores.player1score > scores.player2score,
+        };
+
         this.player1.score = scores.player1score;
         this.player2.score = scores.player2score;
         
@@ -123,7 +134,7 @@ class GameController {
     		'score1': scores.player1score, 
     		'score2': scores.player2score, 
     		'size': this.size,
-    	}, this.moveList, function(res){
+    	}, this.moveList, user, function(res){
     		log.info('Game saved to database.', res);
     	});
     }

@@ -73,13 +73,7 @@ app.post("/saveGame", function(req, res) {
             }
             db.addMovesList(obj,res);
 
-            obj = {
-                username: req.body.game.player1,
-                score: req.body.game.score.player1score,
-                piecestaken: req.body.game.player1score,
-                pieceslost: req.body.game.player2score,
-                win: req.body.game.score.player1score > req.body.game.score.player2score
-            };
+            obj = req.body.user;
         }
     });
 });
