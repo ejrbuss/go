@@ -112,7 +112,7 @@ class Database {
         console.log("Getting list of moves...");
         var gameID = new ObjectID(obj.id);
     }
-     
+    
     //add new move
     addNewMove(obj, res) {
         console.log("Adding new move to database...");
