@@ -21,18 +21,16 @@ function saveMove(move, gameID, callback){
 	xmlhr.open('POST','/addMove',true);
 	xmlhr.setRequestHeader("content-type", "application/json");
 	xmlhr.send(JSON.stringify(obj));
-
 }
 
 function saveGameToDB(game, moves, user, callback){
 	xmlhr = new XMLHttpRequest();
-
 	var obj = {
 		'game': game,
 		'moves': moves,
 		'user': user,
 	};
-
+    
 	xmlhr.onreadystatechange = function() {
 		if(xmlhr.readyState == 4 && xmlhr.status == 200) {
 			//handle response
@@ -76,7 +74,7 @@ function saveNewGame(player1, player2, size, callback){
 		'time':null,
 		'complete':false
 	};
-
+    
 	xmlhr.onreadystatechange = function() {
 		if(xmlhr.readyState == 4 && xmlhr.status == 200) {
 			//handle response
@@ -87,12 +85,12 @@ function saveNewGame(player1, player2, size, callback){
 	xmlhr.open('POST','/newGame',true);
 	xmlhr.setRequestHeader("content-type", "application/json");
 	xmlhr.send(JSON.stringify(obj));
-
 }
 
 function getMatchHistory(username, callback){
 	var xmlhr = new XMLHttpRequest();
 	var obj = {name:username};
+    
 	xmlhr.onreadystatechange = function() {
 		if(xmlhr.readyState == 4 && xmlhr.status == 200) {
 			//handle response
@@ -103,7 +101,6 @@ function getMatchHistory(username, callback){
 	xmlhr.open('POST', '/getGames', true);
 	xmlhr.setRequestHeader("content-type", "application/json");
 	xmlhr.send(JSON.stringify(obj));
-
 }
 
 function getMoveList(gameID, callback){
