@@ -1,3 +1,4 @@
+"use strict"
 
 var express    = require("express");
 var bodyParser = require("body-parser");
@@ -85,15 +86,19 @@ app.post("/saveGame", function(req, res) {
         if(err)
             res.status(500).send();
         else {
+            //get id for move list
             var id = data._id;
+            //delete ai from dictionary
+            delete games[data.gameid];
+            //prep movelist
             obj = {
                 moves: req.body.moves,
                 gameid: id,
             }
             db.addMovesList(obj);
-
+            //prep user
             obj = req.body.user;
-            console.log(obj);
+            //console.log(obj);
             db.updateStats(obj);
             res.sendStatus(200);
         }
@@ -130,12 +135,25 @@ app.post("/aiMove", function(req, res) {
                     break;
             }
         }
-        var move = games[game.id].getMove(game);
+        var move;
+        if(req.body.ai == 'AI4'){
+            games[game.id].getMove(game, function(newmove){
+                console.log(newmove);
+                res.send(newmove);
+            });
+        } else {
+            move = games[game.id].getMove(game);
+        }
+        
     } catch(err) {
-        var move = err;
+        console.log(err);
+        move = err;
     }
-    console.log(move);
-    res.send(move);
+
+    if(req.body.ai != 'AI4'){
+        console.log(move);
+        res.send(move);
+    }
 });
 
 app.post("/newGame", function(req, res) {
@@ -166,12 +184,27 @@ app.post("/getMoves", function(req, res) {
 app.post("/updateStats", function(req, res) {
     console.log("updating Stats");
     console.log(req.body);
-    db.updateStats(req.body, res);
+    db.updateStats(req.body);
 });
 
 app.listen(8080, function() {
     console.log('Started!');
 });
+
+
+//==========================================================================================================================//
+//call every 10 minutes
+setInterval(cleanDictionary, 600000);
+
+function cleanDictionary(){
+    var now = Date.now();
+    //deletes any ai's that havent made a move in 10 minutes
+    for(var key in games){
+        if(games[key].timeLastMove < now - 600000){
+            delete games[key];
+        }
+    }
+}
 
 //==========================================================================================================================//
 var DEBUG = 4

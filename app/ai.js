@@ -5,6 +5,7 @@ var makeRandomMoves   = sim.makeRandomMoves;
 var findPossibleMoves = sim.findPossibleMoves;
 var randomInt         = sim.randomInt;
 var filterMoves       = sim.filterMoves;
+var http			  = require("http");
 
 class Move{
 	constructor(x, y, side){
@@ -22,6 +23,7 @@ class AI1 {
 		var j = i;
 		var moves = findPossibleMoves(Game.Board);
 		this.blobmoves = [moves[randomInt(moves.length)]];
+		this.timeLastMove = Date.now();
 	}
     
 	getMove(Game){
@@ -51,6 +53,7 @@ class AI1 {
 				this.blobmoves.splice(i, 1);
 			}
 		}
+		this.timeLastMove = Date.now();
 		return {x: x, y: y, pass};
 	}
 }
@@ -64,6 +67,7 @@ class AI2 {
 		this.direction = "up";
 		this.spirallength = 1;
 		this.spiralcount = 1;
+		this.timeLastMove = Date.now();
 	}
 
 	getMove(Game){
@@ -86,6 +90,7 @@ class AI2 {
 				this.swirl();
 			}
 		}
+		this.timeLastMove = Date.now();
 		if (pass){
 			return {x: 0, y: 0, pass: true}
 		}
@@ -151,6 +156,7 @@ class AI3 {
 				this.potentialMoves.push({x:i, y:j});
 			}
 		}
+		this.timeLastMove = Date.now();
 	}
 
 	getMove(Game){
@@ -229,7 +235,7 @@ class AI3 {
 		}
 
 		
-		
+		this.timeLastMove = Date.now();
 		if (max == 0)
 			return {x: 0, y: 0, pass: true};
 		else
@@ -390,6 +396,7 @@ class AI5{
         log.debug('New AI5');
 		this.SIMULATIONS = Math.floor(0.25*Math.pow(0.016*Game.Board.size, -2.9));
 		this.MAXMOVES = 30;
+		this.timeLastMove = Date.now();
 	}
 
 	getMove(Game){
@@ -434,6 +441,7 @@ class AI5{
 				maxindex = k;
 			}
 		}
+		this.timeLastMove = Date.now();
 		log.debug(movescore[maxindex] + "/" + this.SIMULATIONS);
 		var score = endGame(Game);
 		if (max == -1 || max < Math.floor(0.25*this.SIMULATIONS) || (score.player2score >= score.player1score && max > Math.floor(0.75*this.SIMULATIONS)))
@@ -447,9 +455,10 @@ class AIX{
 
 	constructor(Game){
 		this.name = 'AIX';
+		this.timeLastMove = Date.now();
 	}
 
-	getMove(Game){
+	getMove(Game, cb){
 		var options;
 		if(Game.player1score > Game.player2score){
 			options = {
@@ -479,7 +488,7 @@ class AIX{
 
 		    res.on('data', function(chunk){
 		    	console.log(chunk.toString());
-		    	str += chunk.toString();
+		    	str = chunk.toString();
 		    });
 
 		    res.on('end', function(){
@@ -491,8 +500,9 @@ class AIX{
 		    		side:move.c,
 		    		pass:move.pass
 		    	};
-
-		    	return newMove;
+		    	this.timeLastMove = Date.now();
+		    	console.log('return: ' + JSON.stringify(newMove));
+		    	cb(newMove);
 		    });
 		};
 
@@ -500,16 +510,26 @@ class AIX{
 
 	    req.on('error', function(e){
 	    	console.log('problem with request: ' + e.message);
+	    	this.timeLastMove = Date.now();
 	    	return {x:0, y:0, pass:true};
 	    });
 
-	    var pass = (Game.Board.diff.move.side == 2);
+	    console.log('last: ' + JSON.stringify(Game.Board.diff.Move));
+	    try{
+	    	var pass = (Game.Board.diff.Move.side == 2);
+	    } catch(err) {
+	    	pass = false;
+	    }
+
+	    //console.log('pass: ' + pass);
+	    
 
 	    var postData = JSON.stringify({
 	    	'size': Game.Board.size,
 	    	'board': Game.Board.grid,
-	    	'last': {x:Game.Board.diff.move.x, y:Game.Board.diff.move.y, c:1, pass:pass}
+	    	'last': {x:Game.Board.diff.Move.x, y:Game.Board.diff.Move.y, c:1, pass:pass}
 	    });
+	    console.log('post: ' + postData);
 
 	    req.write(postData);
 

@@ -28,7 +28,7 @@ class ReplayController {
         this.gvc.update();
         this.gvc.player1turn();
         var rc = this;
-        setTimeout(function(){rc.next()}, 3000);        
+        setTimeout(function(){rc.next()}, 1000);        
     }
 
     /*
@@ -51,7 +51,7 @@ class ReplayController {
             }
             this.gvc.update();
             if (this.iterator.hasNext()) {
-                this.timeout = setTimeout(function(){rc.next()}, 2000);
+                this.timeout = setTimeout(function(){rc.next()}, 1000);
             } else {
             	var end = ComponentFactory.ClickAction(function() {
             		clearTimeout(rc.timeout);

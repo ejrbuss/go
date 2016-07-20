@@ -253,7 +253,7 @@ class Database {
 
                 //var userName = obj.username;
                 var userName = obj.username;
-                var highScore = obj.score;
+                var highscore = obj.score;
                 var totalScore = obj.score;
                 var gamesWon = docs.gamesWon;
                 var gamesLost = docs.gamesLost;
@@ -279,9 +279,9 @@ class Database {
                 */
 
                 //high score condition
-                console.log(docs.highScore);
-                if(docs.highScore > highScore){
-                    highScore = docs.highScore;
+                console.log(docs.highscore);
+                if(docs.highscore > highscore){
+                    highscore = docs.highscore;
                 }
 
                 // total score condition
@@ -320,7 +320,7 @@ class Database {
                 //storyLevelsComplete = //Eric's Code; */
                 
                 var body = { 
-                    'highScore':highScore,
+                    'highscore':highscore,
                     'totalScore':totalScore,
                     'gamesWon':gamesWon,
                     'gamesLost':gamesLost,
