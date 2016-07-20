@@ -135,12 +135,25 @@ app.post("/aiMove", function(req, res) {
                     break;
             }
         }
-        var move = games[game.id].getMove(game);
+        var move;
+        if(req.body.ai == 'AI4'){
+            games[game.id].getMove(game, function(newmove){
+                console.log(newmove);
+                res.send(newmove);
+            });
+        } else {
+            move = games[game.id].getMove(game);
+        }
+        
     } catch(err) {
-        var move = err;
+        console.log(err);
+        move = err;
     }
-    console.log(move);
-    res.send(move);
+    
+    if(req.body.ai != 'AI4'){
+        console.log(move);
+        res.send(move);
+    }
 });
 
 app.post("/newGame", function(req, res) {
@@ -178,6 +191,8 @@ app.listen(8080, function() {
     console.log('Started!');
 });
 
+
+//==========================================================================================================================//
 //call every 10 minutes
 setInterval(cleanDictionary, 600000);
 

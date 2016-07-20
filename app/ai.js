@@ -458,7 +458,7 @@ class AIX{
 		this.timeLastMove = Date.now();
 	}
 
-	getMove(Game){
+	getMove(Game, cb){
 		var options;
 		if(Game.player1score > Game.player2score){
 			options = {
@@ -488,7 +488,7 @@ class AIX{
 
 		    res.on('data', function(chunk){
 		    	console.log(chunk.toString());
-		    	str += chunk.toString();
+		    	str = chunk.toString();
 		    });
 
 		    res.on('end', function(){
@@ -501,7 +501,8 @@ class AIX{
 		    		pass:move.pass
 		    	};
 		    	this.timeLastMove = Date.now();
-		    	return newMove;
+		    	console.log('return: ' + JSON.stringify(newMove));
+		    	cb(newMove);
 		    });
 		};
 
@@ -509,15 +510,21 @@ class AIX{
 
 	    req.on('error', function(e){
 	    	console.log('problem with request: ' + e.message);
+	    	this.timeLastMove = Date.now();
 	    	return {x:0, y:0, pass:true};
 	    });
 
-	    var pass = (Game.Board.diff.move.side == 2);
+	    try{
+	    	var pass = (Game.Board.diff.move.side == 2);
+	    } catch(err) {
+	    	pass = false;
+	    }
+	    
 
 	    var postData = JSON.stringify({
 	    	'size': Game.Board.size,
 	    	'board': Game.Board.grid,
-	    	'last': {x:Game.Board.diff.move.x, y:Game.Board.diff.move.y, c:1, pass:pass}
+	    	'last': {x:Game.Board.diff.Move.x, y:Game.Board.diff.Move.y, c:1, pass:pass}
 	    });
 
 	    req.write(postData);
