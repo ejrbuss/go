@@ -5,8 +5,7 @@
 * @param user player 1's player object
 */
 function saveGameToDB(game, moves, user, callback){
-	xmlhr = new XMLHttpRequest();
-	toServer('saveGame', obj, callback);
+	toServer('saveGame', {game:game, moves: moves, user:user}, callback);
 }
 
 /*
