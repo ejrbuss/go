@@ -156,3 +156,15 @@ function isValidUsername(username) {
     if (username.length > 8) return false;
     else return true;
 }
+
+/*
+ *  Utility function for making a request to the server.
+ */
+function toServer(url, data, cb=function(){}) {
+    $.ajax({
+        url: 'http://localhost:8080/' + url, 
+        type: 'POST', 
+        contentType: 'application/json',
+        data: JSON.stringify(data)
+    }).done(cb);
+}

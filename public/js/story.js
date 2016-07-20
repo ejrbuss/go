@@ -710,3 +710,7 @@ var story = [
     }
 ]
 
+function updateLevels(playerModel, levelCompleted){
+    var obj = {username:playerModel.username(), levels:levelCompleted};
+    toServer('updateLevels', obj});
+}
