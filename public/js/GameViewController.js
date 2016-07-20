@@ -21,7 +21,11 @@ class GameViewController {
         this.controller = controller;
         this.side = (40 / size) - (5 / this.size); // Make tokens less than the distance between two lines
         
-        var quit = ComponentFactory.ClickAction(quit);
+        var quitAction = ComponentFactory.ClickAction(function(){
+            if(controller.timeout)
+                clearTimeout(controller.timeout);
+            quit();
+        });
         
         vc.add( ComponentFactory.Background(this.stage.background) );
         vc.add( ComponentFactory.Vector().poly([0,25, 10,0, 0,0],background1).addClass('slide-right') );
@@ -52,7 +56,7 @@ class GameViewController {
         vc.add( ComponentFactory.Character(controller.player2.image).xyz(76, 15, 2).width(21).height(28).addClass('slide-up') );
         this.player2image = vc.last;
         // Buttons
-        vc.add( ComponentFactory.TitleButton('QUIT').xy(3, 5).addClass('slide-right').addAction(quit) );
+        vc.add( ComponentFactory.TitleButton('QUIT').xy(3, 5).addClass('slide-right').addAction(quitAction));
         // Render
         vc.clear();
         vc.update();
