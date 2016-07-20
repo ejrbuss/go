@@ -1,20 +1,63 @@
 "use strict"
+var endGame           = require('./score').endGame;
+var sim               = require('./simulation');
+var makeRandomMoves   = sim.makeRandomMoves;
+var findPossibleMoves = sim.findPossibleMoves;
+var randomInt         = sim.randomInt;
+var filterMoves       = sim.filterMoves;
 
-class AI{
-	//class interface
-	// make your AI implement this
-	constructor(Game) {
-        this.name = 'placeholder';
+class Move{
+	constructor(x, y, side){
+		this.x = x;
+		this.y = y;
+		this.side = side;
 	}
+}
 
+class AI1 {
+    
+	constructor(Game){
+        log.debug('New AI1');
+		var i = Math.floor(Game.Board.size / 2);
+		var j = i;
+		var moves = findPossibleMoves(Game.Board);
+		this.blobmoves = [moves[randomInt(moves.length)]];
+	}
+    
 	getMove(Game){
-		return {x: 0, y: 0};
+		var pass = "pass";
+		while (this.blobmoves.length > 0){
+			var i = randomInt(this.blobmoves.length);
+			try{
+				var x = this.blobmoves[i].x;
+				var y = this.blobmoves[i].y;
+				Game.Board.move(new Move(x, y, Game.player2));
+				this.blobmoves.push({x: x+1, y: y});
+				this.blobmoves.push({x: x-1, y: y});
+				this.blobmoves.push({x: x, y: y+1});
+				this.blobmoves.push({x: x, y: y-1});
+				Game.Board.grid[x][y] = 0;
+				pass = null;
+				break;
+			}
+			catch(err){
+				if (err == "InvalidMoveException" || err == "SuicideException" || err == "ReturnToOldStateException"){
+					log.debug("Blob no Move");
+				}
+				else
+					throw err;
+			}
+			finally{
+				this.blobmoves.splice(i, 1);
+			}
+		}
+		return {x: x, y: y, pass};
 	}
 }
 
 class AI2 {
 	constructor(Game) {
-		this.name = "AI2";
+		log.debug('New AI2');
 		this.size = Game.Board.size;
 		var i = Math.floor(this.size / 2);
 		this.move = {x: i, y: i};
@@ -97,7 +140,7 @@ class AI2 {
 
 class AI3 {
 	constructor(Game) {
-		this.name = 'AI3';
+		log.debug('New AI3');
 		this.boardSize = Game.Board.size - 1;
 		this.SIMULATIONS = 90;
 		this.moves = 0;
@@ -340,51 +383,11 @@ class AI3 {
 	}
 }
 
-
-
-class AI1{
-	constructor(Game){
-        this.name = 'AI1';
-		var i = Math.floor(Game.Board.size / 2);
-		var j = i;
-		var moves = findPossibleMoves(Game.Board);
-		this.blobmoves = [moves[randomInt(moves.length)]];
-	}
-	getMove(Game){
-		var pass = "pass";
-		while (this.blobmoves.length > 0){
-			var i = randomInt(this.blobmoves.length);
-			try{
-				var x = this.blobmoves[i].x;
-				var y = this.blobmoves[i].y;
-				Game.Board.move(new Move(x, y, Game.player2));
-				this.blobmoves.push({x: x+1, y: y});
-				this.blobmoves.push({x: x-1, y: y});
-				this.blobmoves.push({x: x, y: y+1});
-				this.blobmoves.push({x: x, y: y-1});
-				Game.Board.grid[x][y] = 0;
-				pass = null;
-				break;
-			}
-			catch(err){
-				if (err == "InvalidMoveException" || err == "SuicideException" || err == "ReturnToOldStateException"){
-					log.debug("Blob no Move");
-				}
-				else
-					throw err;
-			}
-			finally{
-				this.blobmoves.splice(i, 1);
-			}
-		}
-		return {x: x, y: y, pass};
-	}
-}
-
 class AI5{
     
 	constructor(Game){
-        this.name = 'AI5';
+        console.log(Game.Board);
+        log.debug('New AI5');
 		this.SIMULATIONS = Math.floor(0.25*Math.pow(0.016*Game.Board.size, -2.9));
 		this.MAXMOVES = 30;
 	}

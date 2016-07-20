@@ -31,15 +31,15 @@ class GameController {
         this.stageID = stageID;
         this.playerModel = playerModel;
         this.game = new Game(this.id, this.size);
-        this.ai = assembleAI(ai, this.game);
+        this.ai = new aiinterface(ai);
        
         this.player1 = {
             name: playerModel.username(),
             image: 'Player1'
         }
         this.player2 = {
-            name: 'Player 2',
-            image: 'Player1'
+            name: this.ai.name,
+            image: this.ai.image
         }
 
         var gc = this;
@@ -70,29 +70,33 @@ class GameController {
             // Success
             this.gvc.update();
             this.moveList.push({'x':x,'y':y,'pass':pass});
-            if (this.ai) {
+            if (this.ai.real) {
                 this.gvc.player2turn();
-                var move = this.ai.getMove(this.game);
-                this.game.move(move.x, move.y, move.pass);
-                if ( this.pass && move.pass ) {
-                    this.end();
-                    return;
-                } else {
-                    this.pass = move.pass;
-                }
-                this.moveList.push({'x':move.x,'y':move.y,'pass':move.pass});
-                this.gvc.update();
-                this.gvc.gameInput();
-                this.gvc.player1turn();
+                var gc = this;
+                this.ai.getMove(this.game, function(move) {
+                    log.debug(move);
+                    // check error
+                    gc.game.move(move.x, move.y, move.pass);
+                    if ( gc.pass && move.pass ) {
+                        gc.end();
+                        return;
+                    } else {
+                        gc.pass = move.pass;
+                    }
+                    gc.moveList.push({'x':move.x,'y':move.y,'pass':move.pass});
+                    gc.gvc.update();
+                    gc.gvc.gameInput();
+                    gc.gvc.player1turn();
+                });
             } else {
                 if (this.turn == 1) {
                     this.gvc.gameInput();
                     this.gvc.player2turn();
-                    this.turn = 2
+                    this.turn = 2;
                 } else {
                     this.gvc.gameInput();
                     this.gvc.player1turn();
-                    this.turn = 1
+                    this.turn = 1;
                 }
             }
         } catch(err) {
@@ -137,6 +141,30 @@ class GameController {
     	}, this.moveList, user, function(res){
     		log.info('Game saved to database.', res);
     	});
+    }
+    
+}
+//==========================================================================================================================//
+// AIINTERFACE
+//==========================================================================================================================//
+class aiinterface {
+    
+    constructor(ai) {
+        log.debug(ai);
+        if ( ai == undefined ) {
+            this.name = 'Player 2';
+            this.image = 'Player1';
+            this.real = false;
+        } else {
+            this.name = ['AI1', 'AI2', 'AI3', 'AI4', 'AI5'][ai];
+            this.image = ai + 1;
+            this.real = true;
+        }
+        
+    }
+    
+    getMove(game, callback) {
+        toServer('aiMove', {game: game.copyState(), ai: this.name}, callback);
     }
     
 }

@@ -500,6 +500,13 @@ class ComponentFactory {
             .element('ul');
     }
     
+    static ListElement(text, color=background1) {
+        return ComponentFactory.Text(text, color)
+            .background(background2)
+            .position('relative')
+            .element('li');
+    }
+    
     /**
      * Returns a new Component that acts ass a password field.
      */

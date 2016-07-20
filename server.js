@@ -1,20 +1,34 @@
-var express = require("express");
+
+var express    = require("express");
 var bodyParser = require("body-parser");
-var sha1 = require("sha1");
+var sha1       = require("sha1");
+var Game       = require('./app/model')
+var database   = require("./app/Database");
+var ais        = require("./app/ai");
+
+/**
+ * TODO someone needs to delete games (ais) once games finish
+ */
+
+var games = {};
+var gameIDcounter = 0;
+
 var app = express();
 app.use(bodyParser.json());
 
-var database = require("./app/Database");
 var db = new database();
 db.connect();
-
-var ais = require("./app/ai");
-var ai = null;
 
 app.use(express.static('public'));
 
 app.get('/', function(req, res) {
     res.sendFile(__dirname + '/index.html');
+});
+
+// Get game id
+app.post('/getGameID', function(req, res) {
+    gameIDcounter++
+    res.send(gameIDcounter.toString());
 });
 
 // Hashes a string.
@@ -93,25 +107,35 @@ app.post("/addMove", function(req, res) {
 });
 
 app.post("/aiMove", function(req, res) {
-    console.log("Getting ai move...");
-    console.log(req.body);
-    if(!ai){
-        switch(req.body.ai.toUpperCase()){
-            case("AI1"):
-                ai = new ais.AI1(req.body.Game);
-            case("AI2"):
-                ai = new ais.AI2(req.body.Game);
-            case("AI3"):
-                ai = new ais.AI3(req.body.Game);
-            case("AI4"):
-                ai = new ais.AI4(req.body.Game);
-            case("AI5"):
-                ai = new ais.AI5(req.body.Game);
+    console.log("Getting " + req.body.ai + ' moves for game ' + req.body.game.id);
+    var game = new Game(req.body.game.id, req.body.game.size);
+    game.resetState(req.body.game);
+    try {
+        if (!games[game.id] ) {
+            switch(req.body.ai) {
+                case('AI1'):
+                    games[game.id] = new ais.AI1(game);
+                    break;
+                case('AI2'):
+                    games[game.id] = new ais.AI2(game);
+                    break;
+                case('AI3'):
+                    games[game.id] = new ais.AI3(game);
+                    break;
+                case('AI4'):
+                    games[game.id] = new ais.AI4(game);
+                    break;
+                default:
+                    games[game.id] = new ais.AI5(game);
+                    break;
+            }
         }
+        var move = games[game.id].getMove(game);
+    } catch(err) {
+        var move = err;
     }
-    var move = ai.getMove(req.body.Game);
-
-    res.status(200).json(move);
+    console.log(move);
+    res.send(move);
 });
 
 app.post("/newGame", function(req, res) {
@@ -148,3 +172,40 @@ app.post("/updateStats", function(req, res) {
 app.listen(8080, function() {
     console.log('Started!');
 });
+
+//==========================================================================================================================//
+var DEBUG = 4
+var INFO  = 3
+var WARN  = 2
+var NONE  = 1
+
+class Logger {
+    
+    /**
+     * Creates a new logger instance.
+     * @level the maximum level of logs to show
+     */
+    constructor(level) {
+        this.debug = level >= DEBUG ? this.log('DEBUG', '#0000FF') : function() {};
+        this.info  = level >= INFO  ? this.log('INFO',  '#00C864') : function() {};
+        this.warn  = level >= WARN  ? this.log('WARN',  '#C80164') : function() {};
+    }
+    
+    /**
+     * Returns a function that will properly format the output of the given logging level.
+     * @param level the logging level
+     * @param color the color of the logging level
+     */
+    log(level, color) {
+        return function() {
+            var time = new Date().toLocaleTimeString();
+            var caller = new Error().stack.split('\n')[2].trim()
+            console.log(level + ' : ' + time + ' ' + caller);
+            for(var i = 0; i < arguments.length; i++)
+                console.log(arguments[i]);
+        }
+    }
+    
+}
+
+global.log = new Logger(DEBUG); // logger instance to use

@@ -441,6 +441,7 @@ class ViewController {
             'left':  { '9✕9': '19✕19', '19✕19': '13✕13', '13✕13': '9✕9' }
         }
         var vc = this;
+        var aiID = 0;
         var stageID = 0;
         // Actions
         var menu   = ComponentFactory.ClickAction(function() { vc.mainMenu(playerModel); });
@@ -448,12 +449,13 @@ class ViewController {
             new GameController(
                 vc, playerModel, 
                 size[$('.size').text()], 
-                'AI2', 
+                aiID, 
                 function(){ vc.versusAi(playerModel); }, 
                 function() {}, 
                 stageID); 
         });
         var aiSelect = ComponentFactory.ClickAction(function(component) {
+            aiID = component.recieve();
             $( '.ai' ).addClass('unselected');
             component.$.removeClass('unselected')
         });
@@ -593,10 +595,10 @@ class ViewController {
         this.add( ComponentFactory.Vector()
             .poly([0,0, 30,0, 20,50, 0,50], background1)
             .addClass('slide-right') );
-        this.add( ComponentFactory.Vector()
-            .poly([35,0, 65,0, 65,50, 35,50], background1)
-            .poly([70,0, 100,0, 100,50, 70,50], background1)
-            .addClass('slide-left') );
+        //this.add( ComponentFactory.Vector()
+        //    .poly([35,0, 65,0, 65,50, 35,50], background1)
+        //    .poly([70,0, 100,0, 100,50, 70,50], background1)
+        //    .addClass('slide-left') );
         // Buttons
         this.add( ComponentFactory.TitleButton('RETURN').xy(15, 40).addClass('slide-right').addAction(menu) );
         // Text
@@ -612,7 +614,39 @@ class ViewController {
         this.add( ComponentFactory.Text(playerModel.killDeath(), select1).size(2.5).xy(16, 19).addClass('slide-right') );
         this.add( ComponentFactory.Text(playerModel.currentStreak(), select1).size(2.5).xy(16, 22.5).addClass('slide-right') );
         this.add( ComponentFactory.Text(playerModel.longestStreak(), select1).size(2.5).xy(16, 26).addClass('slide-right') );
-        
+        // Leaderboards
+        var totalscores = function(leaderboard) {
+            log.debug(leaderboard);
+            vc.add( ComponentFactory.Vector()
+                .poly([35,0, 65,0, 55,50, 25,50], background1)
+                .addClass('slide-left') );
+            vc.add( ComponentFactory.Text('TOTALSCORE').size(5).xy(37, 2).addClass('slide-left') );
+            for(var i = 0; i < leaderboard.length; i++) {
+                var y = i * 4 + 8;
+                var x = i * -0.8 + 36;
+                vc.add( ComponentFactory.Text(i + 1, '#444').xy(x, y).addClass('slide-left') )
+                vc.add( ComponentFactory.Text(leaderboard[i].username, select2).xy(x + 2, y).addClass('slide-left') );
+                vc.add( ComponentFactory.Text(leaderboard[i].totalScore).xy(x + 15, y).addClass('slide-left') );
+            }
+            vc.update();
+        }
+        var highscores = function(leaderboard) {
+            log.debug(leaderboard);
+            vc.add( ComponentFactory.Vector()
+                .poly([70,0, 100,0, 90,50, 60,50], background1)
+                .addClass('slide-left') );
+            vc.add( ComponentFactory.Text('HIGHSCORE').size(5).xy(72, 2).addClass('slide-left') );
+            for(var i = 0; i < leaderboard.length; i++) {
+                var y = i * 4 + 8;
+                var x = i * -0.8 + 71;
+                log.debug(playerModel.username() == leaderboard[i].username)
+                var c = leaderboard[i].username == playerModel.username() ? select1 : '#444';
+                vc.add( ComponentFactory.Text(i + 1, c).xy(x, y).addClass('slide-left') )
+                vc.add( ComponentFactory.Text(leaderboard[i].username, select2).xy(x + 2, y).addClass('slide-left') );
+                vc.add( ComponentFactory.Text(leaderboard[i].highscore).xy(x + 15, y).addClass('slide-left') );
+            }
+            vc.update();
+        }
         var callback = function(leaderboard) {
             var leaderboardList = ComponentFactory.List().background(accent).width(40).height(20);
             for(var i = 0; i< leaderboard.length; i++) {
@@ -626,7 +660,8 @@ class ViewController {
         this.clear();
         this.update();
         
-        //playerModel.stats('l', callback);
+        playerModel.stats('l', totalscores);
+        playerModel.stats('h', highscores);
     }
     
     /**

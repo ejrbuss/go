@@ -2,21 +2,21 @@
 /*
 The game model
 */
+
+var score = require('./score');
+var isCapture = score.isCapture;
+var isSuicide = score.isSuicide;
+
 class Game{
     
 	constructor(id, size){
 		this.Board = new Board(size);
-        this.size = size;
 		this.player1 = 1;
 		this.player2 = 2;
 		this.player1score = 0;
 		this.player2score = 0;
+		this.id = id;
 		this.turn = this.player1;
-        var g = this;
-        toServer('getGameID', {}, function(id) {
-            log.debug('Got game id: ' + id);
-            g.id = id;
-        });
 	}
 
 	move(x, y, pass){
@@ -37,10 +37,8 @@ class Game{
 		return captured;
 	}
 
-	copyState() {
+	copyState() { 
 		return {
-            id: this.id,
-            size: this.size,
             player1score: this.player1score,
             player2score: this.player2score,
             turn: this.turn,
@@ -69,7 +67,6 @@ class Game{
 }
 
 class Board {
-    
 	constructor(size) {
 		this.size = size;
 		this.grid = [];
@@ -188,3 +185,5 @@ class Move{
 		this.side = side;
 	}
 }
+
+module.exports = Game;

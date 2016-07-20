@@ -51,3 +51,10 @@ function filterMoves(moves, num){
 	}
 	return ret;
 }
+
+module.exports = {
+    makeRandomMoves : makeRandomMoves,
+    findPossibleMoves : findPossibleMoves,
+    randomInt : randomInt,
+    filterMoves: filterMoves
+}

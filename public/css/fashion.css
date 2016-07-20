@@ -175,7 +175,8 @@ ul {
 
 li {
     text-align: left !important;
-    padding: 0.5vw;
+    padding: 0.W5vw;
+    margin: 0.5vw;
 }
 
 /* Some magic http://jsfiddle.net/hmartiro/Xck2A/1/ */
