@@ -512,8 +512,20 @@ var story = [
                 name: 'Sentinel',
                 color: sentinel,
                 character: 'f199',
-                background: 'f199',   
-            }, 
+                background: 'lightning',   
+            }, {
+                text: 'Wha, what is that??',
+                name: 'Player',
+                color: player,
+                character: 'player1',
+                background: 'bright',   
+            }, {
+                text: '??>A<##@? ??#@ ?# ?$(#?',
+                name: 'Sentinel',
+                color: sentinel,
+                character: 'f200',
+                background: 'space',   
+            },
         ],
         game: {
             size: 9,
