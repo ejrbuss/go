@@ -5,6 +5,7 @@ var makeRandomMoves   = sim.makeRandomMoves;
 var findPossibleMoves = sim.findPossibleMoves;
 var randomInt         = sim.randomInt;
 var filterMoves       = sim.filterMoves;
+var http			  = require("http");
 
 class Move{
 	constructor(x, y, side){

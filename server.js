@@ -89,7 +89,7 @@ app.post("/saveGame", function(req, res) {
             //get id for move list
             var id = data._id;
             //delete ai from dictionary
-            games.Remove(data.gameid);
+            delete games[data.gameid];
             //prep movelist
             obj = {
                 moves: req.body.moves,
@@ -186,7 +186,7 @@ function cleanDictionary(){
     //deletes any ai's that havent made a move in 10 minutes
     for(var key in games){
         if(games[key].timeLastMove < now - 600000){
-            games.Remove(key);
+            delete games[key];
         }
     }
 }
