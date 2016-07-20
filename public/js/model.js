@@ -15,7 +15,7 @@ class Game{
         var g = this;
         toServer('getGameID', {}, function(id) {
             log.debug('Got game id: ' + id);
-            g.id = id;
+            g.gameid = id;
         });
 	}
 
@@ -39,7 +39,7 @@ class Game{
 
 	copyState() {
 		return {
-            id: this.id,
+            id: this.gameid,
             size: this.size,
             player1score: this.player1score,
             player2score: this.player2score,

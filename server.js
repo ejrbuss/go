@@ -1,3 +1,4 @@
+"use strict"
 
 var express    = require("express");
 var bodyParser = require("body-parser");
@@ -85,15 +86,19 @@ app.post("/saveGame", function(req, res) {
         if(err)
             res.status(500).send();
         else {
+            //get id for move list
             var id = data._id;
+            //delete ai from dictionary
+            games.Remove(data.gameid);
+            //prep movelist
             obj = {
                 moves: req.body.moves,
                 gameid: id,
             }
             db.addMovesList(obj);
-
+            //prep user
             obj = req.body.user;
-            console.log(obj);
+            //console.log(obj);
             db.updateStats(obj);
             res.sendStatus(200);
         }
@@ -172,6 +177,19 @@ app.post("/updateStats", function(req, res) {
 app.listen(8080, function() {
     console.log('Started!');
 });
+
+//call every 10 minutes
+setInterval(cleanDictionary, 600000);
+
+function cleanDictionary(){
+    var now = Date.now();
+    //deletes any ai's that havent made a move in 10 minutes
+    for(var key in games){
+        if(games[key].timeLastMove < now - 600000){
+            games.Remove(key);
+        }
+    }
+}
 
 //==========================================================================================================================//
 var DEBUG = 4

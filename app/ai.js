@@ -22,6 +22,7 @@ class AI1 {
 		var j = i;
 		var moves = findPossibleMoves(Game.Board);
 		this.blobmoves = [moves[randomInt(moves.length)]];
+		this.timeLastMove = Date.now();
 	}
     
 	getMove(Game){
@@ -51,6 +52,7 @@ class AI1 {
 				this.blobmoves.splice(i, 1);
 			}
 		}
+		this.timeLastMove = Date.now();
 		return {x: x, y: y, pass};
 	}
 }
@@ -64,6 +66,7 @@ class AI2 {
 		this.direction = "up";
 		this.spirallength = 1;
 		this.spiralcount = 1;
+		this.timeLastMove = Date.now();
 	}
 
 	getMove(Game){
@@ -86,6 +89,7 @@ class AI2 {
 				this.swirl();
 			}
 		}
+		this.timeLastMove = Date.now();
 		if (pass){
 			return {x: 0, y: 0, pass: true}
 		}
@@ -151,6 +155,7 @@ class AI3 {
 				this.potentialMoves.push({x:i, y:j});
 			}
 		}
+		this.timeLastMove = Date.now();
 	}
 
 	getMove(Game){
@@ -229,7 +234,7 @@ class AI3 {
 		}
 
 		
-		
+		this.timeLastMove = Date.now();
 		if (max == 0)
 			return {x: 0, y: 0, pass: true};
 		else
@@ -390,6 +395,7 @@ class AI5{
         log.debug('New AI5');
 		this.SIMULATIONS = Math.floor(0.25*Math.pow(0.016*Game.Board.size, -2.9));
 		this.MAXMOVES = 30;
+		this.timeLastMove = Date.now();
 	}
 
 	getMove(Game){
@@ -434,6 +440,7 @@ class AI5{
 				maxindex = k;
 			}
 		}
+		this.timeLastMove = Date.now();
 		log.debug(movescore[maxindex] + "/" + this.SIMULATIONS);
 		var score = endGame(Game);
 		if (max == -1 || max < Math.floor(0.25*this.SIMULATIONS) || (score.player2score >= score.player1score && max > Math.floor(0.75*this.SIMULATIONS)))
@@ -447,6 +454,7 @@ class AIX{
 
 	constructor(Game){
 		this.name = 'AIX';
+		this.timeLastMove = Date.now();
 	}
 
 	getMove(Game){
@@ -491,7 +499,7 @@ class AIX{
 		    		side:move.c,
 		    		pass:move.pass
 		    	};
-
+		    	this.timeLastMove = Date.now();
 		    	return newMove;
 		    });
 		};
