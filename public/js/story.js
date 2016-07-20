@@ -236,7 +236,7 @@ var story = [
                 character: 'goat',
                 background: '1',   
             }, {
-                text: 'Sheep can not give you "looks”. \nAnyway, beginning in the realm of ancient China, master…',
+                text: 'Goats can not give you "looks”. \nAnyway, beginning in the realm of ancient China, master…',
                 name: 'Sensei',
                 color: sensei,
                 character: 'sensei',
@@ -310,7 +310,7 @@ var story = [
         },
         next: function(vc, playerModel) {
             // Update player level completed
-            vc.story(playerModel, 2, 1);
+            vc.story(playerModel, 1, 0);
         }
     }, { // Level 2
         scenes: [
@@ -339,7 +339,7 @@ var story = [
                 character: 'player1',
                 background: '1',   
             }, {
-                text: '… fine. \nYou must seek the Token of a Thousand Truths. It is the most overpowered piece of Go \nparaphernalia that has ever existed, with it you will gain powers you do not deserve.',
+                text: '… fine. You must seek the Token of a Thousand Truths. \nIt is the most overpowered piece of Go paraphernalia that has ever existed, \nwith it you will gain powers you do not deserve.',
                 name: 'Sensei',
                 color: sensei,
                 character: 'sensei',
@@ -357,33 +357,163 @@ var story = [
                 character: 'sensei',
                 background: '1',   
             }, {
-                text: 'ok',
+                text: 'ok.',
                 name: 'Player',
                 color: player,
                 character: 'player1',
                 background: '1',   
-            }//, {
-            //     text: 'Well, well, well, what have we here.',
-            //     name: 'Edgar',
-            //     color: edgar,
-            //     character: 'player1',
-            //     background: '1',   
-            // }, 
+            }, {
+                text: 'Well, well, well, what have we here.',
+                name: 'Edgar',
+                color: edgar,
+                character: 'edgar',
+                background: 'mystical',   
+            }, {
+                text: 'Looks like somebody is a tad lost.',
+                name: 'Elfred',
+                color: elfred,
+                character: 'elfred',
+                background: 'mystical',   
+            }, {
+                text: 'Far away from home are we?',
+                name: 'Edgar',
+                color: edgar,
+                character: 'edgar',
+                background: 'mystical',   
+            }, {
+                text: '...',
+                name: 'Player',
+                color: player,
+                character: 'player1',
+                background: '1',   
+            }, {
+                text: 'Speechless, eh, I like the silence, is peaceful.',
+                name: 'Edgar',
+                color: edgar,
+                character: 'edgar',
+                background: 'mystical',   
+            }, {
+                text: 'Yeh, silent till we start skinning em alive.',
+                name: 'Elfred',
+                color: elfred,
+                character: 'elfred',
+                background: 'mystical',   
+            }, {
+                text: 'Yer not supposed to tell em that.',
+                name: 'Edgar',
+                color: edgar,
+                character: 'edgar',
+                background: 'mystical',   
+            }, {
+                text: 'Why, why does that matter. \nIt’s not like I spoiled the experience for em. \nThis isn\'t shagging Game of Thrones.',
+                name: 'Elfred',
+                color: elfred,
+                character: 'elfred',
+                background: 'mystical',   
+            }, {
+                text: 'Well, it\'s a matter of the surprise isn\'t it. \nYou’re not surprised anymore are ya?',
+                name: 'Edgar',
+                color: edgar,
+                character: 'edgar',
+                background: 'mystical',   
+            }, {
+                text: '...',
+                name: 'Player',
+                color: player,
+                character: 'player1',
+                background: '1',   
+            }, {
+                text: 'Look at that, you confused the fool.',
+                name: 'Edgar',
+                color: edgar,
+                character: 'edgar',
+                background: 'mystical',   
+            }, {
+                text: 'You always have to find problems with everything.',
+                name: 'Elfred',
+                color: elfred,
+                character: 'elfred',
+                background: 'mystical',   
+            }, {
+                text: 'Well it\'s only because you can\'t appreciate some theatrics. \nSaying what we\'re going to do before we do it, what the hell is that. You don\'t go see \nHamlet and in the first 5 minutes they tell you everybody frickin dies.',
+                name: 'Edgar',
+                color: edgar,
+                character: 'edgar',
+                background: 'mystical',   
+            }, {
+                text: 'Well maybe they should, \nthen I can quickly plow off and have a smashing good romp at the tavern.',
+                name: 'Elfred',
+                color: elfred,
+                character: 'elfred',
+                background: 'mystical',   
+            }, {
+                text: 'Ye\'re a hobnocker.',
+                name: 'Edgar',
+                color: edgar,
+                character: 'edgar',
+                background: 'mystical',   
+            }, {
+                text: 'Eh, the bloke\'s gettin away!',
+                name: 'Elfred',
+                color: elfred,
+                character: 'elfred',
+                background: 'mystical',   
+            }, 
         ],
         game: {
             size: 9,
             ai: 'AI2',
             stageID: 1
+        },
+        next: function(vc, playerModel) {
+            // Update player level completed
+            vc.story(playerModel, 2, 0);
         }
     }, { // Level 3
         scenes: [
             {
-                text: 'Testing the text',
-                name: 'Claws',
-                color: accent,
-                character: '3',
-                background: '3',   
-            }
+                text: 'Bloody \'ell, the blighter got the best of us.',
+                name: 'Edgar',
+                color: edgar,
+                character: 'edgar',
+                background: 'mystical',   
+            }, {
+                text: 'Yeh, you got us this time, but we\'ll be watchin for you.',
+                name: 'Elfred',
+                color: elfred,
+                character: 'elfred',
+                background: 'mystical',   
+            }, {
+                text: 'Step in these woods again and you\'ll have to deal with more of us.',
+                name: 'Elfred',
+                color: elfred,
+                character: 'elfred',
+                background: 'mystical',   
+            }, {
+                text: 'Well there you go again, tellin em our secrets.',
+                name: 'Edgar',
+                color: edgar,
+                character: 'edgar',
+                background: 'mystical',   
+            }, {
+                text: 'I\'m really getting tired of you.',
+                name: 'Elfred',
+                color: elfred,
+                character: 'elfred',
+                background: 'mystical',   
+            }, {
+                text: 'There it is. The Token of a Thousand Truths.',
+                name: 'Player',
+                color: player,
+                character: 'player1',
+                background: 'bright',   
+            }, {
+                text: '??#*??',
+                name: 'Sentinel',
+                color: sentinel,
+                character: 'f199',
+                background: 'f199',   
+            }, 
         ],
         game: {
             size: 9,
