@@ -126,6 +126,13 @@ class Database {
             res.send(null);
         }
     }
+
+    updateLevels(obj, res) {
+        var username = obj.username;
+        var collection = this._db.collection('accounts');
+
+        collection.updateOne({username:username}, {levels:obj.levels});
+    }
    
     //get move list for replay
     //obj in the form {id:gameID}

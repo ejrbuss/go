@@ -14,6 +14,7 @@ class ReplayController {
         this.turn = 1;
         this.id = gameID;
         this.game = new Game(this.id, size);
+        this.quit = quit;
         this.player1 = {
             name: player1,
             image: 'Player1'
@@ -28,7 +29,9 @@ class ReplayController {
         this.gvc.update();
         this.gvc.player1turn();
         var rc = this;
-        setTimeout(function(){rc.next()}, 1000);        
+        setTimeout(function(){rc.next()}, 1000);
+        var next = ComponentFactory.ClickAction(function () {rc.next()});
+        vc.add(ComponentFactory.TitleButton('NEXT').xy(62, 45).addAction(next).addClass('next'));        
     }
 
     /*
@@ -71,7 +74,7 @@ class ReplayController {
             vc.update();
 
         } else {
-            log.info('Game finished - game should end here once it is implemented properly.')
+            log.warn('Replay finished improperly; returning to menu.');
             this.quit();
         }
     }
@@ -134,7 +137,7 @@ class ReplayList {
     constructor(username, cb) {
         var rc = this;
         getMatchHistory(username, function (response) {
-            rc.matchList = JSON.parse(response);
+            rc.matchList = response;
             cb();
         });
     }
@@ -156,7 +159,7 @@ class ReplayIterator {
         
         getMoveList(id, function (response) {
         	log.debug(response);
-            rc.moveList = JSON.parse(response);            
+            rc.moveList = response;            
         });
         
     }
@@ -200,7 +203,7 @@ class ReplayIterator {
     }
 
 
-     /*
+    /*
     * Returns the previous move in the list, but does not decrement the iterator.
     */
     peekPrev() {
@@ -226,6 +229,10 @@ class ReplayIterator {
     hasPrev() {
         return this.current > 0;
     }
+
+    /*
+    * Checks if a board exists in the current iterator position.
+    */
 
     hasBoard() {
     	return !!this.boardList[this.current];

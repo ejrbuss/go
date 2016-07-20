@@ -541,6 +541,6 @@ module.exports = {
 	AI1: AI1,
 	AI2: AI2,
 	AI3: AI3,
-	AI4: AIX,
-	AI5: AI5
+	AI4: AI5,
+	AI5: AIX
 };
