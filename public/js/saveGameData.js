@@ -4,13 +4,8 @@
 * @param moves the list of moves played during the game
 * @param user player 1's player object
 */
-
 function saveGameToDB(game, moves, user, callback){
-	var obj = {
-		'game': game,
-		'moves': moves,
-		'user': user,
-	};
+	xmlhr = new XMLHttpRequest();
 	toServer('saveGame', obj, callback);
 }
 

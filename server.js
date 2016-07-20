@@ -149,7 +149,7 @@ app.post("/aiMove", function(req, res) {
         console.log(err);
         move = err;
     }
-    
+
     if(req.body.ai != 'AI4'){
         console.log(move);
         res.send(move);
@@ -184,7 +184,7 @@ app.post("/getMoves", function(req, res) {
 app.post("/updateStats", function(req, res) {
     console.log("updating Stats");
     console.log(req.body);
-    db.updateStats(req.body, res);
+    db.updateStats(req.body);
 });
 
 app.listen(8080, function() {
