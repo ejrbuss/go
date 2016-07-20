@@ -595,11 +595,6 @@ class ViewController {
         this.add( ComponentFactory.Vector()
             .poly([0,0, 30,0, 20,50, 0,50], background1)
             .addClass('slide-right') );
-        //this.add( ComponentFactory.Vector()
-        //    .poly([35,0, 65,0, 65,50, 35,50], background1)
-        //    .poly([70,0, 100,0, 100,50, 70,50], background1)
-        //    .addClass('slide-left') );
-        // Buttons
         this.add( ComponentFactory.TitleButton('RETURN').xy(15, 40).addClass('slide-right').addAction(menu) );
         // Text
         this.add( ComponentFactory.Text(playerModel.username(), select1).size(10).xy(2, 1).addClass('slide-right') );
@@ -616,34 +611,48 @@ class ViewController {
         this.add( ComponentFactory.Text(playerModel.longestStreak(), select1).size(2.5).xy(16, 26).addClass('slide-right') );
         // Leaderboards
         var totalscores = function(leaderboard) {
-            log.debug(leaderboard);
+            log.info('Loaded total scores leaderboard', leaderboard);
             vc.add( ComponentFactory.Vector()
                 .poly([35,0, 65,0, 55,50, 25,50], background1)
                 .addClass('slide-left') );
             vc.add( ComponentFactory.Text('TOTALSCORE').size(5).xy(37, 2).addClass('slide-left') );
-            for(var i = 0; i < leaderboard.length; i++) {
+            var seen = false;
+            for(var i = 0; i < 9 && i < leaderboard.length; i++) {
                 var y = i * 4 + 8;
                 var x = i * -0.8 + 36;
+                var c = leaderboard[i].username == playerModel.username() ? select1 : select2;
+                seen |= leaderboard[i].username == playerModel.username();
                 vc.add( ComponentFactory.Text(i + 1, '#444').xy(x, y).addClass('slide-left') )
-                vc.add( ComponentFactory.Text(leaderboard[i].username, select2).xy(x + 2, y).addClass('slide-left') );
+                vc.add( ComponentFactory.Text(leaderboard[i].username, c).xy(x + 2, y).addClass('slide-left') );
                 vc.add( ComponentFactory.Text(leaderboard[i].totalScore).xy(x + 15, y).addClass('slide-left') );
+            }
+            if (!seen) {
+                vc.add( ComponentFactory.Text(playerModel.lrank(), '#444').xy(27, 44).addClass('slide-left') )
+                vc.add( ComponentFactory.Text(playerModel.username(), select1).xy(30.8, 44).addClass('slide-left') );
+                vc.add( ComponentFactory.Text(playerModel.totalScore()).xy(43.8, 44).addClass('slide-left') );
             }
             vc.update();
         }
         var highscores = function(leaderboard) {
-            log.debug(leaderboard);
+            log.info('Loaded high scores leaderboard', leaderboard);
             vc.add( ComponentFactory.Vector()
                 .poly([70,0, 100,0, 90,50, 60,50], background1)
                 .addClass('slide-left') );
             vc.add( ComponentFactory.Text('HIGHSCORE').size(5).xy(72, 2).addClass('slide-left') );
-            for(var i = 0; i < leaderboard.length; i++) {
+            var seen = false;
+            for(var i = 0; i < 9 && i < leaderboard.length; i++) {
                 var y = i * 4 + 8;
                 var x = i * -0.8 + 71;
-                log.debug(playerModel.username() == leaderboard[i].username)
-                var c = leaderboard[i].username == playerModel.username() ? select1 : '#444';
-                vc.add( ComponentFactory.Text(i + 1, c).xy(x, y).addClass('slide-left') )
-                vc.add( ComponentFactory.Text(leaderboard[i].username, select2).xy(x + 2, y).addClass('slide-left') );
+                var c = leaderboard[i].username == playerModel.username() ? select1 : select2;
+                seen |= leaderboard[i].username == playerModel.username();
+                vc.add( ComponentFactory.Text(i + 1, '#444').xy(x, y).addClass('slide-left') )
+                vc.add( ComponentFactory.Text(leaderboard[i].username, c).xy(x + 2, y).addClass('slide-left') );
                 vc.add( ComponentFactory.Text(leaderboard[i].highscore).xy(x + 15, y).addClass('slide-left') );
+            }
+            if (!seen) {
+                vc.add( ComponentFactory.Text(playerModel.hrank(), '#444').xy(62, 44).addClass('slide-left') )
+                vc.add( ComponentFactory.Text(playerModel.username(), select1).xy(65.8, 44).addClass('slide-left') );
+                vc.add( ComponentFactory.Text(playerModel.highscore()).xy(78.8, 44).addClass('slide-left') );
             }
             vc.update();
         }
