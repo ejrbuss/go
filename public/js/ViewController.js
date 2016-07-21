@@ -276,18 +276,20 @@ class ViewController {
         var vc = this;
         // Actions
         var skip = ComponentFactory.ClickAction(function() { 
-            if ( story[level].game )
+            log.debug('Skipping', story[level].game);
+            if ( story[level].game ) {
                 new GameController(
-                vc, 
-                playerModel, 
-                story[level].game.size, 
-                story[level].game.ai, 
-                function(){ vc.levelSelect(playerModel); },
-                function(){ story[level].next(vc, playerModel); },
-                story[level].game.stageID
-            );
-            else 
+                    vc, 
+                    playerModel, 
+                    story[level].game.size, 
+                    story[level].game.ai, 
+                    function(){ vc.levelSelect(playerModel); },
+                    function(){ story[level].next(vc, playerModel); },
+                    story[level].game.stageID
+                );
+            } else {
                 story[level].next(vc, playerModel);
+            }
         });
         if (story[level].scenes.length <= scene) {
             skip.action()();

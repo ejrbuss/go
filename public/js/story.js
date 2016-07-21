@@ -309,7 +309,7 @@ var story = [
             stageID: 0
         },
         next: function(vc, playerModel) {
-            // Update player level completed
+            updateLevels(playerModel, 1);
             vc.story(playerModel, 1, 0);
         }
     }, { // Level 2
@@ -466,7 +466,7 @@ var story = [
             stageID: 1
         },
         next: function(vc, playerModel) {
-            // Update player level completed
+            updateLevels(playerModel, 2);
             vc.story(playerModel, 2, 0);
         }
     }, { // Level 3
@@ -532,7 +532,10 @@ var story = [
             ai: 2,
             stageID: 2
         },
-        next: undefined
+        next: function(vc, playerModel) {
+            updateLevels(playerModel, 3);
+            vc.story(playerModel, 3, 0);
+        }
     }, { // Level 4
         scenes: [
         	{
@@ -626,7 +629,10 @@ var story = [
             ai: 3,
             stageID: 3
         },
-        next: undefined
+        next: function(vc, playerModel) {
+            updateLevels(playerModel, 4);
+            vc.story(playerModel, 4, 0);
+        }
     }, { // Level 5
         scenes: [
             {
@@ -793,6 +799,7 @@ var story = [
             stageID: 4
         },
         next: function(vc, playerModel) {
+            updateLevels(playerModel, 5);
             vc.story(playerModel, 5, 0);
         }
     }, { // Epilogue
@@ -860,7 +867,7 @@ var story = [
     }
 ]
 
-function updateLevels(playerModel, levelCompleted){
+function updateLevels(playerModel, levelCompleted) {
     var obj = {username:playerModel.username(), levels:levelCompleted};
     toServer('updateLevels', obj);
 }
