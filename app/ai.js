@@ -394,7 +394,7 @@ class AI5{
 	constructor(Game){
         console.log(Game.Board);
         log.debug('New AI5');
-		this.SIMULATIONS = Math.floor(0.25*Math.pow(0.016*Game.Board.size, -2.9));
+		this.SIMULATIONS = Math.floor(0.5*Math.pow(0.016*Game.Board.size, -2.9));
 		this.MAXMOVES = 30;
 		this.timeLastMove = Date.now();
 	}

@@ -532,7 +532,10 @@ var story = [
             ai: 2,
             stageID: 2
         },
-        next: undefined
+        next: function(vc, playerModel) {
+            // Update player level completed
+            vc.story(playerModel, 3, 0);
+        }
     }, { // Level 4
         scenes: [
         	{
@@ -626,7 +629,10 @@ var story = [
             ai: 3,
             stageID: 3
         },
-        next: undefined
+        next: function(vc, playerModel) {
+            // Update player level completed
+            vc.story(playerModel, 4, 0);
+        }
     }, { // Level 5
         scenes: [
             {
