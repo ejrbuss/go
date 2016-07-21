@@ -868,6 +868,7 @@ var story = [
 ]
 
 function updateLevels(playerModel, levelCompleted) {
+    playerModel.levels(Math.max(playerModel.levels(), levelCompleted));
     var obj = {username:playerModel.username(), levels:levelCompleted};
     toServer('updateLevels', obj);
 }
