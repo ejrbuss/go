@@ -105,7 +105,7 @@ var story = [
             }, {
                 text: '... ok.',
                 name: 'Player',
-                color: player1,
+                color: player,
                 character: 'player1',
                 background: '0',   
             }, {
