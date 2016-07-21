@@ -106,6 +106,9 @@ class Database {
             });
         });
     }
+
+
+
     
     // Get leaderboard/highscores.
     getStats(type, username, res) {
@@ -127,12 +130,14 @@ class Database {
         }
     }
 
+
     updateLevels(obj, res) {
         var username = obj.username;
         var collection = this._db.collection('accounts');
 
         collection.updateOne({username:username}, {$set: {levels:obj.levels}});
     }
+
    
     //get move list for replay
     //obj in the form {id:gameID}
@@ -246,13 +251,16 @@ class Database {
         res.send(true);
     }
 
+
     //update stats
-    updateStats(obj) {
+    updateStats(obj,res) {
         var userName = obj.username;
+          var that = this;
+
 
         var collection = this._db.collection('accounts');
         collection.findOne({username:userName}, function(err, docs) {
-            if(err || docs == null){
+            if(err){
                 res.send(null);
             } else {
                 console.log("doc found");
@@ -260,7 +268,7 @@ class Database {
 
                 //var userName = obj.username;
                 var userName = obj.username;
-                var highscore = obj.score;
+                var highScore = obj.score;
                 var totalScore = obj.score;
                 var gamesWon = docs.gamesWon;
                 var gamesLost = docs.gamesLost;
@@ -268,8 +276,7 @@ class Database {
                 var longestStreak = docs.longestStreak;
                 var piecesWon = docs.piecesWon;
                 var piecesLost = docs.piecesLost;
-                var totalPlayingTime;
-                var storyLevelsComplete; 
+                //var storyLevelsComplete = obj.storyLevelsComplete 
            
                 /* Testing stuff
                 var userName = 'aaa';
@@ -286,9 +293,9 @@ class Database {
                 */
 
                 //high score condition
-                console.log(docs.highscore);
-                if(docs.highscore > highscore){
-                    highscore = docs.highscore;
+                console.log(docs.highScore);
+                if(docs.highScore > highScore){
+                    highScore = docs.highScore;
                 }
 
                 // total score condition
@@ -321,13 +328,13 @@ class Database {
                 
                 console.log('docs' + docs.piecesWon);
                 console.log('obj' + obj.piecestaken);
+                
                 // TODO Implement this!!!  
-                //totalPlayingTime = docs.totalPlayingTime + obj.totalPlayingTime; // something
-
                 //storyLevelsComplete = //Eric's Code; */
+
                 
                 var body = { 
-                    'highscore':highscore,
+                    'highscore':highScore,
                     'totalScore':totalScore,
                     'gamesWon':gamesWon,
                     'gamesLost':gamesLost,
@@ -337,7 +344,14 @@ class Database {
                     'piecesLost':piecesLost,
                 };
 
-                collection.updateOne({username:userName},{$set:body});
+              
+                collection.updateOne({username:userName},{$set:body},function() {
+                    console.log(that);
+                    that.getPlayer({username:userName},res);
+
+                }
+
+                    );
             }
         });
     }

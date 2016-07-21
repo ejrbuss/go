@@ -99,8 +99,10 @@ app.post("/saveGame", function(req, res) {
             //prep user
             obj = req.body.user;
             //console.log(obj);
-            db.updateStats(obj);
-            res.sendStatus(200);
+            db.updateStats(obj,res); 
+
+            		
+            //res.sendStatus(200);
         }
     });
 });

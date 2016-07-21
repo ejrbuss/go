@@ -117,6 +117,7 @@ class GameController {
      */
     end() {
         var scores = endGame(this.game);
+        var  gc = this;
         //stats for updating user
 
         var user = {
@@ -146,6 +147,10 @@ class GameController {
     		'size': this.size,
     	}, this.moveList, user, function(res){
     		log.info('Game saved to database.', res);
+            gc.playerModel.property = res;
+            gc.playerModel.expand();
+            console.log("here");
+            console.log(gc.playerModel);
     	});
     }
     
