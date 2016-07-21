@@ -9,7 +9,7 @@
 //==========================================================================================================================//
 // GLOBALS 
 //==========================================================================================================================//
-var delay = 2000;
+var delay = 1000;
 //==========================================================================================================================//
 class ReplayController {
     
@@ -74,13 +74,10 @@ class ReplayController {
             	log.warn(err);
             }
             this.gvc.update();
-            if (this.iterator.hasNext()) {
-                this.timeout = setTimeout(function(){rc.next()}, delay);
-            }   
+            this.timeout = setTimeout(function(){rc.next()}, delay);
             this.gvc.update();
             this.gvc.pause();
         } else {
-            log.warn('Replay finished improperly; returning to menu.');
             this.quit();
         }
     }
@@ -140,7 +137,9 @@ class ReplayList {
     constructor(username, cb) {
         var rc = this;
         getMatchHistory(username, function (response) {
-            rc.matchList = response;
+            if (!response)
+                response = [];
+            rc.matchList = response.reverse();
             cb();
         });
     }

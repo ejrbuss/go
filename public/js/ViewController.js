@@ -521,51 +521,65 @@ class ViewController {
         this.reload = function() {
             this.replayList(playerModel);
         }
-
         var vc = this;
+        var replayAction = function() {};
         // Actions
-        var menu  = ComponentFactory.ClickAction(function() { vc.mainMenu(playerModel); });
-        var enter = ComponentFactory.EnterAction();
-        var leave = ComponentFactory.LeaveAction();
+        var menu   = ComponentFactory.ClickAction(function() { vc.mainMenu(playerModel); });
+        var enter  = ComponentFactory.EnterAction(select1);
+        var leave  = ComponentFactory.LeaveAction();
+        var replay = ComponentFactory.ClickAction(function() { replayAction() });
+        
         // Vectors
         this.add( ComponentFactory.Vector().poly([0,0,     50,0,  35,50,  0,50], background1).z(1).addClass('slide-right') );
         this.add( ComponentFactory.Vector().poly([100,50,  100,25,  90,50], background1).z(2).addClass('slide-left') );
         // Background
-        this.add( ComponentFactory.Background('2') );
-        this.add( ComponentFactory.Title('VS').size(10).xy(70, 10) );
+        this.add( ComponentFactory.Background(stages[0].background).addClass('match') );
+        
+        // Helper Functinos
+        function setReplay(match) {
+            replayAction = function() { vc.replayGame(match, playerModel); };
+        }
 
+        function select(match) {
+            return ComponentFactory.ClickAction(function(component) {
+                setReplay(match);
+                $('.match').remove()
+                $('.replay').css('background', '');
+                component.$.css('background', select2);
+                var player2 = {'Player 2': 'player1', 'AI1': 1, 'AI2': 2, 'AI3': 3, 'AI4': 4, 'AI5': 5}[match.player2]
+                vc.add( ComponentFactory.Background(stages[match.stageID].background).addClass('match') );
+                vc.add( ComponentFactory.Title('VS').size(10).xy(67.5, 30).addClass('slide-up match') );
+                vc.add( ComponentFactory.Character('player1').xy(50, 21).height(30).addClass('slide-up match') );
+                vc.add( ComponentFactory.Character(player2  ).xy(75, 21).height(30).addClass('slide-up match') );
+                vc.update();
+            });
+        }
         // Replay List
         var rc = new ReplayList(playerModel.username(), function() {
-            if(rc.matchList. length > 0) {
-
-                function callback(i) {
-                    return function() {vc.replayGame(rc.matchList[i], playerModel)};
-                }
-
-                var replayList = ComponentFactory.List();
-                for(var i = 0; i < rc.matchList.length; i++) {
-
-                    var component = ComponentFactory.Text(rc.matchList[i].player1 + " vs. " + rc.matchList[i].player2 + ' - ' + (new Date(rc.matchList[i].time)).toLocaleString()).element('li').position('relative');
-                   var replay = ComponentFactory.ClickAction(callback(i));
-                    log.info(rc.matchList[i]);
-                    component.addAction(enter).addAction(leave).addAction(replay);
-                    replayList.addComponent(component);
-                    
-                }
-
-                vc.add(replayList.background(background1).xy(15, 3).width(40).height(44).addClass('slide-right'));
+            if(rc.matchList.length > 0) {
+                var replayList = ComponentFactory.List().background(background1).xy(15, 3).width(40).height(44).addClass('slide-right');
+                $.each(rc.matchList, function(_, match) {
+                    log.info(match);
+                    replayList.addComponent( ComponentFactory.ListElement('{0} vs. {1} - {2}'.format(
+                            match.player1, 
+                            match.player2, 
+                            new Date(match.time).toLocaleString()
+                        )).addAction(enter).addAction(leave).addAction(select(match)).addClass('replay')
+                    );
+                });     
+                vc.add(replayList);
             } else {
                 log.debug('No games found in database for replay.');
                 var noneFound = ComponentFactory.Text('No games found!');
                 vc.add(noneFound.background(background1).xy(15, 3).width(40).height(44).addClass('slide-right'));
-            }
-
+            }            
             // Buttons
             vc.add( ComponentFactory.TitleButton('RETURN').xy(1, 40).addClass('slide-right').addAction(enter).addAction(leave).addAction(menu) );
+            vc.add( ComponentFactory.TitleButton('REPLAY').xy(88, 40).addClass('slide-left').addAction(enter).addAction(leave).addAction(replay) );
             // Render
             vc.clear();
             vc.update();
-
+            select(rc.matchList[0]).action()(replayList.component()[0]);
         });
     }
 

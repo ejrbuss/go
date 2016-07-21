@@ -502,12 +502,14 @@ class ComponentFactory {
     
     static List() {
         return new Component()
+            .z(60)
             .element('ul');
     }
     
-    static ListElement(text, color=background1) {
+    static ListElement(text, color=background2) {
         return ComponentFactory.Text(text, color)
-            .background(background2)
+            
+            .size(2)
             .position('relative')
             .element('li');
     }
