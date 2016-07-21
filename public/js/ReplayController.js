@@ -7,11 +7,15 @@
 //    /_/ |_|\___/ .___/_/\__,_/\__, /   \____/\____/_/ /_/\__/_/   \____/_/_/\___/_/     
 //              /_/            /____/                                                     
 //==========================================================================================================================//
+// GLOBALS 
+//==========================================================================================================================//
+var delay = 2000;
+//==========================================================================================================================//
 class ReplayController {
     constructor(vc, player1, player2, gameID, size, quit, stageID) {
         log.info('new replay started', arguments);
-        this.timeout = null;
         this.turn = 1;
+        this.quit = quit;
         this.id = gameID;
         this.game = new Game(this.id, size);
         this.player1 = {
@@ -27,14 +31,27 @@ class ReplayController {
         // Update
         this.gvc.update();
         this.gvc.player1turn();
+        this.gvc.replayInput();
         var rc = this;
-        setTimeout(function(){rc.next()}, 3000);        
+        this.timeout = setTimeout(function(){rc.next()}, delay);        
+    }
+    
+    play() {
+        if (this.iterator.hasNext()) {
+            this.timeout = setTimeout(function(){rc.next()}, delay);
+            this.gvc.pause();
+        }
+    }
+    
+    pause() {
+        clearTimeout(this.timeout);
+        this.gvc.play();
     }
 
     /*
     * Moves the board onto the next move and adds that move to the board displayed by the UI.
     */
-    next() {
+    next() {   
         clearTimeout(this.timeout);
 
         if(this.iterator.hasNext()) {
@@ -51,25 +68,9 @@ class ReplayController {
             }
             this.gvc.update();
             if (this.iterator.hasNext()) {
-                this.timeout = setTimeout(function(){rc.next()}, 2000);
-            } else {
-            	var end = ComponentFactory.ClickAction(function() {
-            		clearTimeout(rc.timeout);
-            		log.debug('running end');
-            		rc.quit();
-            	});
-            	$('.next').remove();
-            	vc.add(ComponentFactory.TitleButton('END').xy(62, 45).addAction(end).addClass('end'));
-            	
+                this.timeout = setTimeout(function(){rc.next()}, delay);
             }
-
-            if(this.iterator.hasPrev() && $('.prev').length === 0) {
-            	var prev = ComponentFactory.ClickAction(function () {rc.prev()});
-            	vc.add(ComponentFactory.TitleButton('PREVIOUS').xy(48,45).addAction(prev).addClass('prev'));
-            }
-
             vc.update();
-
         } else {
             log.info('Game finished - game should end here once it is implemented properly.')
             this.quit();
@@ -82,12 +83,6 @@ class ReplayController {
     prev() {
         clearTimeout(this.timeout);
         var end = $('.end');
-        if(end.length > 0){
-        	end.remove();
-        	var next = ComponentFactory.ClickAction(function () {rc.next()});
-        	vc.add(ComponentFactory.TitleButton('NEXT').xy(62, 45).addAction(next).addClass('next'));
-
-        }
 
         if(this.iterator.hasPrev()) {
         	var board = this.iterator.prev();
@@ -95,7 +90,7 @@ class ReplayController {
         	var rc = this;
 
         	this.game.Board.grid = this.game.Board.gridCopy(board);
-
+            
 
         	//switch turns around when going back one move
 
@@ -110,6 +105,7 @@ class ReplayController {
         		this.game.Board.grid = this.game.Board.gridCopy(board);
 
         	this.gvc.update();
+            this.gvc.play();
 
         	var prev = $('.prev');
         	if(prev.length > 0 && !this.iterator.hasPrev()) {

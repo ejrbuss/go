@@ -245,7 +245,7 @@ class Database {
 
         var collection = this._db.collection('accounts');
         collection.findOne({username:userName}, function(err, docs) {
-            if(err){
+            if(err || docs == null){
                 res.send(null);
             } else {
                 console.log("doc found");

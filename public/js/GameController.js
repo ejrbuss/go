@@ -21,9 +21,9 @@ class GameController {
      * @param color       The color of the board
      * @param background  The name of the background file
      */
-    constructor(vc, playerModel, size, ai, quit, callback=function(){}, stageID=0) {
+    constructor(vc, playerModel, size, ai, quit, callback=undefined, stageID=0) {
         log.info('new game started', arguments);
-
+        debug.gc = this;
         this.turn = 1;
         this.size = size;
         this.pass = false;
@@ -32,6 +32,8 @@ class GameController {
         this.playerModel = playerModel;
         this.game = new Game(this.id, this.size);
         this.ai = new aiinterface(ai);
+        this.quit = quit;
+        this.callback = callback ? callback : quit;
        
         this.player1 = {
             name: playerModel.username(),
@@ -125,9 +127,9 @@ class GameController {
         this.player2.score = scores.player2score;
         
         if (scores.player1score > scores.player2score) {
-            this.gvc.end('YOU WIN', select2, select1);
+            this.gvc.end('YOU WIN', select2, select1, this.callback);
         } else {
-            this.gvc.end('YOU LOSE', select1, select2);
+            this.gvc.end('YOU LOSE', select1, select2, this.quit);
         }
     	
     	console.log(this.moveList);

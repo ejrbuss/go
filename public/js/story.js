@@ -304,8 +304,8 @@ var story = [
             }
         ],
         game: {
-            size: 9,               // Board size
-            ai: 'AI1',             // Ai to use
+            size: 9,           // Board size
+            ai: 0,             // Ai to use
             stageID: 0
         },
         next: function(vc, playerModel) {
@@ -372,9 +372,10 @@ var story = [
         ],
         game: {
             size: 9,
-            ai: 'AI2',
+            ai: 1,
             stageID: 1
-        }
+        },
+        next: undefined
     }, { // Level 3
         scenes: [
             {
@@ -387,9 +388,10 @@ var story = [
         ],
         game: {
             size: 9,
-            ai: 'AI3',
+            ai: 2,
             stageID: 2
-        }
+        },
+        next: undefined
     }, { // Level 4
         scenes: [
             {
@@ -402,9 +404,10 @@ var story = [
         ],
         game: {
             size: 9,
-            ai: 'AI2',
+            ai: 3,
             stageID: 3
-        }
+        },
+        next: undefined
     }, { // Level 5
         scenes: [
             {
@@ -417,7 +420,7 @@ var story = [
         ],
         game: {
             size: 9,
-            ai: 'AI5',
+            ai: 4,
             stageID: 4
         },
         next: function(vc, playerModel) {

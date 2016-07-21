@@ -160,12 +160,87 @@ class GameViewController {
     }
     
     /**
+     *
+     */
+    replayInput() {
+        log.debug('Replay Input update');
+        
+        var gvc = this;
+        var enter = new Action().trigger('mouseenter').action(function(component) {
+            $( '#' + component.id() + ' polygon' ).css('fill', select1);
+        })
+        var leave = new Action().trigger('mouseleave').action(function(component) {
+            $( '#' + component.id() + ' polygon' ).css('fill', background2);
+        });
+        
+        var prevAction = ComponentFactory.ClickAction(function() { gvc.controller.prev() }); 
+        var nextAction = ComponentFactory.ClickAction(function() { gvc.controller.next() }); 
+        
+        // Vectors
+        var prev = ComponentFactory.Vector()
+            .poly([44.5,44.5, 41.5,46, 44.5,47.5], background2)
+            .poly([41.5,44.5, 42,44.5, 42,47.5, 41.5,47.5], background2)
+            .z(50).addAction(enter).addAction(leave).addAction(prevAction).addClass('slide-up');
+        this.vc.add( prev );        
+        var next = ComponentFactory.Vector()
+            .poly([55.5,44.5, 58.5,46, 55.5,47.5], background2)
+            .poly([58.5,44.5, 58,44.5, 58,47.5, 58.5,47.5], background2) 
+            .z(50).addAction(enter).addAction(leave).addAction(nextAction).addClass('slide-up');
+        this.vc.add( next );
+        this.pause();
+    }
+    
+    play() {
+        $('pause').remove();
+        var gvc = this;
+        var enter = new Action().trigger('mouseenter').action(function(component) {
+            $( '#' + component.id() + ' polygon' ).css('fill', select1);
+        })
+        var leave = new Action().trigger('mouseleave').action(function(component) {
+            $( '#' + component.id() + ' polygon' ).css('fill', background2);
+        }); 
+        
+        var action = ComponentFactory.ClickAction(function() { gvc.controller.next() }); 
+        
+        var play = ComponentFactory.Vector()
+            .poly([48.5,44.5, 51.5,46, 48.5,47.5], background2)  
+            .z(50).addAction(enter).addAction(leave).addAction(play).addClass('play');
+        this.vc.add( play );
+        // Render
+        this.vc.update();
+    }
+    
+    pause(first=false) {
+        $('play').remove();
+        var gvc = this;
+        var enter = new Action().trigger('mouseenter').action(function(component) {
+            $( '#' + component.id() + ' polygon' ).css('fill', select1);
+        })
+        var leave = new Action().trigger('mouseleave').action(function(component) {
+            $( '#' + component.id() + ' polygon' ).css('fill', background2);
+        });
+        
+        var action = ComponentFactory.ClickAction(function() { gvc.controller.next() }); 
+        
+        var pause = ComponentFactory.Vector()
+            //.poly([48.5,44.5, 59.5,44.5, 59.5,47.5, 48.5,47.5], background2) 
+            .poly([48.5,44.5, 51.5,46, 48.5,47.5], accent) 
+            .z(50).addAction(enter).addAction(leave).addAction(action).addClass('pause');
+        if(first)
+            pause.addClass('slide-up');
+        this.vc.add( pause );
+        // Render
+        this.vc.update();
+    }
+    
+    /**
      * End game message.
      * @param text  the text to display
      * @param front the color of the front of the message
      * @param back  the color of the back of the message
      */
-    end(text, front=select1, back=select2) {
+    end(text, front=select1, back=select2, callback) {
+        var callback = ComponentFactory.ClickAction(callback);
         var countup = new Action().action(function(component) {
             component.$.countup();    
         });
@@ -186,7 +261,7 @@ class GameViewController {
         this.vc.add( ComponentFactory.Text(this.controller.player1.score).xy(44, 18).addClass('slide-down') );
         this.vc.add( ComponentFactory.Text(this.controller.player2.name).xy(33, 22).addClass('slide-down') );
         this.vc.add( ComponentFactory.Text(this.controller.player2.score).xy(43, 22).addClass('slide-down') );
-        this.vc.add( ComponentFactory.TitleButton('CONTINUE', background2, select2).xy(52, 22).addClass('slide-down') );
+        this.vc.add( ComponentFactory.TitleButton('CONTINUE', background2, select2).xy(52, 22).addClass('slide-down').addAction(callback) );
         
         this.vc.update();
         

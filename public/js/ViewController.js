@@ -166,7 +166,7 @@ class ViewController {
         this.add( ComponentFactory.Text('PROGRESS').xy(65,   17).size(2).addClass('slide-left') );
         this.add( ComponentFactory.Text(playerModel.winLoss(), select1  ).xy(73.5, 12).size(2).addClass('slide-left') );
         this.add( ComponentFactory.Text(playerModel.killDeath(), select1).xy(73,   14.5).size(2).addClass('slide-left') );
-        this.add( ComponentFactory.Text(playerModel.progress(), select1 ).xy(72.5, 17).size(2).addClass('slide-left') );
+        this.add( ComponentFactory.Text(playerModel.progress(), select1 ).xy(72.6, 17).size(2).addClass('slide-left') );
         // Buttons
         this.add( ComponentFactory.TitleButton('STORY'  ).xy(6,  10).addAction(toStory).addClass('slide-up') );
         this.add( ComponentFactory.TitleButton('VERSUS' ).xy(9,  15).addAction(toVersus).addClass('slide-up') );
@@ -283,7 +283,7 @@ class ViewController {
                 story[level].game.size, 
                 story[level].game.ai, 
                 function(){ vc.levelSelect(playerModel); },
-                undefined,
+                story[level].next(vc, playerModel),
                 story[level].game.stageID
             );
             story[level].next(vc, playerModel);
@@ -379,7 +379,7 @@ class ViewController {
                 size[$('.size').text()], 
                 null, 
                 function(){ vc.versusPvP(playerModel); }, 
-                function() {}, 
+                undefined, 
                 stageID); 
         });
         var stageSelect = ComponentFactory.ClickAction(function(component) {
@@ -451,7 +451,7 @@ class ViewController {
                 size[$('.size').text()], 
                 aiID, 
                 function(){ vc.versusAi(playerModel); }, 
-                function() {}, 
+                undefined, 
                 stageID); 
         });
         var aiSelect = ComponentFactory.ClickAction(function(component) {
