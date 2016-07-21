@@ -465,9 +465,6 @@ var story = [
             ai: 1,
             stageID: 1
         },
-<<<<<<< HEAD
-        next: undefined
-=======
         next: function(vc, playerModel) {
             // Update player level completed
             vc.story(playerModel, 2, 0);
