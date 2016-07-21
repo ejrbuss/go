@@ -191,11 +191,11 @@ class GameViewController {
             .poly([58.5,44.5, 58,44.5, 58,47.5, 58.5,47.5], background2) 
             .z(50).addAction(enter).addAction(leave).addAction(nextAction).addClass('slide-up');
         this.vc.add( next );
-        this.pause();
+        this.pause(true);
     }
     
     play() {
-        $('pause').remove();
+        $('.pause, .play').remove();
         var gvc = this;
         var enter = new Action().trigger('mouseenter').action(function(component) {
             $( '#' + component.id() + ' polygon' ).css('fill', select1);
@@ -204,18 +204,18 @@ class GameViewController {
             $( '#' + component.id() + ' polygon' ).css('fill', background2);
         }); 
         
-        var action = ComponentFactory.ClickAction(function() { gvc.controller.next() }); 
+        var action = ComponentFactory.ClickAction(function() { gvc.controller.play() }); 
         
         var play = ComponentFactory.Vector()
             .poly([48.5,44.5, 51.5,46, 48.5,47.5], background2)  
-            .z(50).addAction(enter).addAction(leave).addAction(play).addClass('play');
+            .z(50).addAction(enter).addAction(leave).addAction(action).addClass('play');
         this.vc.add( play );
         // Render
         this.vc.update();
     }
     
     pause(first=false) {
-        $('play').remove();
+        $('.pause, .play').remove();
         var gvc = this;
         var enter = new Action().trigger('mouseenter').action(function(component) {
             $( '#' + component.id() + ' polygon' ).css('fill', select1);
@@ -224,11 +224,10 @@ class GameViewController {
             $( '#' + component.id() + ' polygon' ).css('fill', background2);
         });
         
-        var action = ComponentFactory.ClickAction(function() { gvc.controller.next() }); 
-        
+        var action = ComponentFactory.ClickAction(function() { gvc.controller.pause() }); 
         var pause = ComponentFactory.Vector()
-            //.poly([48.5,44.5, 59.5,44.5, 59.5,47.5, 48.5,47.5], background2) 
-            .poly([48.5,44.5, 51.5,46, 48.5,47.5], accent) 
+            .poly([51.5,44.5, 50.5,44.5, 50.5,47.5, 51.5,47.5], background2) 
+            .poly([48.5,44.5, 49.5,44.5, 49.5,47.5, 48.5,47.5], background2) 
             .z(50).addAction(enter).addAction(leave).addAction(action).addClass('pause');
         if(first)
             pause.addClass('slide-up');

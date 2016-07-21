@@ -143,8 +143,8 @@ class Database {
         console.log("Getting list of moves..." + gameID);
         var collection = this._db.collection('moves');
         collection.findOne({gameid: gameID}, function(err, docs){
-            if(err){
-                res.send(null);
+            if(err || !docs){
+                res.send([]);
             } else {
                 console.log(docs);
                 res.send(docs.moves);

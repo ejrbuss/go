@@ -575,7 +575,7 @@ class ViewController {
     replayGame(match, playerModel) {
         log.info('loaded replayGame', arguments);
         var vc = this;
-        var play = new ReplayController(this, match.player1, match.player2, match._id, match.size, function() {vc.replayList(playerModel)}, accent, '0');
+        var play = new ReplayController(this, match.player1, match.player2, match._id, match.size, function() {vc.replayList(playerModel)}, match.stageID);
            
     }
 

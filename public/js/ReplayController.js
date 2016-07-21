@@ -12,6 +12,7 @@
 var delay = 2000;
 //==========================================================================================================================//
 class ReplayController {
+    
     constructor(vc, player1, player2, gameID, size, quit, stageID) {
         log.info('new replay started', arguments);
         this.turn = 1;
@@ -27,24 +28,21 @@ class ReplayController {
             name: player2,
             image: 'Player1'
         }
-        this.iterator = new ReplayIterator(gameID, size);
-        this.gvc = new GameViewController(vc, 0, size, quit, this);
+        var rc = this;
+        this.iterator = new ReplayIterator(gameID, size, function() {
+            if (rc.iterator.hasNext()) {
+                rc.timeout = setTimeout(function(){rc.next()}, delay);
+            }
+        });
+        this.gvc = new GameViewController(vc, stageID, size, quit, this);
         // Update
         this.gvc.update();
         this.gvc.player1turn();
         this.gvc.replayInput();
-        var rc = this;
-        
-        if (this.iterator.hasNext()) {
-            this.timeout = setTimeout(function(){rc.next()}, delay);
-        }  
     }
     
     play() {
-        if (this.iterator.hasNext()) {
-            this.timeout = setTimeout(function(){rc.next()}, delay);
-            this.gvc.pause();
-        }
+        this.next();
     }
     
     pause() {
@@ -73,22 +71,9 @@ class ReplayController {
             this.gvc.update();
             if (this.iterator.hasNext()) {
                 this.timeout = setTimeout(function(){rc.next()}, delay);
-            } else {
-            	var end = ComponentFactory.ClickAction(function() {
-            		clearTimeout(rc.timeout);
-            		log.debug('running end');
-            		rc.quit();
-            	});
-            	$('.next').remove();
-            	vc.add(ComponentFactory.TitleButton('END').xy(62, 45).addAction(end).addClass('end'));
-            	
-            }
-
-            if(this.iterator.hasPrev() && $('.prev').length === 0) {
-            	var prev = ComponentFactory.ClickAction(function () {rc.prev()});
-            	vc.add(ComponentFactory.TitleButton('PREVIOUS').xy(48,45).addAction(prev).addClass('prev'));
-            }
-            vc.update();
+            }   
+            this.gvc.update();
+            this.gvc.pause();
         } else {
             log.warn('Replay finished improperly; returning to menu.');
             this.quit();
@@ -162,15 +147,16 @@ class ReplayIterator {
     * @param id The game id for the game to be loaded and played.
     */
 
-    constructor(id, size) {
+    constructor(id, size, cb) {
         var rc = this;
         var gm = new Game(0, size);
         this.boardList = [];
         this.current = 0;
         
         getMoveList(id, function (response) {
-        	log.debug(response);
-            rc.moveList = response;            
+            log.info('Move list response', response);
+        	rc.moveList = response ? response : [];
+            cb();
         });
         
     }

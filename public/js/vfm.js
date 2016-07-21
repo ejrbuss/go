@@ -138,7 +138,8 @@ class PropertyExpander {
      * @param val the value to add to the property to
      */
     adder(id, val) {
-        this[id].push(val);
+        if(val) 
+            this[id].push(val);
         return this;
     }
     
