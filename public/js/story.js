@@ -469,7 +469,6 @@ var story = [
             // Update player level completed
             vc.story(playerModel, 2, 0);
         }
->>>>>>> origin/master
     }, { // Level 3
         scenes: [
             {
