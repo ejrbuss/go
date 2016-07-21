@@ -12,13 +12,14 @@
 var delay = 2000;
 //==========================================================================================================================//
 class ReplayController {
+    
     constructor(vc, player1, player2, gameID, size, quit, stageID) {
         log.info('new replay started', arguments);
-        this.turn = 1;
-        this.quit = quit;
+        
         this.id = gameID;
-        this.game = new Game(this.id, size);
         this.quit = quit;
+        this.game = new Game(this.id, size);
+        
         this.player1 = {
             name: player1,
             image: 'Player1'
@@ -27,24 +28,21 @@ class ReplayController {
             name: player2,
             image: 'Player1'
         }
-        this.iterator = new ReplayIterator(gameID, size);
-        this.gvc = new GameViewController(vc, 0, size, quit, this);
+        var rc = this;
+        this.iterator = new ReplayIterator(gameID, size, function() {
+            if (rc.iterator.hasNext()) {
+                rc.timeout = setTimeout(function(){rc.next()}, delay);
+            }
+        });
+        this.gvc = new GameViewController(vc, stageID, size, quit, this);
         // Update
         this.gvc.update();
         this.gvc.player1turn();
         this.gvc.replayInput();
-        var rc = this;
-        
-        if (this.iterator.hasNext()) {
-            this.timeout = setTimeout(function(){rc.next()}, delay);
-        }  
     }
     
     play() {
-        if (this.iterator.hasNext()) {
-            this.timeout = setTimeout(function(){rc.next()}, delay);
-            this.gvc.pause();
-        }
+        this.next();
     }
     
     pause() {
@@ -67,28 +65,20 @@ class ReplayController {
 
             try {
            		this.game.move(move.x,move.y,move.pass);
+                if(this.game.turn === this.game.player1) {
+                    this.gvc.player1turn();
+                } else {
+                    this.gvc.player2turn();
+                }
             } catch (err) {
             	log.warn(err);
             }
             this.gvc.update();
             if (this.iterator.hasNext()) {
                 this.timeout = setTimeout(function(){rc.next()}, delay);
-            } else {
-            	var end = ComponentFactory.ClickAction(function() {
-            		clearTimeout(rc.timeout);
-            		log.debug('running end');
-            		rc.quit();
-            	});
-            	$('.next').remove();
-            	vc.add(ComponentFactory.TitleButton('END').xy(62, 45).addAction(end).addClass('end'));
-            	
-            }
-
-            if(this.iterator.hasPrev() && $('.prev').length === 0) {
-            	var prev = ComponentFactory.ClickAction(function () {rc.prev()});
-            	vc.add(ComponentFactory.TitleButton('PREVIOUS').xy(48,45).addAction(prev).addClass('prev'));
-            }
-            vc.update();
+            }   
+            this.gvc.update();
+            this.gvc.pause();
         } else {
             log.warn('Replay finished improperly; returning to menu.');
             this.quit();
@@ -112,10 +102,13 @@ class ReplayController {
 
         	//switch turns around when going back one move
 
-        	if(this.game.turn === this.game.player1)
-        		this.game.turn = this.game.player2;
-        	else
+        	if(this.game.turn === this.game.player1) {
+        		this.gvc.player2turn();
+                this.game.turn = this.game.player2;
+            } else {
+                this.gvc.player1turn();
         		this.game.turn = this.game.player1;
+            }
 
         	if(this.iterator.hasPrev())
         		this.game.Board.oldGrid = this.game.Board.gridCopy(this.iterator.peekPrev());
@@ -144,7 +137,6 @@ class ReplayList {
     * @param username A string that represents the username for the player that is being loaded.
     * @param cb Callback function to call once the match history has been loaded.
     */
-
     constructor(username, cb) {
         var rc = this;
         getMatchHistory(username, function (response) {
@@ -161,16 +153,16 @@ class ReplayIterator {
     * The constructor loads the game data for the given match id.
     * @param id The game id for the game to be loaded and played.
     */
-
-    constructor(id, size) {
+    constructor(id, size, cb) {
         var rc = this;
         var gm = new Game(0, size);
         this.boardList = [];
         this.current = 0;
         
         getMoveList(id, function (response) {
-        	log.debug(response);
-            rc.moveList = response;            
+            log.info('Move list response', response);
+        	rc.moveList = response ? response : [];
+            cb();
         });
         
     }
@@ -178,7 +170,6 @@ class ReplayIterator {
     /*
     * Returns the next move; will increment iterator by one move.
     */
-
     next() {
         if (this.hasNext()) {
             return this.moveList[this.current++];
@@ -191,7 +182,6 @@ class ReplayIterator {
     /*
     * Returns the previous move; will decrement iterator by one move.
     */
-
     prev() {
         if (this.hasPrev()) {
             return this.boardList[--this.current];
@@ -204,7 +194,6 @@ class ReplayIterator {
     /*
     * Returns the next move in the list, but does not increment the iterator.
     */
-
     peek() {
         if(this.hasNext()) {
             return this.moveList[this.current];
@@ -228,7 +217,6 @@ class ReplayIterator {
     /*
     * Returns true if there are more elements in the list to be returned by next(), false otherwise.
     */
-
     hasNext() {
         return this.current < this.moveList.length;
     }
@@ -236,7 +224,6 @@ class ReplayIterator {
     /*
     * Returns true if there are more elements in the list to be returned by prev(), false otherwise.
     */
-
     hasPrev() {
         return this.current > 0;
     }
@@ -244,7 +231,6 @@ class ReplayIterator {
     /*
     * Checks if a board exists in the current iterator position.
     */
-
     hasBoard() {
     	return !!this.boardList[this.current];
     }

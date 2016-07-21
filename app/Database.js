@@ -131,7 +131,7 @@ class Database {
         var username = obj.username;
         var collection = this._db.collection('accounts');
 
-        collection.updateOne({username:username}, {levels:obj.levels});
+        collection.updateOne({username:username}, {$set: {levels:obj.levels}});
     }
    
     //get move list for replay
@@ -143,8 +143,8 @@ class Database {
         console.log("Getting list of moves..." + gameID);
         var collection = this._db.collection('moves');
         collection.findOne({gameid: gameID}, function(err, docs){
-            if(err){
-                res.send(null);
+            if(err || !docs){
+                res.send([]);
             } else {
                 console.log(docs);
                 res.send(docs.moves);
