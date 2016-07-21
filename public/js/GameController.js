@@ -112,7 +112,6 @@ class GameController {
      */
     end() {
         var scores = endGame(this.game);
-
         //stats for updating user
 
         var user = {

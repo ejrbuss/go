@@ -514,11 +514,14 @@ class AIX{
 	    	return {x:0, y:0, pass:true};
 	    });
 
+	    console.log('last: ' + JSON.stringify(Game.Board.diff.Move));
 	    try{
-	    	var pass = (Game.Board.diff.move.side == 2);
+	    	var pass = (Game.Board.diff.Move.side == 2);
 	    } catch(err) {
 	    	pass = false;
 	    }
+
+	    //console.log('pass: ' + pass);
 	    
 
 	    var postData = JSON.stringify({
@@ -526,6 +529,7 @@ class AIX{
 	    	'board': Game.Board.grid,
 	    	'last': {x:Game.Board.diff.Move.x, y:Game.Board.diff.Move.y, c:1, pass:pass}
 	    });
+	    console.log('post: ' + postData);
 
 	    req.write(postData);
 
@@ -537,6 +541,6 @@ module.exports = {
 	AI1: AI1,
 	AI2: AI2,
 	AI3: AI3,
-	AI4: AIX,
-	AI5: AI5
+	AI4: AI5,
+	AI5: AIX
 };

@@ -136,7 +136,7 @@ app.post("/aiMove", function(req, res) {
             }
         }
         var move;
-        if(req.body.ai == 'AI4'){
+        if(req.body.ai == 'AI5'){
             games[game.id].getMove(game, function(newmove){
                 console.log(newmove);
                 res.send(newmove);
@@ -149,8 +149,8 @@ app.post("/aiMove", function(req, res) {
         console.log(err);
         move = err;
     }
-    
-    if(req.body.ai != 'AI4'){
+
+    if(req.body.ai != 'AI5'){
         console.log(move);
         res.send(move);
     }
@@ -184,7 +184,13 @@ app.post("/getMoves", function(req, res) {
 app.post("/updateStats", function(req, res) {
     console.log("updating Stats");
     console.log(req.body);
-    db.updateStats(req.body, res);
+    db.updateStats(req.body);
+});
+
+app.post("/updateLevels", function(req, res) {
+    console.log("Updating levels...");
+    console.log(req.body);
+    db.updateLevels(req.body);
 });
 
 app.listen(8080, function() {

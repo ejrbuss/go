@@ -18,6 +18,7 @@ class ReplayController {
         this.quit = quit;
         this.id = gameID;
         this.game = new Game(this.id, size);
+        this.quit = quit;
         this.player1 = {
             name: player1,
             image: 'Player1'
@@ -33,6 +34,7 @@ class ReplayController {
         this.gvc.player1turn();
         this.gvc.replayInput();
         var rc = this;
+<<<<<<< HEAD
         this.timeout = setTimeout(function(){rc.next()}, delay);        
     }
     
@@ -46,6 +48,11 @@ class ReplayController {
     pause() {
         clearTimeout(this.timeout);
         this.gvc.play();
+=======
+        setTimeout(function(){rc.next()}, 1000);
+        var next = ComponentFactory.ClickAction(function () {rc.next()});
+        vc.add(ComponentFactory.TitleButton('NEXT').xy(62, 45).addAction(next).addClass('next'));        
+>>>>>>> origin/master
     }
 
     /*
@@ -69,10 +76,24 @@ class ReplayController {
             this.gvc.update();
             if (this.iterator.hasNext()) {
                 this.timeout = setTimeout(function(){rc.next()}, delay);
+            } else {
+            	var end = ComponentFactory.ClickAction(function() {
+            		clearTimeout(rc.timeout);
+            		log.debug('running end');
+            		rc.quit();
+            	});
+            	$('.next').remove();
+            	vc.add(ComponentFactory.TitleButton('END').xy(62, 45).addAction(end).addClass('end'));
+            	
+            }
+
+            if(this.iterator.hasPrev() && $('.prev').length === 0) {
+            	var prev = ComponentFactory.ClickAction(function () {rc.prev()});
+            	vc.add(ComponentFactory.TitleButton('PREVIOUS').xy(48,45).addAction(prev).addClass('prev'));
             }
             vc.update();
         } else {
-            log.info('Game finished - game should end here once it is implemented properly.')
+            log.warn('Replay finished improperly; returning to menu.');
             this.quit();
         }
     }
@@ -130,7 +151,7 @@ class ReplayList {
     constructor(username, cb) {
         var rc = this;
         getMatchHistory(username, function (response) {
-            rc.matchList = JSON.parse(response);
+            rc.matchList = response;
             cb();
         });
     }
@@ -152,7 +173,7 @@ class ReplayIterator {
         
         getMoveList(id, function (response) {
         	log.debug(response);
-            rc.moveList = JSON.parse(response);            
+            rc.moveList = response;            
         });
         
     }
@@ -196,7 +217,7 @@ class ReplayIterator {
     }
 
 
-     /*
+    /*
     * Returns the previous move in the list, but does not decrement the iterator.
     */
     peekPrev() {
@@ -222,6 +243,10 @@ class ReplayIterator {
     hasPrev() {
         return this.current > 0;
     }
+
+    /*
+    * Checks if a board exists in the current iterator position.
+    */
 
     hasBoard() {
     	return !!this.boardList[this.current];

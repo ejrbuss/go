@@ -236,7 +236,7 @@ var story = [
                 character: 'goat',
                 background: '1',   
             }, {
-                text: 'Sheep can not give you "looks”. \nAnyway, beginning in the realm of ancient China, master…',
+                text: 'Goats can not give you "looks”. \nAnyway, beginning in the realm of ancient China, master…',
                 name: 'Sensei',
                 color: sensei,
                 character: 'sensei',
@@ -310,7 +310,7 @@ var story = [
         },
         next: function(vc, playerModel) {
             // Update player level completed
-            vc.story(playerModel, 2, 1);
+            vc.story(playerModel, 1, 0);
         }
     }, { // Level 2
         scenes: [
@@ -339,7 +339,7 @@ var story = [
                 character: 'player1',
                 background: '1',   
             }, {
-                text: '… fine. \nYou must seek the Token of a Thousand Truths. It is the most overpowered piece of Go \nparaphernalia that has ever existed, with it you will gain powers you do not deserve.',
+                text: '… fine. You must seek the Token of a Thousand Truths. \nIt is the most overpowered piece of Go paraphernalia that has ever existed, \nwith it you will gain powers you do not deserve.',
                 name: 'Sensei',
                 color: sensei,
                 character: 'sensei',
@@ -357,34 +357,179 @@ var story = [
                 character: 'sensei',
                 background: '1',   
             }, {
-                text: 'ok',
+                text: 'ok.',
                 name: 'Player',
                 color: player,
                 character: 'player1',
                 background: '1',   
-            }//, {
-            //     text: 'Well, well, well, what have we here.',
-            //     name: 'Edgar',
-            //     color: edgar,
-            //     character: 'player1',
-            //     background: '1',   
-            // }, 
+            }, {
+                text: 'Well, well, well, what have we here.',
+                name: 'Edgar',
+                color: edgar,
+                character: 'edgar',
+                background: 'mystical',   
+            }, {
+                text: 'Looks like somebody is a tad lost.',
+                name: 'Elfred',
+                color: elfred,
+                character: 'elfred',
+                background: 'mystical',   
+            }, {
+                text: 'Far away from home are we?',
+                name: 'Edgar',
+                color: edgar,
+                character: 'edgar',
+                background: 'mystical',   
+            }, {
+                text: '...',
+                name: 'Player',
+                color: player,
+                character: 'player1',
+                background: 'mystical',   
+            }, {
+                text: 'Speechless, eh, I like the silence, is peaceful.',
+                name: 'Edgar',
+                color: edgar,
+                character: 'edgar',
+                background: 'mystical',   
+            }, {
+                text: 'Yeh, silent till we start skinning em alive.',
+                name: 'Elfred',
+                color: elfred,
+                character: 'elfred',
+                background: 'mystical',   
+            }, {
+                text: 'Yer not supposed to tell em that.',
+                name: 'Edgar',
+                color: edgar,
+                character: 'edgar',
+                background: 'mystical',   
+            }, {
+                text: 'Why, why does that matter. \nIt’s not like I spoiled the experience for em. \nThis isn\'t shagging Game of Thrones.',
+                name: 'Elfred',
+                color: elfred,
+                character: 'elfred',
+                background: 'mystical',   
+            }, {
+                text: 'Well, it\'s a matter of the surprise isn\'t it. \nYou’re not surprised anymore are ya?',
+                name: 'Edgar',
+                color: edgar,
+                character: 'edgar',
+                background: 'mystical',   
+            }, {
+                text: '...',
+                name: 'Player',
+                color: player,
+                character: 'player1',
+                background: 'mystical',   
+            }, {
+                text: 'Look at that, you confused the fool.',
+                name: 'Edgar',
+                color: edgar,
+                character: 'edgar',
+                background: 'mystical',   
+            }, {
+                text: 'You always have to find problems with everything.',
+                name: 'Elfred',
+                color: elfred,
+                character: 'elfred',
+                background: 'mystical',   
+            }, {
+                text: 'Well it\'s only because you can\'t appreciate some theatrics. \nSaying what we\'re going to do before we do it, what the hell is that. You don\'t go see \nHamlet and in the first 5 minutes they tell you everybody frickin dies.',
+                name: 'Edgar',
+                color: edgar,
+                character: 'edgar',
+                background: 'mystical',   
+            }, {
+                text: 'Well maybe they should, \nthen I can quickly plow off and have a smashing good romp at the tavern.',
+                name: 'Elfred',
+                color: elfred,
+                character: 'elfred',
+                background: 'mystical',   
+            }, {
+                text: 'Ye\'re a hobnocker.',
+                name: 'Edgar',
+                color: edgar,
+                character: 'edgar',
+                background: 'mystical',   
+            }, {
+                text: 'Eh, the bloke\'s gettin away!',
+                name: 'Elfred',
+                color: elfred,
+                character: 'elfred',
+                background: 'mystical',   
+            }, 
         ],
         game: {
             size: 9,
             ai: 1,
             stageID: 1
         },
+<<<<<<< HEAD
         next: undefined
+=======
+        next: function(vc, playerModel) {
+            // Update player level completed
+            vc.story(playerModel, 2, 0);
+        }
+>>>>>>> origin/master
     }, { // Level 3
         scenes: [
             {
-                text: 'Testing the text',
-                name: 'Claws',
-                color: accent,
-                character: '3',
-                background: '3',   
-            }
+                text: 'Bloody \'ell, the blighter got the best of us.',
+                name: 'Edgar',
+                color: edgar,
+                character: 'edgar',
+                background: 'mystical',   
+            }, {
+                text: 'Yeh, you got us this time, but we\'ll be watchin for you.',
+                name: 'Elfred',
+                color: elfred,
+                character: 'elfred',
+                background: 'mystical',   
+            }, {
+                text: 'Step in these woods again and you\'ll have to deal with more of us.',
+                name: 'Elfred',
+                color: elfred,
+                character: 'elfred',
+                background: 'mystical',   
+            }, {
+                text: 'Well there you go again, tellin em our secrets.',
+                name: 'Edgar',
+                color: edgar,
+                character: 'edgar',
+                background: 'mystical',   
+            }, {
+                text: 'I\'m really getting tired of you.',
+                name: 'Elfred',
+                color: elfred,
+                character: 'elfred',
+                background: 'mystical',   
+            }, {
+                text: 'There it is. The Token of a Thousand Truths.',
+                name: 'Player',
+                color: player,
+                character: 'player1',
+                background: 'bright',   
+            }, {
+                text: '??#*??',
+                name: 'Sentinel',
+                color: sentinel,
+                character: 'f199',
+                background: 'lightning',   
+            }, {
+                text: 'Wha, what is that??',
+                name: 'Player',
+                color: player,
+                character: 'player1',
+                background: 'bright',   
+            }, {
+                text: '??>A##@? ??#@ ?# ?$(#?',
+                name: 'Sentinel',
+                color: sentinel,
+                character: 'f200',
+                background: 'space',   
+            },
         ],
         game: {
             size: 9,
@@ -394,13 +539,91 @@ var story = [
         next: undefined
     }, { // Level 4
         scenes: [
-            {
-                text: 'Testing the text',
-                name: 'Joker',
-                color: select1,
-                character: '4',
+        	{
+        		text: 'BLUEAAUOHHGFgdfgH?#?$?#?$?',
+                name: 'Sentinel',
+                color: sentinel,
+                character: 'f201',
+                background: 'space',   
+            }, {
+            	text: 'I finally have it. The Token of a Thousand Truths. \nIt\'s bigger than I expected.',
+                name: 'Player',
+                color: player,
+                character: 'player1',
+                background: 'bright',   
+            }, {
+            	text: 'Now I can fight Rallien, Lord of the Inferno and \navenge Simon’s AI.',
+                name: 'Player',
+                color: player,
+                character: 'player1',
+                background: 'bright', 
+            }, {
+                text: 'So you have finally come to face me.\nYou will lose. Just like all those before you.\nHAW HAW HAW.',
+                name: 'Rallien',
+                color: rallien,
+                character: 'rallien',
                 background: '4',   
-            }
+            }, {
+            	text: 'No, this time I will defeat you.',
+                name: 'Player',
+                color: player,
+                character: 'player1',
+                background: '4',   
+            }, {
+            	text: 'Your ignorance precedes you.The empire has been in power \nfor more than a million years. We have endured great wars. \nWe have technologically advanced beyond the sphere of physics.',
+                name: 'Rallien',
+                color: rallien,
+                character: 'rallien',
+                background: '4',   
+            }, {
+            	text: 'Entire civilizations tremble before our power. \nWhat makes you think you can defeat me?',
+                name: 'Rallien',
+                color: rallien,
+                character: 'rallien',
+                background: '4', 
+            }, {
+            	text: 'I have the Token of a Thousand Truths.',
+                name: 'Player',
+                color: player,
+                character: 'player1',
+                background: '4', 
+            }, {
+            	text: 'No, how? It was believed to not exist. I mean, \nthe prophecy mentioned it but it has never been seen \nfor a millenia. You must hand it over.',
+                name: 'Rallien',
+                color: rallien,
+                character: 'rallien',
+                background: '4', 
+            }, {
+            	text: 'You do not understand the great power beholden upon you!',
+                name: 'Rallien',
+                color: rallien,
+                character: 'rallien',
+                background: '4', 
+            }, {
+            	text: 'no',
+                name: 'Player',
+                color: player,
+                character: 'player1',
+                background: '4', 
+            }, {
+            	text: 'The token could end the wars between the galaxies and restore \npeace to the universe. You must give it to me.',
+                name: 'Rallien',
+                color: rallien,
+                character: 'rallien',
+                background: '4', 
+            }, {
+            	text: 'no',
+                name: 'Player',
+                color: player,
+                character: 'player1',
+                background: '4', 
+            }, {
+            	text: 'You have made a huge mistake! \nPrepare to be DESTROYED! ARRGGH!',
+                name: 'Rallien',
+                color: rallien,
+                character: 'rallien',
+                background: '4', 
+            }, 
         ],
         game: {
             size: 9,
@@ -411,12 +634,162 @@ var story = [
     }, { // Level 5
         scenes: [
             {
-                text: 'Testing the text',
-                name: 'Admin',
-                color: select2,
-                character: '5',
-                background: '5',   
-            }
+                text: 'No! You cannot defeat me. You will create chaos in the \nuniverse. Entire galaxies will fall if you use the Token.',
+                name: 'Rallien',
+                color: rallien,
+                character: 'rallien',
+                background: '4',   
+            }, {
+                text: 'I am begging you DO NOT USE THE TOKEN. \nGIVE IT TO ME!',
+                name: 'Rallien',
+                color: rallien,
+                character: 'rallien',
+                background: '4',   
+            }, {
+            	text: '(Places Token of a Thousand Truths).',
+                name: 'Player',
+                color: player,
+                character: 'player1',
+                background: '4', 
+            }, {
+                text: 'ARRGHH, NOOOOOOoooooooooo...',
+                name: 'Rallien',
+                color: rallien,
+                character: 'rallien',
+                background: 'token',   
+            }, {
+            	text: 'ok.',
+                name: 'Player',
+                color: player,
+                character: 'player1',
+                background: '4', 
+            }, {
+            	text: 'Well done player. Very well done. You performed \nexactly as I expected.',
+                name: 'Emilia',
+                color: emilia,
+                character: 'evil',
+                background: '5', 
+            }, {
+            	text: 'What\'s that? Who\'s there?',
+                name: 'Player',
+                color: player,
+                character: 'player1',
+                background: '4', 
+            }, {
+            	text: 'Thanks to you, a power void has been created in the galaxy. \nNow my evil society can take over the universe.',
+                name: 'Emilia',
+                color: emilia,
+                character: 'evil',
+                background: '5', 
+            }, {
+            	text: 'What? I was just trying to get my teacher’s AI back.',
+                name: 'Player',
+                color: player,
+                character: 'player1',
+                background: '4', 
+            }, {
+            	text: 'YOU FOOL! This was never about the AI, I am the one who \naccused Simon of interstellar requirements violations.',
+                name: 'Emilia',
+                color: emilia,
+                character: 'evil',
+                background: '5', 
+            }, {
+            	text: 'OMFG.',
+                name: 'Player',
+                color: player,
+                character: 'player1',
+                background: '4', 
+            }, {
+            	text: 'Now you will be the first to be annihilated in our \ntakeover of the universe.',
+                name: 'Emilia',
+                color: emilia,
+                character: 'evil',
+                background: '5', 
+            }, {
+            	text: 'No I won’t. I have the TOKEN OF A THOUSAND TRUTHS.',
+                name: 'Player',
+                color: player,
+                character: 'player1',
+                background: '4', 
+            }, {
+            	text: 'HAW HAW HAW HAW. The Token is useless against me.',
+                name: 'Emilia',
+                color: emilia,
+                character: 'evil',
+                background: '5', 
+            }, {
+            	text: '(Evil Magic)',
+                name: 'Emilia',
+                color: emilia,
+                character: 'evil',
+                background: '5', 
+            }, {
+                text: '(The Token of a Thousand Truths is destroyed)',
+                name: 'Player',
+                color: player,
+                character: 'player1',
+                background: '4', 
+            }, {
+            	text: 'Nooo. Not the token. I can’t beat you without the token. \nI suck at Go.',
+                name: 'Player',
+                color: player,
+                character: 'player1',
+                background: '4', 
+            }, {
+            	text: 'My child, you must find your inner bravery. ',
+                name: 'Ghost',
+                color: sensei,
+                character: 'sensei',
+                background: 'sky', 
+            }, {
+            	text: 'Sensei, is that you?',
+                name: 'Player',
+                color: player,
+                character: 'player1',
+                background: 'sky', 
+            }, {
+            	text: 'Yes, it is me. You do not need the Token of a Thousand Truths. \nYou can defeat Emilia yourself. ',
+                name: 'Ghost',
+                color: sensei,
+                character: 'sensei',
+                background: 'sky', 
+            }, {
+            	text: 'No I can’t. You said so yourself, I am terrible at Go.',
+                name: 'Player',
+                color: player,
+                character: 'player1',
+                background: 'sky', 
+            }, {
+            	text: 'Yes, you were terrible. But look at your journey, you have \nimproved greatly in your battles. You have defeated great enemies. \nYou have learned lessons even I could not have taught you.',
+                name: 'Ghost',
+                color: sensei,
+                character: 'sensei',
+                background: 'sky', 
+            }, {
+            	text: 'You can do it. You must believe.',
+                name: 'Ghost',
+                color: sensei,
+                character: 'sensei',
+                background: 'sky', 
+            }, {
+            	text: ' I do believe, Sensei. I believe I can do it.',
+                name: 'Player',
+                color: player,
+                character: 'player1',
+                background: 'sky', 
+            }, {
+            	text: 'Prepare to die!',
+                name: 'Emilia',
+                color: emilia,
+                character: 'evil',
+                background: '5', 
+            }, {
+            	text: 'Let\'s battle!',
+                name: 'Player',
+                color: player,
+                character: 'player1',
+                background: '5', 
+            },
         ],
         game: {
             size: 9,
@@ -429,12 +802,60 @@ var story = [
     }, { // Epilogue
         scenes: [
             {
-                text: 'Testing the text',
-                name: 'Admin',
-                color: select2,
-                character: '5',
-                background: '5',   
-            }
+            	text: 'Noooo. My plan is foiled again. You may have defeated \nme this time, but the evil society will reign on, I will come back stronger \nthan ever and once and for all we will take over the universe.',
+                name: 'Emilia',
+                color: emilia,
+                character: 'evil',
+                background: '5', 
+            }, {
+            	text: 'We shall meet again!',
+                name: 'Emilia',
+                color: emilia,
+                character: 'evil',
+                background: '5', 
+            }, {
+            	text: 'I have defeated the Emilia and restored \npeace to the universe. But I\'m sorry I couldn\'t get your AI back.',
+                name: 'Player',
+                color: player,
+                character: 'player1',
+                background: '0', 
+            }, {
+            	text: 'Oh, that\'s ok, I found out I had a backup right after you left.',
+                name: 'Simon',
+                color: simon,
+                character: 'cat1',
+                background: '0', 
+            }, {
+            	text: '...ok.',
+                name: 'Player',
+                color: player,
+                character: 'player1',
+                background: '0', 
+            }, {
+            	text: 'But you have done everyone a great service for saving the universe. \nAlso you are on your way to becoming a Go master. \nSensei Caleb says it is time for you to resume your training.',
+                name: 'Simon',
+                color: simon,
+                character: 'cat1',
+                background: '0', 
+            }, {
+            	text: 'Uhm no, I still don\'t think I have time for that.',
+                name: 'Player',
+                color: player,
+                character: 'player1',
+                background: '0', 
+            }, {
+            	text: 'Hahaha. Very well. UML standardization is handled by the \nObject Management Group. UML is published by the \nInternational Organization for Standardization...',
+                name: 'Simon',
+                color: simon,
+                character: 'cat1',
+                background: '0', 
+            }, {
+            	text: '(THE END)',
+                name: '',
+                color: player,
+                character: null,
+                background: '0', 
+            },
         ],
         next: function(vc, playerModel) {
             vc.mainMenu(playerModel);
@@ -443,3 +864,7 @@ var story = [
     }
 ]
 
+function updateLevels(playerModel, levelCompleted){
+    var obj = {username:playerModel.username(), levels:levelCompleted};
+    toServer('updateLevels', obj);
+}
