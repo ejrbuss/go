@@ -5,6 +5,7 @@ class PlayerModel extends PropertyExpander {
     constructor(player) {
         super();
         
+        debug.pm = this;
         if (player == 'debug') {
             player = {
                 username:            'debug',
