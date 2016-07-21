@@ -103,7 +103,12 @@ class GameController {
             }
         } catch(err) {
             log.warn('Move error', err, arguments)
-            vc.message(err, select1);
+            if (err == "InvalidMoveException")
+                vc.message("Invalid Move!", select1);
+            if (err == "SuicideException")
+                vc.message("Suicide!", select1);
+            if (err == "ReturnToOldStateException")
+                vc.message("Return to Old State!");
         }
     }
     
