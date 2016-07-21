@@ -131,7 +131,7 @@ class Database {
         var username = obj.username;
         var collection = this._db.collection('accounts');
 
-        collection.updateOne({username:username}, {levels:obj.levels});
+        collection.updateOne({username:username}, {$set: {levels:obj.levels}});
     }
    
     //get move list for replay
