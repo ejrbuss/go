@@ -34,8 +34,10 @@ class ReplayController {
         this.gvc.player1turn();
         this.gvc.replayInput();
         var rc = this;
-<<<<<<< HEAD
-        this.timeout = setTimeout(function(){rc.next()}, delay);        
+        
+        if (this.iterator.hasNext()) {
+            this.timeout = setTimeout(function(){rc.next()}, delay);
+        }  
     }
     
     play() {
@@ -48,11 +50,6 @@ class ReplayController {
     pause() {
         clearTimeout(this.timeout);
         this.gvc.play();
-=======
-        setTimeout(function(){rc.next()}, 1000);
-        var next = ComponentFactory.ClickAction(function () {rc.next()});
-        vc.add(ComponentFactory.TitleButton('NEXT').xy(62, 45).addAction(next).addClass('next'));        
->>>>>>> origin/master
     }
 
     /*
