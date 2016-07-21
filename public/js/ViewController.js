@@ -276,17 +276,18 @@ class ViewController {
         var vc = this;
         // Actions
         var skip = ComponentFactory.ClickAction(function() { 
-            if ( story[level].game != undefined )
+            if ( story[level].game )
                 new GameController(
                 vc, 
                 playerModel, 
                 story[level].game.size, 
                 story[level].game.ai, 
                 function(){ vc.levelSelect(playerModel); },
-                story[level].next(vc, playerModel),
+                function(){ story[level].next(vc, playerModel); },
                 story[level].game.stageID
             );
-            story[level].next(vc, playerModel);
+            else 
+                story[level].next(vc, playerModel);
         });
         if (story[level].scenes.length <= scene) {
             skip.action()();
