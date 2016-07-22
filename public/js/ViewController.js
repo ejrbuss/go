@@ -546,7 +546,7 @@ class ViewController {
                 $('.match').remove()
                 $('.replay').css('background', '');
                 component.$.css('background', select2);
-                var player2 = {'Player 2': 'player1', 'AI1': 1, 'AI2': 2, 'AI3': 3, 'AI4': 4, 'AI5': 5}[match.player2]
+                var player2 = {'Player 2': 'player1', 'AI1': 1, 'AI2': 2, 'AI3': 3, 'AI4': 4, 'AI5': 5}[match.player2];
                 vc.add( ComponentFactory.Background(stages[match.stageID].background).addClass('match') );
                 vc.add( ComponentFactory.Title('VS').size(10).xy(67.5, 30).addClass('slide-up match') );
                 vc.add( ComponentFactory.Character('player1').xy(50, 21).height(30).addClass('slide-up match') );
