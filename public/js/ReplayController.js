@@ -19,14 +19,13 @@ class ReplayController {
         this.id = gameID;
         this.quit = quit;
         this.game = new Game(this.id, size);
-        var player2image = {'Player 2': 'player1', 'AI1': 1, 'AI2': 2, 'AI3': 3, 'AI4': 4, 'AI5': 5}[match.player2];
         this.player1 = {
             name: player1,
             image: 'player1'
         }
         this.player2 = {
             name: player2,
-            image: player2image[player2]
+            image: {'Player 2': 'player1', 'AI1': 1, 'AI2': 2, 'AI3': 3, 'AI4': 4, 'AI5': 5}[player2];
         }
         var rc = this;
         this.iterator = new ReplayIterator(gameID, size, function() {
