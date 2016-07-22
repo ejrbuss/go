@@ -22,11 +22,11 @@ class ReplayController {
         
         this.player1 = {
             name: player1,
-            image: 'Player1'
+            image: 'player1'
         }
         this.player2 = {
             name: player2,
-            image: 'Player1'
+            image: player2
         }
         var rc = this;
         this.iterator = new ReplayIterator(gameID, size, function() {
