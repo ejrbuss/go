@@ -25,7 +25,7 @@ class ReplayController {
         }
         this.player2 = {
             name: player2,
-            image: {'Player 2': 'player1', 'AI1': 1, 'AI2': 2, 'AI3': 3, 'AI4': 4, 'AI5': 5}[player2];
+            image: {'Player 2': 'player1', 'AI1': 1, 'AI2': 2, 'AI3': 3, 'AI4': 4, 'AI5': 5}[player2]
         }
         var rc = this;
         this.iterator = new ReplayIterator(gameID, size, function() {
