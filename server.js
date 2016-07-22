@@ -138,7 +138,7 @@ app.post("/aiMove", function(req, res) {
             }
         }
         var move;
-        if(req.body.ai == 'AI5'){
+        if(req.body.ai == 'AI4'){
             games[game.id].getMove(game, function(newmove){
                 console.log(newmove);
                 res.send(newmove);
@@ -152,7 +152,7 @@ app.post("/aiMove", function(req, res) {
         move = err;
     }
 
-    if(req.body.ai != 'AI5'){
+    if(req.body.ai != 'AI4'){
         console.log(move);
         res.send(move);
     }
