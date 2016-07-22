@@ -164,7 +164,7 @@ class aiinterface {
         log.debug(ai);
         if ( ai == undefined ) {
             this.name = 'Player 2';
-            this.image = 'Player1';
+            this.image = 'Player2';
             this.real = false;
         } else {
             this.name = ['AI1', 'AI2', 'AI3', 'AI4', 'AI5'][ai];

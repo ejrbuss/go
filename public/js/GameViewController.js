@@ -51,9 +51,9 @@ class GameViewController {
         vc.add( ComponentFactory.Text(controller.player2.name).xy(81, 41.5).addClass('slide-up') );
         this.player2text = vc.last;
         // Images
-        vc.add( ComponentFactory.Character(controller.player1.image).xyz(3, 15, 2).width(21).height(28).addClass('slide-up') );
+        vc.add( ComponentFactory.Character(controller.player1.image).xyz(3, 13, 2).width(21).height(28).addClass('slide-up') );
         this.player1image = vc.last;
-        vc.add( ComponentFactory.Character(controller.player2.image).xyz(76, 15, 2).width(21).height(28).addClass('slide-up') );
+        vc.add( ComponentFactory.Character(controller.player2.image).xyz(76, 13, 2).width(21).height(28).addClass('slide-up') );
         this.player2image = vc.last;
         // Buttons
         vc.add( ComponentFactory.TitleButton('QUIT').xy(3, 5).addClass('slide-right').addAction(quitAction));
@@ -68,8 +68,8 @@ class GameViewController {
     player1turn() {
         this.player1text.$.css({'color' : select2});
         this.player2text.$.css({'color' : background2});
-        this.player1image.$.css({'opacity' : 1 });
-        this.player2image.$.css({'opacity' : 0.7 });
+        //this.player1image.$.css({'opacity' : 1 });
+        //this.player2image.$.css({'opacity' : 0.7 });
         //this.vc.message(this.controller.player1.name, this.stage.color);
     }
     
@@ -79,8 +79,8 @@ class GameViewController {
     player2turn() {
         this.player1text.$.css({'color' : background2});
         this.player2text.$.css({'color' : select2});
-        this.player1image.$.css({'opacity' : 0.7 });
-        this.player2image.$.css({'opacity' : 1 });
+        //this.player1image.$.css({'opacity' : 0.7 });
+        //this.player2image.$.css({'opacity' : 1 });
         //this.vc.message(this.controller.player2.name, this.stage.color);
     }
     
