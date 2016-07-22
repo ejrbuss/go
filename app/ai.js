@@ -518,16 +518,23 @@ class AIX{
 	    try{
 	    	var pass = (Game.Board.diff.Move.side == 2);
 	    } catch(err) {
-	    	pass = false;
+	    	pass = true;
 	    }
 
 	    //console.log('pass: ' + pass);
 	    
-
+	 	if (pass){
+	 		var lastx = 0;
+	 		var lasty = 0;
+	 	}
+	 	else{
+	 		var lastx = Game.Board.diff.Move.x;
+	 		var lasty = Game.Board.diff.Move.y;
+	 	}
 	    var postData = JSON.stringify({
 	    	'size': Game.Board.size,
 	    	'board': Game.Board.grid,
-	    	'last': {x:Game.Board.diff.Move.x, y:Game.Board.diff.Move.y, c:1, pass:pass}
+	    	'last': {x:lastx, y:lasty, c:1, pass:pass}
 	    });
 	    console.log('post: ' + postData);
 
