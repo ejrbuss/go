@@ -23,8 +23,8 @@ class ViewController {
         this.reload = function() {};
         
         log.debug('Currently booting straight to the main menu');
-        // this.login(); // Uncomment this line and remove the following to load normally
-        this.mainMenu(new PlayerModel('debug'));
+        this.login(); // Uncomment this line and remove the following to load normally
+        //this.mainMenu(new PlayerModel('debug'));
     }
     
     //======================================================================================================================//
