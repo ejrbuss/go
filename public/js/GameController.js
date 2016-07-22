@@ -37,7 +37,7 @@ class GameController {
        
         this.player1 = {
             name: playerModel.username(),
-            image: 'Player1'
+            image: 'player1'
         }
         this.player2 = {
             name: this.ai.name,
@@ -164,7 +164,7 @@ class aiinterface {
         log.debug(ai);
         if ( ai == undefined ) {
             this.name = 'Player 2';
-            this.image = 'Player2';
+            this.image = 'player2';
             this.real = false;
         } else {
             this.name = ['AI1', 'AI2', 'AI3', 'AI4', 'AI5'][ai];
