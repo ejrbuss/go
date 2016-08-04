@@ -292,9 +292,7 @@ class Component extends PropertyExpander {
      */
     
     xy(x, y) {
-        this.x(x);
-        this.y(y);
-        return this;
+        return this.x(x).y(y);
     }
     
     xyz(x, y, z) {
