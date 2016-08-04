@@ -38,7 +38,7 @@ or
 ```
 $ npm start
 ```
-from the root go299 direcrtory. The application will now be accessible from 
+from the root go299 directory. The application will now be accessible from 
 the url `http://localhost:8080`.
 
 ## Credit
