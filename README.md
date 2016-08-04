@@ -5,9 +5,9 @@ indi __________
   / /_/ / /_/ / 
   \____/\____/  
 ```
-indiGO is a web application implementation of the traditional chinese game Go.
+indiGO is a web application implementation of the traditional Chinese game Go.
 It includes a number of features including a story mode, seperate ai opponents,
-game replays and user accounts. 
+game replays, and user accounts. 
 
 ## Dependencies
 
@@ -28,7 +28,7 @@ be done using the shell command
 $ mongod
 ```
 This may require you navigate to the mongodb bin folder if you have not included
-the binaries in your PATH. 
+the mongo binaries in your PATH. 
 
 Once mongo is running the server can be started with either
 ```bash
@@ -47,7 +47,7 @@ This is a currently unlicensed project created by Tal Melamed, Cole Macdonald,
 Eric Buss, Torrey Randolph, Trevor Lee, and Tyler Fisher for the Unvieristy of 
 Victoria's Software Enginereering 299: Software Architecture course. 
 
-The project was created using 
+This project was created using 
 [Node.js](https://nodejs.org/en/), 
 [mongoDB](https://www.mongodb.com/), 
 [expressjs](https://expressjs.com/), 
