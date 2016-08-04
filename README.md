@@ -5,20 +5,20 @@ indi __________
   / /_/ / /_/ / 
   \____/\____/  
 ```
-indiGO is a web application implementation of the traditional Chinese game Go.
-It includes a number of features including a story mode, separate ai opponents,
+IndiGo is a web application implementation of the traditional Chinese game Go.
+It includes a number of features including a story mode, separate AI opponents,
 game replays, and user accounts. 
 
 ## Dependencies
 
-To run indiGO you must have [node.js](https://nodejs.org/en/) and 
+To run IndiGo you must have [node.js](https://nodejs.org/en/) and 
 [mongoDB](https://www.mongodb.com/) installed on your machine.
 
 The game itself is only tested in Chrome and Firefox.
 
 ## Running
 
-To run indiGO either clone the project or download the zip into a local directory.
+To run IndiGo either clone the project or download the zip into a local directory.
 ```bash
 $ git clone https://github.com/balancededge/go299
 ```
