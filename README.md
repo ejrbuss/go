@@ -6,7 +6,7 @@ indi __________
   \____/\____/  
 ```
 indiGO is a web application implementation of the traditional Chinese game Go.
-It includes a number of features including a story mode, seperate ai opponents,
+It includes a number of features including a story mode, separate ai opponents,
 game replays, and user accounts. 
 
 ## Dependencies
@@ -44,8 +44,8 @@ the url `http://localhost:8080`.
 ## Credit
 
 This is a currently unlicensed project created by Tal Melamed, Cole Macdonald,
-Eric Buss, Torrey Randolph, Trevor Lee, and Tyler Fisher for the Unvieristy of 
-Victoria's Software Enginereering 299: Software Architecture course. 
+Eric Buss, Torrey Randolph, Trevor Lee, and Tyler Fisher for the University of 
+Victoria's Software Engineering 299: Software Architecture course. 
 
 This project was created using 
 [Node.js](https://nodejs.org/en/), 
