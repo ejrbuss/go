@@ -104,6 +104,17 @@ class ViewController {
         // Actions
         var newAccountAction = ComponentFactory.ClickAction(function() { newAccount($('.username').val().toLowerCase(), $('.password').val().toLowerCase()); });
         var loginAction = ComponentFactory.ClickAction(function() { login($('.username').val().toLowerCase(), $('.password').val().toLowerCase()); });
+        var guestAction = ComponentFactory.ClickAction(function() { 
+            var guestLogin = { username: 'guest', password: sha1('guest') };
+            toServer('checkLogin', guestLogin, function(response) {
+                console.log(response);
+                if (!response) {
+                    newAccount('guest', 'guest');
+                } else {
+                    login('guest', 'guest');
+                }
+            });
+        });
         // Vectors
         this.add( ComponentFactory.Vector()
                  .poly([50,0, 70,0, 20,20], accent)
@@ -121,6 +132,7 @@ class ViewController {
         // Buttons
         this.add( ComponentFactory.TitleButton('NEW ACCOUNT', select1, select1).xyz(43, 31, 51).addAction(newAccountAction) );
         this.add( ComponentFactory.TitleButton('LOGIN', select2, select2).xy(63, 31).addAction(loginAction) );
+        this.add( ComponentFactory.TitleButton('GUEST', select1, select1).xy(33, 31).addAction(guestAction) );
         // Images
         this.add( ComponentFactory.Resource('/rsc/icons/logo.png').xy(20, -5).width(28).addClass('slide-down') );
         // Render
@@ -555,7 +567,7 @@ class ViewController {
             });
         }
         // Replay List
-        var rc = new ReplayList(playerModel.username(), function() {
+        var rc = new ReplayList(playerModel.username(), function(rc) {
             if(rc.matchList.length > 0) {
                 var replayList = ComponentFactory.List().background(background1).xy(15, 3).width(40).height(44).addClass('slide-right');
                 $.each(rc.matchList, function(_, match) {
@@ -579,7 +591,9 @@ class ViewController {
             // Render
             vc.clear();
             vc.update();
-            select(rc.matchList[0]).action()(replayList.component()[0]);
+            if (replayList) {
+                select(rc.matchList[0]).action()(replayList.component()[0]);
+            }
         });
     }
 

@@ -11,7 +11,6 @@ function makeRandomMoves(Game, numberofmoves){
 		}
 		catch(err){
 			if (err == "InvalidMoveException" || err == "SuicideException" || err == "ReturnToOldStateException"){
-				//console.log(err);
 				invalidmoves = invalidmoves.concat(possiblemoves.splice(n, 1));
 				continue;
 			}

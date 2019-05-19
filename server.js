@@ -20,7 +20,9 @@ app.use(bodyParser.json());
 var db = new database();
 db.connect();
 
-app.use(express.static('public'));
+// app.use(express.static('public'));
+app.use(express.static('docs'));
+
 
 app.get('/', function(req, res) {
     res.sendFile(__dirname + '/index.html');
@@ -242,7 +244,7 @@ class Logger {
             var time = new Date().toLocaleTimeString();
             var caller = new Error().stack.split('\n')[2].trim()
             console.log(level + ' : ' + time + ' ' + caller);
-            for(var i = 0; i < arguments.length; i++)
+            for(var i = 0; i < arguments.length; i++)x
                 console.log(arguments[i]);
         }
     }

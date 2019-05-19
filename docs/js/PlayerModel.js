@@ -106,6 +106,9 @@ function newAccount(username, password) {
                     if (success) {
                         // Retrieve player info.
                         toServer('getPlayer', {username: username}, function(player) {
+                            if (!player) {
+                                throw new Error();
+                            }
                             vc.mainMenu(new PlayerModel(player));
                         });                    
                     } else {

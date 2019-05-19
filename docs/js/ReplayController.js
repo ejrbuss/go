@@ -29,9 +29,11 @@ class ReplayController {
         }
         var rc = this;
         this.iterator = new ReplayIterator(gameID, size, function() {
-            if (rc.iterator.hasNext()) {
-                rc.timeout = setTimeout(function(){rc.next()}, delay);
-            }
+            setTimeout(function() {
+                if (rc.iterator.hasNext()) {
+                    rc.timeout = setTimeout(function(){rc.next()}, delay);
+                }
+            });
         });
         this.gvc = new GameViewController(vc, stageID, size, quit, this);
         // Update
@@ -139,7 +141,7 @@ class ReplayList {
             if (!response)
                 response = [];
             rc.matchList = response.reverse();
-            cb();
+            cb(rc);
         });
     }
 

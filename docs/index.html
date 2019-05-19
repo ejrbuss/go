@@ -23,16 +23,24 @@
         <script src='js/PlayerModel.js'></script>
         <script src='js/saveGameData.js'></script>
         <script src='js/ReplayController.js'></script>
+        <!-- DummyServer -->
+        <script src='js/ai.js'></script>
+        <script src='js/DummyServer.js'></script>
+        <script src='js/storagedb.js'></script>
+        <script src='js/sha1.js'></script>
         <!-- Start -->
         <script>
             var vc = null; // View Controller object
             $(document).ready(function() {
                 vc = new ViewController('.content');
+                if (dummyServer) {
+                    dummyServer.init();
+                }
             });
         </script>
     </head>
     <body>
-        <span style='color:#FFF;top:0;position:absolute'>WARNING: performance issues and browser compatibility issues galore</span>
+        <span style='color:#FFF;top:0;position:absolute'>WARNING: performance issues and browser compatibility issues galore (Best in Chrome)</span>
         <div class='content'></div>
     </body>
 </html>

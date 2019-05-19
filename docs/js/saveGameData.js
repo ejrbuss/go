@@ -29,10 +29,14 @@ function getMoveList(gameID, callback){
 }
 
 function toServer(url, data, cb) {
-    $.ajax({
-        url: 'http://localhost:8080/' + url, 
-        type: 'POST', 
-        contentType: 'application/json',
-        data: JSON.stringify(data)
-    }).done(cb);
+    if (dummyServer) {
+        dummyServer(url, data, cb);
+    } else {
+        $.ajax({
+            url: 'http://localhost:8080/' + url, 
+            type: 'POST', 
+            contentType: 'application/json',
+            data: JSON.stringify(data)
+        }).done(cb);
+    }
 }
