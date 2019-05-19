@@ -9,6 +9,11 @@ IndiGo is a web application implementation of the traditional Chinese game Go.
 It includes a number of features including a story mode, separate AI opponents,
 game replays, and user accounts. 
 
+## Serverless
+
+You can find a serverless version of the app [here](https://ejrbuss.net/go), note 
+that highscores will be limited to your browser.
+
 ## Dependencies
 
 To run IndiGo you must have [node.js](https://nodejs.org/en/) and 
