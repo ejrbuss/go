@@ -134,7 +134,7 @@ class ViewController {
         this.add( ComponentFactory.TitleButton('LOGIN', select2, select2).xy(63, 31).addAction(loginAction) );
         this.add( ComponentFactory.TitleButton('GUEST', select1, select1).xy(33, 31).addAction(guestAction) );
         // Images
-        this.add( ComponentFactory.Resource('/rsc/icons/logo.png').xy(20, -5).width(28).addClass('slide-down') );
+        this.add( ComponentFactory.Resource('rsc/icons/logo.png').xy(20, -5).width(28).addClass('slide-down') );
         // Render
         this.clear();
         this.update();
